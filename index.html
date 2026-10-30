@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screened Out</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Reading progress + chapter nav -->
+  <div class="progress" aria-hidden="true"><div class="progress-bar" id="progress"></div></div>
+  <nav class="chapters" aria-label="Chapters">
+    <a href="#time" data-chapter="time"><span>1</span> Time</a>
+    <a href="#mind" data-chapter="mind"><span>2</span> Mind</a>
+    <a href="#school" data-chapter="school"><span>3</span> School</a>
+    <a href="#sources" data-chapter="sources">Sources</a>
+  </nav>
+
+  <!-- ================= HERO ================= -->
+  <header class="hero">
+    <p class="kicker">A data story</p>
+    <h1>Screentime Project</h1>
+    <p class="dek">How much of our day goes to screens, and what does it cost our minds and our grades?</p>
+    <p class="byline">By Valay, Aiden, Eli &amp; Hector</p>
+    <div class="scroll-cue" aria-hidden="true">Scroll<span>↓</span></div>
+  </header>
+
+  <!-- ================= CHAPTER 1: TIME (Valay) ================= -->
+  <section class="chapter" id="time" data-chapter="time">
+    <div class="chapter-head">
+      <p class="chapter-num">Chapter 1</p>
+      <h2>Where the hours go</h2>
+      <!-- TODO (Valay): intro question for this section -->
+      <p class="lede">[Valay — intro question. Example: “When did you last spend an hour with friends in person, without a phone on the table?”]</p>
+    </div>
+
+    <!-- Scrolly hook: a 24-hour day that fills in as you scroll -->
+    <div class="scrolly" data-kind="day">
+      <div class="sticky">
+        <figure class="day-graphic" id="day">
+          <figcaption class="day-title" id="dayTitle">One day = 24 hours</figcaption>
+          <div class="day-grid" id="dayGrid" aria-hidden="true"></div>
+          <div class="day-legend" id="dayLegend"></div>
+          <p class="viz-note">Average day, Americans 15–84, 2023–25. American Time Use Survey.</p>
+        </figure>
+      </div>
+      <div class="steps">
+        <!-- data-fill: JSON list of {label, hours, color}.
+             Hours = population-weighted ATUS averages for 2023–25 across all generations, from Valay's dataset.
+             Work & school = work + education. Screens = watching TV + computer leisure + playing games. -->
+        <div class="step" data-title="One day = 24 hours" data-fill='[]'>
+          <p>Every American gets the same 24 hours a day. Each square is one hour.</p>
+        </div>
+        <div class="step" data-title="Sleep" data-fill='[{"label":"Sleep","hours":9.03,"color":"var(--c-sleep)"}]'>
+          <p>The average American spends about <strong>9 hours</strong> asleep.</p>
+        </div>
+        <div class="step" data-title="Work &amp; school" data-fill='[{"label":"Sleep","hours":9.03,"color":"var(--c-sleep)"},{"label":"Work & school","hours":3.66,"color":"var(--c-work)"}]'>
+          <p>Work and school take about <strong>3 hours 40 minutes</strong>. That's averaged over every day of the week and everyone 15 and older, including retirees.</p>
+        </div>
+        <div class="step" data-title="Screens" data-fill='[{"label":"Sleep","hours":9.03,"color":"var(--c-sleep)"},{"label":"Work & school","hours":3.66,"color":"var(--c-work)"},{"label":"Screens for fun","hours":3.17,"color":"var(--c-screen)"}]'>
+          <p>TV, video games and computer time for fun add up to <strong>3 hours 10 minutes a day</strong>, nearly as much as work and school.</p>
+        </div>
+        <div class="step" data-title="Time with people, in person" data-fill='[{"label":"Sleep","hours":9.03,"color":"var(--c-sleep)"},{"label":"Work & school","hours":3.66,"color":"var(--c-work)"},{"label":"Screens for fun","hours":3.17,"color":"var(--c-screen)"},{"label":"Socializing in person","hours":0.52,"color":"var(--c-social)"}]'>
+          <p>Time spent socializing in person: just <strong>31 minutes</strong>. Americans spend about <strong>six times</strong> as long on screens as with people face to face.</p>
+        </div>
+      </div>
+    </div>
+
+    <aside class="fact reveal">
+      <p class="fact-label">Fun fact</p>
+      <p>Since 2004–06, time socializing in person fell from about <strong>40 to 31 minutes</strong> a day, while time playing games roughly <strong>doubled</strong>, from 11 to 23 minutes.</p>
+    </aside>
+
+    <aside class="fact reveal right">
+      <p class="fact-label">Keep in mind</p>
+      <p>The survey doesn't directly measure phone scrolling or social media, so real screen time is likely <strong>even higher</strong>.</p>
+    </aside>
+
+    <div class="viz-block">
+      <h3>A day in the life, by generation</h3>
+      <iframe class="viz-frame" src="viz/valay.html" title="American Time Use: a day in the life, by generation" loading="lazy"></iframe>
+      <p class="viz-note">Source: American Time Use Survey, U.S. Bureau of Labor Statistics. Chart by Valay.</p>
+    </div>
+
+    <div class="takeaway reveal">
+      <!-- TODO (Valay): concluding remark -->
+      <p>[Valay — concluding remark that leads into the effects of all this screen time.]</p>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER 2: MIND (Aiden + Eli) ================= -->
+  <section class="chapter" id="mind" data-chapter="mind">
+    <div class="chapter-head">
+      <p class="chapter-num">Chapter 2</p>
+      <h2>What it does to our minds</h2>
+      <!-- TODO (Aiden): intro to section -->
+      <p class="lede">[Aiden — intro to the section. Connect Valay's time numbers to mental health.]</p>
+    </div>
+
+    <div class="viz-block">
+      <h3>Mental health and stress, 2018 vs. 2024, by generation</h3>
+      <iframe class="viz-frame" src="viz/aiden.html" title="Mental health across time: how each generation rated its mental health and stress in 2018 and 2024" loading="lazy"></iframe>
+      <p class="viz-note">Source: American Psychological Association, Stress in America survey, 2018 and 2024. Chart by Aiden.</p>
+    </div>
+
+    <aside class="fact reveal right">
+      <p class="fact-label">Fun fact</p>
+      <p>[Aiden or Eli — fun fact from your dataset.]</p>
+    </aside>
+
+    <div class="bridge-text reveal">
+      <p>[Aiden — one or two sentences that hand off to Eli's chart.]</p>
+    </div>
+
+    <div class="viz-block">
+      <h3>[Eli — chart title: screen time and depression]</h3>
+      <iframe class="viz-frame" src="viz/eli.html" title="Screen time and depression visualization" loading="lazy"></iframe>
+      <p class="viz-note">Source: [Eli — dataset name]</p>
+    </div>
+
+    <div class="takeaway reveal">
+      <!-- TODO (Aiden): closing remark -->
+      <p>[Aiden — closing remark. Lead into real-world effects like school.]</p>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER 3: SCHOOL (Hector) ================= -->
+  <section class="chapter" id="school" data-chapter="school">
+    <div class="chapter-head">
+      <p class="chapter-num">Chapter 3</p>
+      <h2>A room of 100 students</h2>
+      <p class="lede">Does more screen time mean worse grades? We put 100 students in a classroom to find out.</p>
+    </div>
+
+    <!-- Scrolly: the classroom stays put while the steps change it -->
+    <div class="scrolly" data-kind="frame">
+      <div class="sticky">
+        <iframe class="sticky-frame" id="roomFrame" src="viz/hector-room-of-100.html?embed=scrolly" title="Room of 100: screen time and how teachers rate schoolwork"></iframe>
+      </div>
+      <div class="steps">
+        <!-- data-state is sent to the chart: scr (total|tv|comp|game), year (2006|2010|2014), day (wd|we), lv (room index), hl (true|false) -->
+        <div class="step" data-state='{"scr":"total","year":"2014","day":"wd","lv":0,"hl":false}'>
+          <p>Each figure is <strong>1% of real students</strong> aged 11, 13 and 15 in the HBSC survey. Their color shows how their teacher rates their schoolwork compared with their classmates.</p>
+        </div>
+        <div class="step" data-state='{"lv":0,"hl":true}'>
+          <p>This room spends <strong>less than an hour</strong> on screens on a school day.</p>
+        </div>
+        <div class="step" data-state='{"lv":2,"hl":true}'>
+          <p>Turn screen time up to <strong>2–4 hours</strong>. The screens glow brighter. Watch how the ratings compare.</p>
+        </div>
+        <div class="step" data-state='{"lv":5,"hl":true}'>
+          <p>At <strong>8 hours or more</strong>, the circled students show the gap between this room and the best-rated room.</p>
+        </div>
+        <div class="step" data-state='{"lv":5,"day":"we"}'>
+          <p>On <strong>weekends</strong> the pattern holds, even though everyone has more free time.</p>
+        </div>
+        <div class="step" data-state='{"lv":5,"day":"wd","year":"2006"}'>
+          <p>Is this new? Go back to <strong>2006</strong>, before smartphones were everywhere.</p>
+        </div>
+        <div class="step" data-state='{"year":"2014","scrollTo":".strip"}'>
+          <p>Here is <strong>every room side by side</strong>. Tap any room, or use the buttons, to explore it yourself.</p>
+        </div>
+      </div>
+    </div>
+
+    <aside class="fact reveal">
+      <p class="fact-label">Fun fact</p>
+      <p>Each survey year asked about <strong>185,000–195,000 students</strong>. With that many, even a tiny link between screens and grades shows up clearly in the data.</p>
+    </aside>
+
+    <aside class="fact reveal right">
+      <p class="fact-label">Keep in mind</p>
+      <p>The rating is <strong>self-reported</strong> and compared with classmates. It's not a test score, and the data shows a link, not proof that screens cause lower grades.</p>
+    </aside>
+
+    <div class="takeaway reveal">
+      <!-- TODO (Hector): tweak the concluding remark once the numbers are final -->
+      <p>The link is small, but it points the same way in almost every year and screen type. More hours on screens goes with lower ratings in class.</p>
+    </div>
+  </section>
+
+  <!-- ================= SUMMARY ================= -->
+  <section class="summary">
+    <h2>What it adds up to</h2>
+    <!-- TODO (group): final summary -->
+    <p>[Group — final summary tying together time, mental health and school.]</p>
+  </section>
+
+  <!-- ================= SOURCES ================= -->
+  <section class="sources" id="sources" data-chapter="sources">
+    <h2>Our sources</h2>
+    <dl>
+      <dt>American Time Use Survey (ATUS)</dt>
+      <dd>U.S. Bureau of Labor Statistics, activity summary file, 2003–25 (<a href="https://www.bls.gov/tus/">bls.gov/tus</a>). Periods are 3-year averages: 2004–06, 2014–16 and 2023–25. People coded 85 and older are excluded. Generations follow Pew Research Center definitions (2019), and population weights come from U.S. Census Bureau July 1 estimates. Phone calls are voice calls only. The survey does not directly measure smartphone or social media scrolling, so screen time is undercounted. Differences between generations partly reflect age and life stage.</dd>
+
+      <dt>APA Stress in America</dt>
+      <dd>American Psychological Association survey of U.S. adults 18 and older, 2018 (3,858 adults) and 2024 (3,936 adults), weighted. Both years asked the same mental health and stress questions with the same wording. In the chart, each year shows 800 adults drawn in proportion to the survey weights, so one dot stands for about 1 in 800 U.S. adults; percentages come from the full weighted surveys. Generations use fixed birth years: Gen Z 1997–2012, Millennials 1981–1996, Gen X 1965–1980, Boomers &amp; older 1964 and earlier. The 2018 and 2024 respondents are different people. [Aiden — add anything else from the white paper.]</dd>
+
+      <dt>[Eli — dataset name]</dt>
+      <dd>[Eli — description from the white paper.]</dd>
+
+      <dt>Health Behaviour in School-aged Children (HBSC)</dt>
+      <dd>International open-access files for 2005/06, 2009/10 and 2013/14, about 185,000–195,000 students per year, ages 11, 13 and 15. The academic rating is self-reported and relative to classmates, not a grade or test score. Shares are unweighted and rounded so each room adds up to 100. Each room is a different group of students, so results show an association, not cause and effect. Correlations are Spearman rank correlations between screen-time level and rating. “All screens” adds TV, computer and game hours together.</dd>
+    </dl>
+  </section>
+
+  <footer class="footer">
+    <p>Made by Valay, Aiden, Eli &amp; Hector.</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

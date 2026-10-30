@@ -1,0 +1,1427 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>American Time Use</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="How Americans 15 and older spend their 24 hours, by generation, from the American Time Use Survey.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,900;1,8..60,400&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap">
+<style>
+/* Layout: a survey "almanac" plate. Activities rail on the left, the day's total as one
+   condensed hero figure in the centre, generations as a colour key beneath it, year dial,
+   unit switch and Compare in the right column. Compare views replace the plate (hash routes). */
+:root {
+  /* Colors and fonts match the story site (css/style.css) */
+  --paper: #fbfaf7;
+  --panel: #efebe3;
+  --ink: #1a1a1a;
+  --ink-2: #4a4a4a;
+  --rule: #e2ded5;
+  --accent: #d6461f;
+  --on-ink: #fbfaf7;
+  --on-accent: #ffffff;
+
+  --silent: #7a5aa8;
+  --boomers: #b84a24;
+  --genx: #1f7f72;
+  --millennials: #a87406;
+  --genz: #2d63c8;
+
+  --display: "Source Serif 4", Georgia, serif;
+  --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ui: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--paper); color: var(--ink); }
+body {
+  font-family: var(--body);
+  font-size: 1rem;
+  line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 40px;
+}
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+.wrap { max-width: 1240px; margin: 0 auto; }
+
+.plate {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr) 250px;
+  grid-template-areas:
+    "brand base  ctrl"
+    "acts  stage ctrl";
+  column-gap: 32px;
+  row-gap: 20px;
+  align-items: start;
+}
+.brand  { grid-area: brand; }
+.base-area { grid-area: base; justify-self: center; align-self: end; }
+.ctrl   { grid-area: ctrl; display: grid; gap: 18px; justify-items: end; }
+.acts   { grid-area: acts; }
+.stage  { grid-area: stage; min-width: 0; text-align: center; }
+
+/* ---- brand */
+.brand h1 {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 1.4rem;
+  line-height: 1.1;
+  margin: 0;
+}
+.brand p { margin: 2px 0 0; color: var(--ink-2); font-size: .9rem; }
+
+.eyebrow {
+  font-family: var(--ui);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ---- segmented controls (base hours, compare units) */
+.seg-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.seg {
+  display: inline-flex; padding: 3px; gap: 2px;
+  border: 1px solid var(--rule); border-radius: 999px; background: var(--paper);
+  max-width: 100%;
+}
+.seg button {
+  border: 0; background: transparent; cursor: pointer;
+  padding: 7px 14px; border-radius: 999px;
+  font-family: var(--ui); font-size: .88rem; font-weight: 600; color: var(--ink-2);
+  white-space: nowrap;
+}
+.seg button:hover { color: var(--ink); }
+.seg button[aria-checked="true"] { background: var(--ink); color: var(--on-ink); }
+.seg button[aria-disabled="true"] { opacity: .4; cursor: not-allowed; }
+.info {
+  width: 24px; height: 24px; border-radius: 50%; flex: none;
+  border: 1.5px solid var(--ink-2); background: transparent; color: var(--ink-2);
+  font-family: var(--body); font-style: italic; font-weight: 600; font-size: .85rem; line-height: 1;
+  cursor: help; display: grid; place-items: center; padding: 0;
+}
+
+/* ---- toggle switch */
+.switch {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: none; border: 0; padding: 4px; cursor: pointer;
+  font-family: var(--ui); font-size: .95rem; font-weight: 600;
+}
+.switch .opt { color: var(--ink-2); transition: color .15s; white-space: nowrap; }
+.switch[aria-checked="false"] .opt-hours,
+.switch[aria-checked="true"] .opt-pct { color: var(--ink); }
+.switch .track {
+  position: relative; width: 46px; height: 26px; border-radius: 13px;
+  background: var(--ink); flex: none;
+}
+.switch .thumb {
+  position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--paper); transition: transform .18s ease;
+}
+.switch[aria-checked="true"] .thumb { transform: translateX(20px); }
+
+/* ---- year slider */
+.year { width: 100%; max-width: 230px; }
+.year label { display: block; text-align: right; margin-bottom: 6px; }
+.year input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; margin: 0; cursor: pointer;
+}
+.year input[type="range"]::-webkit-slider-runnable-track { height: 4px; background: var(--rule); border-radius: 2px; }
+.year input[type="range"]::-moz-range-track { height: 4px; background: var(--rule); border-radius: 2px; }
+.year input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; margin-top: -9px;
+  background: var(--ink); border: 3px solid var(--paper); box-shadow: 0 0 0 1px var(--ink);
+}
+.year input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%; background: var(--ink); border: 3px solid var(--paper); box-shadow: 0 0 0 1px var(--ink);
+}
+.year input[type="range"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.stops {
+  display: flex; justify-content: space-between; padding: 0 2px;
+  font-family: var(--ui); font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--ink-2);
+}
+.stops button { background: none; border: 0; padding: 2px 4px; cursor: pointer; color: inherit; font-weight: 500; }
+.stops button[aria-current="true"] { color: var(--ink); font-weight: 800; }
+
+/* ---- Compare! */
+.compare-btn {
+  width: 100%; max-width: 230px;
+  padding: 16px 18px;
+  border: 0; border-radius: 12px; cursor: pointer;
+  background: var(--accent); color: var(--on-accent);
+  font-family: var(--display); font-weight: 900;
+  font-size: 1.5rem; letter-spacing: .02em; line-height: 1;
+  box-shadow: 0 2px 0 var(--ink);
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+.compare-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 0 var(--ink); }
+.compare-btn:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--ink); }
+.compare-btn small { display: block; font-family: var(--ui); font-weight: 600; font-size: .75rem; letter-spacing: 0; margin-top: 5px; opacity: .85; }
+
+/* ---- activities rail */
+.acts h2 { margin: 0 0 10px; }
+.act-list { display: grid; gap: 6px; list-style: none; padding: 0; margin: 0; }
+.act {
+  width: 100%;
+  display: grid; grid-template-columns: 18px 1fr auto; align-items: center; gap: 10px;
+  text-align: left; cursor: pointer;
+  padding: 9px 12px;
+  border: 1px solid var(--rule); border-radius: 8px;
+  background: transparent;
+  font-family: var(--ui); font-size: .92rem; font-weight: 600; line-height: 1.25;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.act:hover { border-color: var(--ink-2); }
+.act .box {
+  width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--ink-2);
+  display: grid; place-items: center;
+}
+.act .box svg { width: 11px; height: 11px; opacity: 0; }
+.act .t { font-family: var(--ui); font-variant-numeric: tabular-nums; font-weight: 500; font-size: .8rem; color: var(--ink-2); white-space: nowrap; }
+.act[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+.act[aria-pressed="true"] .box { background: var(--on-ink); border-color: var(--on-ink); }
+.act[aria-pressed="true"] .box svg { opacity: 1; }
+.act[aria-pressed="true"] .t { color: var(--on-ink); opacity: .8; }
+.act[aria-disabled="true"] { opacity: .42; cursor: not-allowed; border-style: dashed; }
+.act[aria-disabled="true"]:hover { border-color: var(--rule); }
+
+.act-tools { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.more-btn, .clear-btn {
+  font-family: var(--ui); font-size: .88rem; font-weight: 700; cursor: pointer;
+  padding: 8px 12px; border-radius: 8px; background: var(--panel); border: 1px solid transparent;
+}
+.more-btn .chev { display: inline-block; transition: transform .15s; margin-left: 4px; }
+.more-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.clear-btn { background: transparent; border-color: var(--rule); }
+#more-list { margin-top: 10px; }
+.more-list .act, #more-list .act { padding: 7px 12px; font-size: .86rem; }
+
+/* ---- stage */
+.number {
+  font-family: var(--display);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-size: clamp(2.2rem, 6.6vw, 6rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+  margin: 18px 0 0;
+  white-space: nowrap;
+}
+.number.empty { font-size: clamp(2rem, 6vw, 4.2rem); color: var(--ink-2); white-space: normal; text-wrap: balance; }
+.label {
+  font-family: var(--body);
+  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+  max-width: 40ch; margin: 14px auto 0;
+  text-wrap: balance;
+}
+.subline {
+  font-family: var(--ui); font-variant-numeric: tabular-nums;
+  font-size: .95rem; font-weight: 600; color: var(--ink-2);
+  margin: 10px 0 0;
+}
+
+/* stacked bar: share of the selection by generation */
+.share { max-width: 560px; margin: 26px auto 0; }
+.share-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--panel); }
+.share-bar span { display: block; height: 100%; transition: flex-basis .4s ease; }
+
+.gens { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
+.gen {
+  --c: var(--ink);
+  display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  min-width: 118px; padding: 9px 14px 9px 12px;
+  border-radius: 10px; border: 2px solid var(--c); background: transparent; cursor: pointer;
+  text-align: left; font-family: var(--ui);
+  transition: background .12s, color .12s;
+}
+.gen .name { font-weight: 800; font-size: .98rem; display: flex; align-items: center; gap: 7px; }
+.gen .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); border: 2px solid var(--c); }
+.gen .meta { font-size: .76rem; font-weight: 500; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.gen[aria-pressed="true"] { background: var(--c); color: var(--paper); }
+.gen[aria-pressed="true"] .dot { background: var(--paper); border-color: var(--paper); }
+.gen[aria-pressed="true"] .meta { color: var(--paper); opacity: .85; }
+.gen[aria-pressed="false"] .dot { background: transparent; }
+.gen[aria-disabled="true"] { border-style: dashed; border-color: var(--rule); cursor: not-allowed; color: var(--ink-2); background: transparent; }
+.gen[aria-disabled="true"] .dot { background: transparent; border-color: var(--rule); }
+.gen[aria-disabled="true"] .meta { color: var(--ink-2); opacity: 1; }
+.gen .flag { font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+
+.silent { --c: var(--silent); } .boomers { --c: var(--boomers); } .genx { --c: var(--genx); }
+.millennials { --c: var(--millennials); } .genz { --c: var(--genz); }
+
+/* tooltip */
+.tip {
+  position: fixed; z-index: 10; max-width: 280px; pointer-events: none;
+  background: var(--ink); color: var(--paper);
+  font-family: var(--ui); font-size: .82rem; line-height: 1.4;
+  padding: 8px 10px; border-radius: 6px;
+}
+.tip strong { font-weight: 800; }
+
+/* ---- compare views */
+.view-head { display: grid; gap: 4px; margin-bottom: 22px; }
+.view-head h2 {
+  font-family: var(--display); font-weight: 900;
+  font-size: clamp(1.9rem, 4.6vw, 3.2rem); line-height: 1; margin: 0; text-wrap: balance;
+}
+.view-head p { margin: 4px 0 0; color: var(--ink-2); max-width: 62ch; }
+.view-head h2:focus { outline: none; }
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start; }
+.col h3 { margin: 0 0 10px; }
+.col .gen-stack { display: grid; gap: 8px; }
+.col .gen { width: 100%; min-width: 0; flex-direction: row; align-items: center; justify-content: space-between; }
+.col .gen .meta { font-size: .72rem; }
+.col .more-list { margin-top: 8px; }
+.view-foot {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--rule);
+}
+.view-foot .right { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  font-family: var(--ui); font-size: .95rem; font-weight: 700; cursor: pointer;
+  padding: 11px 20px; border-radius: 10px; border: 1px solid var(--rule); background: transparent;
+}
+.btn.primary { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+.btn:disabled { opacity: .38; cursor: not-allowed; }
+.linkbtn {
+  background: none; border: 0; padding: 4px 0; cursor: pointer;
+  font-family: var(--ui); font-weight: 700; font-size: .92rem; color: var(--ink);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.hint { font-family: var(--ui); font-size: .82rem; color: var(--ink-2); margin: 0; }
+
+/* results */
+.vs {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+  font-family: var(--display); font-weight: 900;
+  font-size: clamp(1.25rem, 2.6vw, 1.9rem); line-height: 1.15; margin: 0;
+}
+.vs .side { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.vs .sw { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+.vs .sw.dashed { background: transparent !important; border: 3px dashed var(--sw); }
+.vs .v { font-family: var(--body); font-style: italic; font-weight: 400; font-size: .8em; color: var(--ink-2); }
+.res-controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: flex-end; margin: 22px 0 6px; }
+.res-controls .grp { display: grid; gap: 6px; }
+.res-controls .seg-row { justify-content: flex-start; }
+.note { font-family: var(--ui); font-size: .82rem; color: var(--ink-2); margin: 6px 0 0; min-height: 1.2em; }
+.chart { margin-top: 14px; min-width: 0; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--ui); fill: var(--ink-2); }
+.chart .mark { cursor: default; }
+.chart .mark:focus { outline: none; }
+.chart .mark:focus-visible { stroke: var(--accent); stroke-width: 3; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--ui); font-size: .85rem; font-weight: 600; margin-top: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { width: 18px; height: 4px; border-radius: 2px; display: inline-block; }
+.pies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.pie h4 { font-family: var(--ui); font-size: .95rem; font-weight: 800; margin: 0 0 8px; }
+.pie ul { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; font-family: var(--ui); font-size: .85rem; }
+.pie li { display: grid; grid-template-columns: 12px 1fr auto; gap: 8px; align-items: center; }
+.pie li i { width: 12px; height: 12px; border-radius: 3px; display: block; }
+.pie li b { font-variant-numeric: tabular-nums; font-weight: 700; }
+.bullets { margin: 22px 0 0; padding-left: 1.2em; display: grid; gap: 8px; max-width: 70ch; font-size: 1.05rem; }
+.res-foot { margin-top: 26px; }
+
+/* ---- footer */
+footer {
+  margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--rule);
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 40px;
+  font-size: .9rem; color: var(--ink-2);
+}
+footer p { margin: 0; max-width: 62ch; }
+footer .src { grid-column: 1 / -1; font-size: .82rem; }
+footer a { color: var(--ink); }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---- mobile: base, slider, toggle, Compare!, number, generations, activities */
+@media (max-width: 860px) {
+  .plate {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "brand"
+      "base"
+      "ctrl"
+      "stage"
+      "acts";
+    row-gap: 16px;
+  }
+  .base-area { justify-self: stretch; }
+  .ctrl { justify-items: stretch; gap: 14px; }
+  .year { max-width: none; }
+  .year label { text-align: left; }
+  .compare-btn { max-width: none; }
+  .number { font-size: clamp(2rem, 9.5vw, 4.4rem); margin-top: 8px; }
+  .gen { min-width: 0; flex: 1 1 calc(50% - 8px); }
+  .act-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
+  .cols { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .col .act-list { grid-template-columns: minmax(0, 1fr); }
+  .pies { grid-template-columns: minmax(0, 1fr); }
+  footer { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 420px) {
+  .seg button { padding: 7px 9px; font-size: .82rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+
+<div class="wrap">
+  <!-- ======================= MAIN ======================= -->
+  <div class="plate" id="view-main">
+    <header class="brand">
+      <h1>American Time Use</h1>
+      <p>A day in the life, by generation</p>
+    </header>
+
+    <div class="base-area">
+      <div class="seg-row" id="base-main"></div>
+    </div>
+
+    <div class="ctrl">
+      <div class="year">
+        <label class="eyebrow" for="year">Survey years</label>
+        <input type="range" id="year" min="0" max="2" step="1" value="2" aria-valuetext="2025">
+        <div class="stops" id="stops"></div>
+      </div>
+      <button type="button" id="mode" class="switch" role="switch" aria-checked="false" aria-label="Show as percent of day">
+        <span class="opt opt-hours">Hours</span>
+        <span class="track" aria-hidden="true"><span class="thumb"></span></span>
+        <span class="opt opt-pct" id="pct-label">% of day</span>
+      </button>
+      <button type="button" id="compare-go" class="compare-btn">Compare!<small>Generations, activities, years</small></button>
+    </div>
+
+    <section class="acts" aria-labelledby="acts-h">
+      <h2 class="eyebrow" id="acts-h">Activities</h2>
+      <ul class="act-list" id="main-list"></ul>
+      <div class="act-tools">
+        <button type="button" class="more-btn" id="more" aria-expanded="false" aria-controls="more-list">More<span class="chev" aria-hidden="true">▾</span></button>
+        <button type="button" class="clear-btn" id="clear" hidden>Clear activities</button>
+      </div>
+      <ul class="act-list" id="more-list" hidden></ul>
+    </section>
+
+    <main class="stage">
+      <p class="number" id="number" aria-hidden="true">0</p>
+      <p class="label" id="label"></p>
+      <p class="subline" id="subline"></p>
+      <p class="sr" id="live" aria-live="polite"></p>
+
+      <div class="share" aria-hidden="true"><div class="share-bar" id="share"></div></div>
+      <div class="gens" id="gens" role="group" aria-label="Generations"></div>
+    </main>
+  </div>
+
+  <!-- ======================= COMPARE: SIDE A / SIDE B ======================= -->
+  <section id="view-pick" hidden aria-labelledby="pick-h">
+    <div class="view-head">
+      <span class="eyebrow" id="pick-step">Compare · Step 1 of 2</span>
+      <h2 id="pick-h" tabindex="-1">Select What to Compare</h2>
+      <p id="pick-sub">Pick one or more of each. Several generations combine into one group; several activities are added together.</p>
+    </div>
+    <div class="cols">
+      <div class="col">
+        <h3 class="eyebrow" id="pk-gen-h">Generations</h3>
+        <div class="gen-stack" id="pk-gens" role="group" aria-labelledby="pk-gen-h"></div>
+      </div>
+      <div class="col">
+        <h3 class="eyebrow" id="pk-act-h">Activities</h3>
+        <ul class="act-list" id="pk-acts" aria-labelledby="pk-act-h"></ul>
+        <div class="act-tools">
+          <button type="button" class="more-btn" id="pk-more" aria-expanded="false" aria-controls="pk-more-list">More<span class="chev" aria-hidden="true">▾</span></button>
+        </div>
+        <ul class="act-list more-list" id="pk-more-list" hidden></ul>
+      </div>
+      <div class="col">
+        <h3 class="eyebrow" id="pk-yr-h">Year</h3>
+        <ul class="act-list" id="pk-years" aria-labelledby="pk-yr-h"></ul>
+        <p class="hint" style="margin-top:10px">Pick two or more years to see a trend line.</p>
+      </div>
+    </div>
+    <div class="view-foot">
+      <button type="button" class="linkbtn" id="pk-main">Back to main</button>
+      <div class="right">
+        <button type="button" class="btn" id="pk-back">Back</button>
+        <button type="button" class="btn primary" id="pk-next" disabled>Next</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= COMPARE: RESULTS ======================= -->
+  <section id="view-results" hidden aria-labelledby="res-h">
+    <div class="view-head">
+      <span class="eyebrow">Compare · Results</span>
+      <h2 id="res-h" class="vs" tabindex="-1"></h2>
+    </div>
+    <div class="res-controls">
+      <div class="grp"><span class="eyebrow">Base</span><div class="seg-row" id="base-res"></div></div>
+      <div class="grp"><span class="eyebrow">Show</span><div class="seg-row" id="unit-res"></div></div>
+    </div>
+    <p class="note" id="res-note"></p>
+    <div class="chart" id="chart"></div>
+    <ul class="bullets" id="bullets"></ul>
+    <div class="view-foot res-foot">
+      <button type="button" class="linkbtn" id="res-main">Back to main</button>
+      <div class="right">
+        <button type="button" class="btn" id="res-new">New comparison</button>
+        <button type="button" class="btn primary" id="res-edit">Edit comparison</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p id="note-pop"></p>
+    <p>Phone calls are voice calls only. ATUS does not directly measure smartphone or social media scrolling, so screen time is undercounted.</p>
+    <p>Years are 3-year averages (2004–06, 2014–16, 2023–25). Generation differences within one year partly reflect age and life stage.</p>
+    <p>People coded 85 and older are left out in every period, because that group always includes people born before 1928 (before the Silent Generation). Ages 80–84 are included.</p>
+    <p>Base hours are figured from each generation's own averages. Total hours = the full 24-hour day. Waking hours = 24 hours minus average sleep. Leisure hours = 24 hours minus average sleep and average work; it still includes eating, chores, caregiving, commuting, and school.</p>
+    <p class="src">Sources: U.S. Bureau of Labor Statistics, <a href="https://www.bls.gov/tus/" target="_blank" rel="noopener">American Time Use Survey</a>, activity summary file 2003–25; Pew Research Center <a href="https://www.pewresearch.org/short-reads/2019/01/17/where-millennials-end-and-generation-z-begins/" target="_blank" rel="noopener">generation definitions</a>; U.S. Census Bureau <a href="https://www.census.gov/programs-surveys/popest.html" target="_blank" rel="noopener">population estimates</a> (July 1 resident population).</p>
+  </footer>
+</div>
+
+<div class="tip" id="tip" role="tooltip" hidden></div>
+
+<script id="atus-data" type="application/json">{"periods":["2005","2015","2025"],"periodYears":{"2005":"2004–2006","2015":"2014–2016","2025":"2023–2025"},"census":{"2005":295516599,"2015":321815121,"2025":341784857},"categories":[{"id":"tv","label":"Watching TV","main":true},{"id":"social","label":"Socializing in person","main":true},{"id":"phone","label":"Phone calls","main":true},{"id":"computer","label":"Computer use for leisure","main":true},{"id":"sleep","label":"Sleep","main":false},{"id":"personal","label":"Other personal care","main":false},{"id":"eating","label":"Eating and drinking","main":false},{"id":"household","label":"Household activities","main":false},{"id":"purchasing","label":"Purchasing goods and services","main":false},{"id":"care_hh","label":"Caring for household members","main":false},{"id":"care_nonhh","label":"Caring for non-household members","main":false},{"id":"work","label":"Work and work-related","main":false},{"id":"education","label":"Education","main":false},{"id":"civic","label":"Organizational, civic, and religious","main":false},{"id":"sports","label":"Sports, exercise, and recreation","main":false},{"id":"games","label":"Playing games","main":false},{"id":"reading","label":"Reading for personal interest","main":false},{"id":"relaxing","label":"Relaxing and thinking","main":false},{"id":"other_leisure","label":"Other leisure","main":false},{"id":"travel","label":"Travel","main":false},{"id":"other","label":"Other / unknown","main":false}],"generations":[{"id":"silent","label":"Silent","born":[1928,1945]},{"id":"boomers","label":"Boomers","born":[1946,1964]},{"id":"genx","label":"Gen X","born":[1965,1980]},{"id":"millennials","label":"Millennials","born":[1981,1996]},{"id":"genz","label":"Gen Z","born":[1997,2012]}],"cells":{"2005":{"silent":{"n":7066,"pop":36779453,"ageMin":59,"ageMax":78,"ageMaxLabel":"78","excludes85":false,"small":false,"min":{"tv":213.808,"social":39.572,"phone":8.21,"computer":8.192,"sleep":518.13,"personal":48.441,"eating":78.568,"household":149.136,"purchasing":36.492,"care_hh":6.405,"care_nonhh":16.209,"work":93.222,"education":2.61,"civic":21.271,"sports":15.391,"games":11.274,"reading":45.299,"relaxing":30.817,"other_leisure":19.109,"travel":64.874,"other":12.97}},"boomers":{"n":14136,"pop":77311842,"ageMin":40,"ageMax":60,"ageMaxLabel":"60","excludes85":false,"small":false,"min":{"tv":146.235,"social":35.417,"phone":5.794,"computer":7.96,"sleep":494.835,"personal":48.002,"eating":67.031,"household":123.576,"purchasing":31.137,"care_hh":20.618,"care_nonhh":10.638,"work":265.524,"education":5.133,"civic":16.347,"sports":16.094,"games":5.403,"reading":21.304,"relaxing":17.013,"other_leisure":15.437,"travel":78.534,"other":7.966}},"genx":{"n":11830,"pop":64171608,"ageMin":24,"ageMax":41,"ageMaxLabel":"41","excludes85":false,"small":false,"min":{"tv":130.64,"social":38.768,"phone":4.892,"computer":7.115,"sleep":508.699,"personal":43.097,"eating":63.825,"household":99.627,"purchasing":31.881,"care_hh":58.54,"care_nonhh":7.673,"work":267.361,"education":14.242,"civic":10.799,"sports":16.984,"games":8.936,"reading":10.515,"relaxing":11.63,"other_leisure":15.5,"travel":82.133,"other":7.144}},"millennials":{"n":4704,"pop":40752346,"ageMin":15,"ageMax":25,"ageMaxLabel":"25","excludes85":false,"small":false,"min":{"tv":138.361,"social":49.438,"phone":10.138,"computer":15.266,"sleep":555.323,"personal":46.074,"eating":56.509,"household":55.75,"purchasing":25.019,"care_hh":17.812,"care_nonhh":8.012,"work":145.459,"education":112.494,"civic":14.996,"sports":34.523,"games":22.231,"reading":8.383,"relaxing":11.467,"other_leisure":25.386,"travel":77.683,"other":9.674}},"genz":null},"2015":{"silent":{"n":4076,"pop":25982872,"ageMin":69,"ageMax":80,"ageMaxLabel":"84","excludes85":true,"small":false,"min":{"tv":258.763,"social":37.425,"phone":7.605,"computer":12.061,"sleep":537.999,"personal":48.543,"eating":75.739,"household":150.514,"purchasing":35.236,"care_hh":5.041,"care_nonhh":10.077,"work":32.726,"education":0.389,"civic":27.479,"sports":15.421,"games":16.967,"reading":51.053,"relaxing":31.592,"other_leisure":17.032,"travel":52.558,"other":15.78}},"boomers":{"n":10599,"pop":73948299,"ageMin":50,"ageMax":70,"ageMaxLabel":"70","excludes85":false,"small":false,"min":{"tv":196.439,"social":34.778,"phone":6.132,"computer":11.997,"sleep":512.969,"personal":47.903,"eating":65.88,"household":131.026,"purchasing":31.188,"care_hh":7.947,"care_nonhh":12.804,"work":197.667,"education":1.912,"civic":21.219,"sports":17.011,"games":7.903,"reading":22.692,"relaxing":20.286,"other_leisure":13.585,"travel":68.276,"other":10.385}},"genx":{"n":9528,"pop":65152346,"ageMin":34,"ageMax":51,"ageMaxLabel":"51","excludes85":false,"small":false,"min":{"tv":137.334,"social":33.868,"phone":4.21,"computer":8.478,"sleep":509.261,"personal":44.198,"eating":62.209,"household":113.344,"purchasing":28.493,"care_hh":45.926,"care_nonhh":6.264,"work":272.986,"education":5.759,"civic":15.842,"sports":18.28,"games":6.737,"reading":10.573,"relaxing":14.855,"other_leisure":13.073,"travel":78.448,"other":9.861}},"millennials":{"n":6606,"pop":68116546,"ageMin":18,"ageMax":35,"ageMaxLabel":"35","excludes85":false,"small":false,"min":{"tv":128.865,"social":41.089,"phone":5.152,"computer":13.1,"sleep":540.665,"personal":45.851,"eating":60.353,"household":82.975,"purchasing":24.838,"care_hh":42.861,"care_nonhh":5.005,"work":241.406,"education":35.74,"civic":9.446,"sports":20.891,"games":18.724,"reading":9.069,"relaxing":12.303,"other_leisure":15.087,"travel":75.394,"other":11.185}},"genz":{"n":1393,"pop":17124058,"ageMin":15,"ageMax":19,"ageMaxLabel":"19","excludes85":false,"small":false,"min":{"tv":129.324,"social":39.248,"phone":13.538,"computer":18.326,"sleep":590.362,"personal":46.685,"eating":56.643,"household":35.495,"purchasing":17.975,"care_hh":5.4,"care_nonhh":6.331,"work":46.959,"education":209.537,"civic":13.712,"sports":44.641,"games":41.648,"reading":9.104,"relaxing":10.538,"other_leisure":22.592,"travel":70.855,"other":11.086}}},"2025":{"silent":{"n":1304,"pop":9557150,"ageMin":78,"ageMax":80,"ageMaxLabel":"84","excludes85":true,"small":false,"min":{"tv":282.406,"social":28.655,"phone":13.72,"computer":11.827,"sleep":553.246,"personal":44.071,"eating":80.24,"household":161.461,"purchasing":29.411,"care_hh":6.136,"care_nonhh":4.032,"work":12.862,"education":0.688,"civic":25.206,"sports":17.691,"games":17.226,"reading":41.371,"relaxing":38.513,"other_leisure":16.968,"travel":40.367,"other":13.903}},"boomers":{"n":7970,"pop":66953724,"ageMin":59,"ageMax":79,"ageMaxLabel":"79","excludes85":false,"small":false,"min":{"tv":231.509,"social":31.292,"phone":8.772,"computer":9.56,"sleep":538.146,"personal":44.306,"eating":72.476,"household":158.613,"purchasing":30.855,"care_hh":6.286,"care_nonhh":13.136,"work":100.077,"education":1.686,"civic":21.229,"sports":19.554,"games":13.58,"reading":26.636,"relaxing":28.318,"other_leisure":15.494,"travel":56.649,"other":11.825}},"genx":{"n":4857,"pop":63860370,"ageMin":43,"ageMax":60,"ageMaxLabel":"60","excludes85":false,"small":false,"min":{"tv":144.951,"social":29.568,"phone":6.172,"computer":9.232,"sleep":525.428,"personal":45.518,"eating":66.311,"household":125.137,"purchasing":25.918,"care_hh":20.631,"care_nonhh":8.991,"work":263.928,"education":2.26,"civic":13.848,"sports":17.418,"games":9.827,"reading":11.977,"relaxing":22.38,"other_leisure":12.027,"travel":68.646,"other":9.835}},"millennials":{"n":5363,"pop":71869791,"ageMin":27,"ageMax":44,"ageMaxLabel":"44","excludes85":false,"small":false,"min":{"tv":112.161,"social":31.012,"phone":5.482,"computer":9.98,"sleep":528.634,"personal":42.797,"eating":64.706,"household":108.393,"purchasing":24.689,"care_hh":58.442,"care_nonhh":3.656,"work":272.696,"education":9.63,"civic":8.542,"sports":19.006,"games":20.864,"reading":10.252,"relaxing":16.392,"other_leisure":11.935,"travel":68.501,"other":12.23}},"genz":{"n":2209,"pop":56819462,"ageMin":15,"ageMax":28,"ageMaxLabel":"28","excludes85":false,"small":false,"min":{"tv":109.306,"social":33.096,"phone":10.626,"computer":23.349,"sleep":580.635,"personal":48.024,"eating":60.465,"household":68.459,"purchasing":17.007,"care_hh":15.383,"care_nonhh":3.614,"work":163.301,"education":97.648,"civic":11.87,"sports":31.319,"games":51.002,"reading":9.099,"relaxing":17.166,"other_leisure":15.657,"travel":64.458,"other":8.517}}}},"smallSample":300,"validation":[{"year":2023,"measure":"sleep","ours":9.071,"bls":9.07,"diff_min":0.1},{"year":2023,"measure":"tv","ours":2.667,"bls":2.67,"diff_min":-0.2},{"year":2023,"measure":"household","ours":1.916,"bls":1.92,"diff_min":-0.3},{"year":2024,"measure":"sleep","ours":9.036,"bls":9.04,"diff_min":-0.2},{"year":2024,"measure":"tv","ours":2.6,"bls":2.6,"diff_min":0.0},{"year":2024,"measure":"household","ours":2.014,"bls":2.01,"diff_min":0.2},{"year":2025,"measure":"sleep","ours":9.033,"bls":9.03,"diff_min":0.2},{"year":2025,"measure":"tv","ours":2.611,"bls":2.61,"diff_min":0.0},{"year":2025,"measure":"household","ours":1.993,"bls":1.99,"diff_min":0.2}]}</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById("atus-data").textContent);
+  const fmt0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+  const fmt1 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  const PHRASE = {
+    tv: "watching TV", social: "socializing in person", phone: "on phone calls",
+    computer: "using a computer for leisure", sleep: "sleeping", personal: "on other personal care",
+    eating: "eating and drinking", household: "on household activities",
+    purchasing: "shopping and buying services", care_hh: "caring for household members",
+    care_nonhh: "caring for people outside their household", work: "working",
+    education: "on education", civic: "on civic, religious, and volunteer work",
+    sports: "on sports, exercise, and recreation", games: "playing games",
+    reading: "reading for fun", relaxing: "relaxing and thinking",
+    other_leisure: "on other leisure", travel: "traveling", other: "on unrecorded time"
+  };
+  // "<poss> ___ time"
+  const NOUN = {
+    tv: "TV", social: "socializing", phone: "phone-call", computer: "leisure computer",
+    sleep: "sleep", personal: "personal-care", eating: "eating and drinking", household: "household",
+    purchasing: "shopping", care_hh: "household caregiving", care_nonhh: "outside caregiving",
+    work: "work", education: "education", civic: "civic and religious", sports: "sports and exercise",
+    games: "gaming", reading: "reading", relaxing: "relaxing", other_leisure: "other leisure",
+    travel: "travel", other: "unrecorded"
+  };
+  const PLURAL_ACT = new Set(["phone", "household"]);
+  const SENT = { silent: "the Silent Generation", boomers: "Boomers", genx: "Gen X", millennials: "Millennials", genz: "Gen Z" };
+  const POSS = { silent: "the Silent Generation's", boomers: "Boomers'", genx: "Gen X's", millennials: "Millennials'", genz: "Gen Z's" };
+  const PLURAL_GEN = new Set(["boomers", "millennials"]);
+
+  const BASES = [
+    { id: "leisure", label: "Leisure hours", word: "leisure", pct: "% of leisure" },
+    { id: "waking", label: "Waking hours", word: "waking", pct: "% of waking" },
+    { id: "total", label: "Total hours", word: "day", pct: "% of day" }
+  ];
+  const EXCL = { total: [], waking: ["sleep"], leisure: ["sleep", "work"] };
+  const EXCL_WHY = {
+    waking: { sleep: "Sleep isn't part of waking hours. Switch to Total hours to select it." },
+    leisure: {
+      sleep: "Sleep isn't part of leisure hours. Switch to Total hours to select it.",
+      work: "Work isn't part of leisure hours. Switch to Waking or Total hours to select it."
+    }
+  };
+  const INFO = "Leisure hours = the day minus sleep and work. It still includes eating, chores, caregiving, commuting, and school.";
+  const NO_GENZ = "Oldest Gen Z were 8 in 2005; ATUS starts at 15.";
+  const CHECK = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.2 10 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink)"/></svg>';
+
+  const state = {
+    period: D.periods.length - 1,
+    pct: false,
+    base: "total",
+    acts: new Set(),
+    gens: new Set(D.generations.map(g => g.id)),
+    shown: 0
+  };
+  const emptySide = () => ({ gens: new Set(), acts: new Set(), years: new Set() });
+  const cmp = { a: emptySide(), b: emptySide(), unit: "min" };
+
+  const $ = id => document.getElementById(id);
+  const P = () => D.periods[state.period];
+  const cell = (g, p = P()) => D.cells[p][g];
+  const catLabel = id => D.categories.find(c => c.id === id).label;
+  const genLabel = id => D.generations.find(g => g.id === id).label;
+  const isExcluded = (id, base = state.base) => EXCL[base].includes(id);
+  const ordered = (set, list) => list.filter(x => set.has(x));
+  const CAT_IDS = D.categories.map(c => c.id);
+  const GEN_IDS = D.generations.map(g => g.id);
+
+  /* ---------- core math */
+  function baseMin(c, base = state.base) {
+    if (base === "waking") return 1440 - c.min.sleep;
+    if (base === "leisure") return 1440 - c.min.sleep - c.min.work;
+    return 1440;
+  }
+  // Population-weighted aggregate of a group of generations in one period.
+  function agg(genIds, actIds, p, base = state.base) {
+    const gs = genIds.filter(g => D.cells[p][g]);
+    if (!gs.length) return null;
+    let pop = 0, sel = 0, bas = 0;
+    const per = {};
+    gs.forEach(g => {
+      const c = D.cells[p][g];
+      const s = actIds.reduce((t, id) => t + c.min[id], 0);
+      pop += c.pop; sel += c.pop * s; bas += c.pop * baseMin(c, base);
+      actIds.forEach(id => { per[id] = (per[id] || 0) + c.pop * c.min[id]; });
+    });
+    return {
+      gens: gs, pop,
+      minPP: sel / pop,          // selected minutes per person
+      basePP: bas / pop,         // base minutes per person
+      share: Math.min(1, sel / bas), // selected ÷ base minutes (weighted); capped against rounding in stored minutes
+      totalHours: sel / 60,      // Σ population × minutes ÷ 60
+      baseHours: bas / 60,
+      perShare: id => per[id] / bas,
+      perMin: id => per[id] / pop
+    };
+  }
+  window.__atus = { D, agg, baseMin, state, cmp }; // inspection hook for checking numbers
+
+  /* ---------- text helpers */
+  function joinList(a) {
+    if (a.length <= 1) return a.join("");
+    if (a.length === 2) return a[0] + " and " + a[1];
+    return a.slice(0, -1).join(", ") + ", and " + a[a.length - 1];
+  }
+  function actPhrase(ids) {
+    if (ids.length > 3) return "on " + ids.length + " selected activities";
+    return joinList(ids.map(id => PHRASE[id]));
+  }
+  function hm(min) {
+    if (min < 1) return "<1m";
+    const h = Math.floor(min / 60), m = Math.round(min % 60);
+    if (h === 0) return m + "m";
+    return h + "h " + (m < 10 ? "0" : "") + m + "m";
+  }
+  function perPerson(min) {
+    if (min >= 60) return "≈ " + fmt1.format(min / 60) + " hours per person per day";
+    return "≈ " + fmt0.format(Math.max(1, Math.round(min))) + " minutes per person per day";
+  }
+  // "1 h 52 m" / "25 minutes"
+  function durLong(min) {
+    const r = Math.round(min);
+    if (r < 60) return r + (r === 1 ? " minute" : " minutes");
+    return Math.floor(r / 60) + " h " + (r % 60) + " m";
+  }
+  function durShort(min) {
+    const r = Math.round(min);
+    if (r < 60) return r + " m";
+    return Math.floor(r / 60) + " h " + (r % 60) + " m";
+  }
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  function possList(ids) {
+    if (ids.length === 1) return POSS[ids[0]];
+    return joinList(ids.map(id => POSS[id])) + " combined";
+  }
+  const baseOf = id => BASES.find(b => b.id === id);
+
+  /* ---------- tooltip */
+  function placeTip(rect, html) {
+    const tip = $("tip");
+    tip.innerHTML = html;
+    tip.hidden = false;
+    const t = tip.getBoundingClientRect();
+    let x = rect.left + rect.width / 2 - t.width / 2;
+    x = Math.max(8, Math.min(x, window.innerWidth - t.width - 8));
+    let y = rect.top - t.height - 8;
+    if (y < 8) y = rect.bottom + 8;
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+  }
+  function hideTip() { $("tip").hidden = true; }
+  function attachTip(el, htmlFn) {
+    const show = () => { const h = htmlFn(); if (h) placeTip(el.getBoundingClientRect(), h); else hideTip(); };
+    el.addEventListener("mouseenter", show);
+    el.addEventListener("mouseleave", hideTip);
+    el.addEventListener("focus", show);
+    el.addEventListener("blur", hideTip);
+  }
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hideTip(); });
+  window.addEventListener("scroll", hideTip, { passive: true });
+
+  /* ---------- segmented control (radiogroup with arrow keys) */
+  const segs = [];
+  function makeSeg(container, opts, getVal, setVal, ariaLabel, withInfo) {
+    const g = document.createElement("div");
+    g.className = "seg"; g.setAttribute("role", "radiogroup"); g.setAttribute("aria-label", ariaLabel);
+    const btns = opts().map(o => {
+      const b = document.createElement("button");
+      b.type = "button"; b.setAttribute("role", "radio"); b.dataset.id = o.id; b.textContent = o.label;
+      b.addEventListener("click", () => { if (b.getAttribute("aria-disabled") !== "true") setVal(o.id); });
+      b.addEventListener("keydown", e => {
+        const k = e.key;
+        if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(k)) return;
+        e.preventDefault();
+        const live = btns.filter(x => x.getAttribute("aria-disabled") !== "true");
+        let i = live.indexOf(b);
+        if (k === "Home") i = 0; else if (k === "End") i = live.length - 1;
+        else i = (i + (k === "ArrowLeft" || k === "ArrowUp" ? -1 : 1) + live.length) % live.length;
+        live[i].focus(); setVal(live[i].dataset.id);
+      });
+      attachTip(b, () => b.dataset.tip || "");
+      g.appendChild(b);
+      return b;
+    });
+    container.appendChild(g);
+    if (withInfo) {
+      const i = document.createElement("button");
+      i.type = "button"; i.className = "info"; i.textContent = "i";
+      i.setAttribute("aria-label", "About base hours: " + INFO);
+      attachTip(i, () => INFO);
+      container.appendChild(i);
+    }
+    const seg = {
+      sync() {
+        const v = getVal(), o = opts();
+        btns.forEach((b, k) => {
+          const on = b.dataset.id === v;
+          b.textContent = o[k].label;
+          b.setAttribute("aria-checked", String(on));
+          b.tabIndex = on ? 0 : -1;
+          if (o[k].disabled) { b.setAttribute("aria-disabled", "true"); b.dataset.tip = o[k].why; }
+          else { b.removeAttribute("aria-disabled"); b.dataset.tip = ""; }
+        });
+      }
+    };
+    segs.push(seg);
+    return seg;
+  }
+
+  function setBase(id) {
+    state.base = id;
+    EXCL[id].forEach(x => state.acts.delete(x));
+    // compare selections follow the same rule
+    [cmp.a, cmp.b].forEach(s => EXCL[id].forEach(x => s.acts.delete(x)));
+    hideTip();
+    renderAll();
+  }
+  // In results, a base that would exclude a chosen activity is disabled.
+  function baseOptsFor(sides) {
+    return () => BASES.map(b => {
+      if (!sides) return { id: b.id, label: b.label };
+      const chosen = new Set([...cmp.a.acts, ...cmp.b.acts]);
+      const hit = EXCL[b.id].find(x => chosen.has(x));
+      return hit
+        ? { id: b.id, label: b.label, disabled: true, why: "Your comparison includes " + catLabel(hit) + ", which isn't part of " + b.word + (b.id === "leisure" ? " hours." : " hours.") }
+        : { id: b.id, label: b.label };
+    });
+  }
+  makeSeg($("base-main"), baseOptsFor(false), () => state.base, setBase, "Base hours", true);
+  makeSeg($("base-res"), baseOptsFor(true), () => state.base, setBase, "Base hours", true);
+  makeSeg($("unit-res"),
+    () => [{ id: "min", label: "Minutes per person" }, { id: "pct", label: baseOf(state.base).pct }, { id: "total", label: "Total hours" }],
+    () => cmp.unit, v => { cmp.unit = v; renderAll(); }, "Unit", false);
+
+  /* ---------- main controls */
+  const stops = $("stops");
+  D.periods.forEach((p, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = p; b.tabIndex = -1;
+    b.addEventListener("click", () => { $("year").value = i; setPeriod(i); });
+    stops.appendChild(b);
+  });
+  $("year").addEventListener("input", e => setPeriod(+e.target.value));
+
+  function actButton(c, isOn, toggle) {
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "act"; b.dataset.id = c.id;
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="box" aria-hidden="true">' + CHECK + '</span><span class="n"></span><span class="t"></span>';
+    b.querySelector(".n").textContent = c.label;
+    b.addEventListener("click", () => {
+      if (b.getAttribute("aria-disabled") === "true") return;
+      toggle(c.id);
+    });
+    attachTip(b, () => (isExcluded(c.id) ? EXCL_WHY[state.base][c.id] : ""));
+    li.appendChild(b);
+    return li;
+  }
+  function syncActButton(b, on) {
+    const ex = isExcluded(b.dataset.id);
+    if (ex) {
+      b.setAttribute("aria-disabled", "true");
+      b.setAttribute("aria-label", catLabel(b.dataset.id) + ", unavailable: " + EXCL_WHY[state.base][b.dataset.id]);
+    } else {
+      b.removeAttribute("aria-disabled");
+      b.removeAttribute("aria-label");
+    }
+    b.setAttribute("aria-pressed", String(on && !ex));
+  }
+  const toggleMain = id => { state.acts.has(id) ? state.acts.delete(id) : state.acts.add(id); renderAll(); };
+  D.categories.forEach(c => $(c.main ? "main-list" : "more-list").appendChild(actButton(c, null, toggleMain)));
+
+  $("more").addEventListener("click", () => {
+    const open = $("more").getAttribute("aria-expanded") !== "true";
+    $("more").setAttribute("aria-expanded", String(open));
+    $("more-list").hidden = !open;
+    renderMain();
+  });
+  $("clear").addEventListener("click", () => { state.acts.clear(); renderMain(); });
+  $("mode").addEventListener("click", () => { state.pct = !state.pct; renderMain(); });
+  $("compare-go").addEventListener("click", () => { location.hash = "compare"; });
+
+  D.generations.forEach(g => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "gen " + g.id; b.dataset.id = g.id;
+    b.innerHTML = '<span class="name"><span class="dot" aria-hidden="true"></span><span></span></span><span class="meta"></span>';
+    b.querySelector(".name span:last-child").textContent = g.label;
+    b.addEventListener("click", () => {
+      if (b.getAttribute("aria-disabled") === "true") return;
+      state.gens.has(g.id) ? state.gens.delete(g.id) : state.gens.add(g.id);
+      renderMain();
+    });
+    attachTip(b, () => tipText(g));
+    $("gens").appendChild(b);
+  });
+
+  function setPeriod(i) {
+    state.period = i;
+    $("year").setAttribute("aria-valuetext", D.periods[i] + " (" + D.periodYears[D.periods[i]] + " average)");
+    renderMain();
+  }
+
+  function tipText(g) {
+    const p = P(), c = cell(g.id);
+    if (!c) return "<strong>" + g.label + ", " + p + ": no data.</strong> " + NO_GENZ;
+    const all = c.ageMin === 15 || g.id === "silent" ? " only" : "";
+    let s = "<strong>" + g.label + ", " + p + ": ages " + c.ageMin + "–" + c.ageMaxLabel + all + "</strong>";
+    s += "<br>Born " + g.born[0] + "–" + g.born[1] + " · " + fmt0.format(c.n) + " respondents";
+    s += "<br>≈ " + fmt1.format(c.pop / 1e6) + " million people";
+    if (c.excludes85) s += "<br>Ages 85+ not included.";
+    if (c.small) s += "<br><strong>Small sample</strong> (under " + D.smallSample + " respondents): read with caution.";
+    return s;
+  }
+
+  /* ---------- number animation */
+  let anim = null;
+  function animateTo(target, decimals) {
+    cancelAnimationFrame(anim);
+    const el = $("number"), from = state.shown, t0 = performance.now();
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const dur = reduce ? 0 : 550;
+    const f = decimals ? fmt1 : fmt0, suffix = decimals ? "%" : "";
+    const step = now => {
+      const k = dur ? Math.min(1, (now - t0) / dur) : 1;
+      const e = 1 - Math.pow(1 - k, 3);
+      const v = from + (target - from) * e;
+      el.textContent = f.format(v) + suffix;
+      state.shown = v;
+      if (k < 1) anim = requestAnimationFrame(step);
+      else state.shown = target;
+    };
+    anim = requestAnimationFrame(step);
+  }
+
+  /* ---------- render: main */
+  function renderMain() {
+    const p = P();
+    const actIds = CAT_IDS.filter(id => state.acts.has(id) && !isExcluded(id));
+    const active = D.generations.filter(g => state.gens.has(g.id) && cell(g.id));
+    const available = D.generations.filter(g => cell(g.id));
+    const B = baseOf(state.base);
+
+    [...stops.children].forEach((b, i) => b.setAttribute("aria-current", String(i === state.period)));
+    $("mode").setAttribute("aria-checked", String(state.pct));
+    $("pct-label").textContent = B.pct;
+    $("mode").setAttribute("aria-label", "Show as percent of " + (state.base === "total" ? "day" : B.word + " hours"));
+
+    [...$("gens").children].forEach(b => {
+      const g = D.generations.find(x => x.id === b.dataset.id), c = cell(g.id);
+      const meta = b.querySelector(".meta");
+      if (!c) {
+        b.setAttribute("aria-disabled", "true");
+        b.setAttribute("aria-pressed", "false");
+        b.setAttribute("aria-label", g.label + ", no data for " + p + ". " + NO_GENZ);
+        meta.innerHTML = '<span class="flag">no data</span>';
+      } else {
+        b.removeAttribute("aria-disabled");
+        b.setAttribute("aria-pressed", String(state.gens.has(g.id)));
+        b.setAttribute("aria-label", g.label + ", ages " + c.ageMin + " to " + c.ageMaxLabel + " in " + p + (c.small ? ", small sample" : ""));
+        meta.textContent = "Ages " + c.ageMin + "–" + c.ageMaxLabel + (c.small ? " · small sample" : "");
+      }
+    });
+
+    const popSum = active.reduce((s, g) => s + cell(g.id).pop, 0);
+    const avgMin = id => popSum ? active.reduce((s, g) => s + cell(g.id).pop * cell(g.id).min[id], 0) / popSum : 0;
+
+    $("view-main").querySelectorAll(".act").forEach(b => {
+      syncActButton(b, state.acts.has(b.dataset.id));
+      b.querySelector(".t").textContent = popSum ? hm(avgMin(b.dataset.id)) : "";
+    });
+    const moreSel = D.categories.filter(c => !c.main && actIds.includes(c.id)).length;
+    const moreOpen = $("more").getAttribute("aria-expanded") === "true";
+    $("more").firstChild.textContent = moreOpen ? "Fewer" : (moreSel ? "More (" + moreSel + " selected)" : "More");
+    $("clear").hidden = actIds.length === 0;
+
+    const census = D.census[p];
+    $("note-pop").textContent = "Population shown is less than the " + p + " US population of " +
+      fmt1.format(census / 1e6) + " million (" + fmt0.format(census) + ") because ATUS only surveys people 15 and older, " +
+      "and excludes people in institutions such as nursing homes and prisons, as well as active-duty military.";
+
+    const numEl = $("number");
+    if (active.length === 0) {
+      cancelAnimationFrame(anim);
+      numEl.classList.add("empty");
+      const onlyNoData = state.gens.size > 0;
+      numEl.textContent = "Select a generation";
+      $("label").textContent = onlyNoData
+        ? "Gen Z has no data for " + p + ". Add another generation or pick a later year."
+        : "Pick one or more generations below to see their time.";
+      $("subline").textContent = "";
+      $("live").textContent = "No generation selected.";
+      $("share").innerHTML = "";
+      state.shown = 0;
+      return;
+    }
+    numEl.classList.remove("empty");
+
+    const A = agg(active.map(g => g.id), actIds, p);
+    const hasAct = actIds.length > 0;
+    const perMin = hasAct ? A.minPP : A.basePP;
+    const totalHours = hasAct ? A.totalHours : A.baseHours;
+    const value = state.pct ? (hasAct ? A.share * 100 : 100) : totalHours;
+    if (state.pctLast !== state.pct) state.shown = 0; // switching units: count up from zero
+    state.pctLast = state.pct;
+    animateTo(value, state.pct ? 1 : 0);
+
+    const allGens = active.length === available.length;
+    const genTxt = allGens ? "all generations" : active.map(g => g.label).join(" + ");
+    const what = hasAct ? actPhrase(actIds) : "";
+    let label;
+    if (state.pct) {
+      if (hasAct && state.base === "total") label = "of the day spent " + what + " — " + genTxt + ", " + p;
+      else if (hasAct) {
+        const who = allGens ? "Americans'" : possList(active.map(g => g.id));
+        label = "of " + who + " " + B.word + " time spent " + what + (allGens ? " — all generations" : "") + ", " + p;
+      } else if (state.base === "total") label = "of the day: the full 24 hours — " + genTxt + ", " + p;
+      else if (state.base === "waking") label = "of waking hours: the day minus sleep — " + genTxt + ", " + p;
+      else label = "of leisure hours: the day minus sleep and work — " + genTxt + ", " + p;
+    } else {
+      if (hasAct) label = "hours Americans spent " + what + " each day — " + genTxt + ", " + p;
+      else if (state.base === "total") label = "hours Americans 15+ lived through each day — " + genTxt + ", " + p;
+      else if (state.base === "waking") label = "waking hours Americans 15+ had each day — " + genTxt + ", " + p;
+      else label = "leisure hours Americans 15+ had each day, after sleep and work — " + genTxt + ", " + p;
+    }
+    $("label").textContent = label;
+    $("subline").textContent = perPerson(perMin) +
+      (state.pct ? "" : " · " + fmt1.format(popSum / 1e6) + " million people");
+    $("live").textContent = (state.pct ? fmt1.format(value) + " percent " : fmt0.format(value) + " ") + label + ". " + perPerson(perMin) + ".";
+
+    const share = $("share");
+    share.innerHTML = "";
+    active.forEach(g => {
+      const a = agg([g.id], actIds, p);
+      const s = document.createElement("span");
+      s.style.flexBasis = ((hasAct ? a.totalHours : a.baseHours) / totalHours * 100) + "%";
+      s.style.background = "var(--" + g.id + ")";
+      share.appendChild(s);
+    });
+  }
+
+  /* ======================= COMPARE: pickers ======================= */
+  let pickSide = "a";
+  const S = () => cmp[pickSide];
+  const complete = s => s.gens.size > 0 && s.acts.size > 0 && s.years.size > 0;
+  const genzBlocked = s => s.years.size === 1 && s.years.has("2005");
+
+  D.generations.forEach(g => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "gen " + g.id; b.dataset.id = g.id;
+    b.innerHTML = '<span class="name"><span class="dot" aria-hidden="true"></span><span></span></span><span class="meta"></span>';
+    b.querySelector(".name span:last-child").textContent = g.label;
+    b.querySelector(".meta").textContent = "b. " + g.born[0] + "–" + g.born[1];
+    b.addEventListener("click", () => {
+      if (b.getAttribute("aria-disabled") === "true") return;
+      const s = S(); s.gens.has(g.id) ? s.gens.delete(g.id) : s.gens.add(g.id);
+      renderPick();
+    });
+    attachTip(b, () => (b.getAttribute("aria-disabled") === "true" ? "<strong>Gen Z, 2005: no data.</strong> " + NO_GENZ : ""));
+    $("pk-gens").appendChild(b);
+  });
+  const togglePick = id => { const s = S(); s.acts.has(id) ? s.acts.delete(id) : s.acts.add(id); renderPick(); };
+  D.categories.forEach(c => $(c.main ? "pk-acts" : "pk-more-list").appendChild(actButton(c, null, togglePick)));
+  D.periods.forEach(p => {
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "act"; b.dataset.year = p;
+    b.innerHTML = '<span class="box" aria-hidden="true">' + CHECK + '</span><span class="n"></span><span class="t"></span>';
+    b.querySelector(".n").textContent = p;
+    b.querySelector(".t").textContent = D.periodYears[p] + " avg.";
+    b.addEventListener("click", () => {
+      const s = S(); s.years.has(p) ? s.years.delete(p) : s.years.add(p);
+      renderPick();
+    });
+    li.appendChild(b);
+    $("pk-years").appendChild(li);
+  });
+  $("pk-more").addEventListener("click", () => {
+    const open = $("pk-more").getAttribute("aria-expanded") !== "true";
+    $("pk-more").setAttribute("aria-expanded", String(open));
+    $("pk-more-list").hidden = !open;
+    renderPick();
+  });
+  $("pk-main").addEventListener("click", () => { location.hash = ""; });
+  $("pk-back").addEventListener("click", () => { location.hash = pickSide === "a" ? "" : "compare"; });
+  $("pk-next").addEventListener("click", () => {
+    if (!complete(S())) return;
+    location.hash = pickSide === "a" ? "compare-to" : "results";
+  });
+
+  function renderPick() {
+    const s = S();
+    if (genzBlocked(s)) s.gens.delete("genz");
+    EXCL[state.base].forEach(x => s.acts.delete(x));
+    $("pick-step").textContent = pickSide === "a" ? "Compare · Step 1 of 2" : "Compare · Step 2 of 2";
+    $("pick-h").textContent = pickSide === "a" ? "Select What to Compare" : "Select What to Compare To";
+    $("pick-sub").textContent = pickSide === "a"
+      ? "Pick one or more of each. Several generations combine into one group; several activities are added together."
+      : "Now the other side: " + sideTitle(cmp.a) + " vs …";
+    $("pk-back").textContent = pickSide === "a" ? "Cancel" : "Back";
+    $("pk-back").hidden = pickSide === "a";
+    $("pk-next").textContent = pickSide === "a" ? "Next" : "Done";
+    $("pk-next").disabled = !complete(s);
+
+    [...$("pk-gens").children].forEach(b => {
+      const blocked = b.dataset.id === "genz" && genzBlocked(s);
+      if (blocked) {
+        b.setAttribute("aria-disabled", "true");
+        b.setAttribute("aria-label", "Gen Z, no data for 2005. " + NO_GENZ);
+        b.querySelector(".meta").innerHTML = '<span class="flag">no data</span>';
+      } else {
+        b.removeAttribute("aria-disabled");
+        b.removeAttribute("aria-label");
+        const g = D.generations.find(x => x.id === b.dataset.id);
+        b.querySelector(".meta").textContent = "b. " + g.born[0] + "–" + g.born[1];
+      }
+      b.setAttribute("aria-pressed", String(s.gens.has(b.dataset.id)));
+    });
+    $("view-pick").querySelectorAll(".act[data-id]").forEach(b => syncActButton(b, s.acts.has(b.dataset.id)));
+    $("view-pick").querySelectorAll(".act[data-year]").forEach(b => b.setAttribute("aria-pressed", String(s.years.has(b.dataset.year))));
+    const moreSel = D.categories.filter(c => !c.main && s.acts.has(c.id)).length;
+    const open = $("pk-more").getAttribute("aria-expanded") === "true";
+    $("pk-more").firstChild.textContent = open ? "Fewer" : (moreSel ? "More (" + moreSel + " selected)" : "More");
+  }
+
+  /* ======================= COMPARE: results ======================= */
+  function gensTitle(s) { return ordered(s.gens, GEN_IDS).map(genLabel).join(" + "); }
+  function actsTitle(s) {
+    const a = ordered(s.acts, CAT_IDS);
+    return a.length > 3 ? a.length + " activities" : a.map(catLabel).join(" + ");
+  }
+  function yearsTitle(s) { return ordered(s.years, D.periods).join(", "); }
+  function sideTitle(s) { return [gensTitle(s), actsTitle(s), yearsTitle(s)].join(" · "); }
+
+  function sideColor(s) {
+    const g = ordered(s.gens, GEN_IDS);
+    return g.length === 1 ? "var(--" + g[0] + ")" : null;
+  }
+  function sideStyles() {
+    // combined groups are drawn in ink (the accent blue is too close to Gen Z's)
+    const ca = sideColor(cmp.a) || "var(--ink)", cb = sideColor(cmp.b) || "var(--ink)";
+    const dashB = ca === cb; // same colour on both sides: B drawn dashed / lighter
+    return { a: { color: ca, dash: false }, b: { color: cb, dash: dashB } };
+  }
+
+  function unitValue(a, unit) {
+    if (!a) return null;
+    if (unit === "pct") return a.share * 100;
+    if (unit === "total") return a.totalHours;
+    return a.minPP;
+  }
+  function fmtVal(v, unit) {
+    if (v == null) return "no data";
+    if (unit === "pct") return fmt1.format(v) + "%";
+    if (unit === "total") return fmt0.format(v) + " hours";
+    return durShort(v);
+  }
+  function fmtTick(v, unit) {
+    if (unit === "pct") return fmt0.format(v) + "%";
+    if (unit === "total") {
+      if (v >= 1e9) return +(v / 1e9).toFixed(1) + "B";
+      if (v >= 1e6) return +(v / 1e6).toFixed(1) + "M";
+      if (v >= 1e3) return +(v / 1e3).toFixed(1) + "K";
+      return String(v);
+    }
+    if (v === 0) return "0";
+    return v >= 60 && v % 60 === 0 ? (v / 60) + " h" : v >= 60 ? (Math.floor(v / 60) + " h " + (v % 60) + " m") : v + " m";
+  }
+  function niceMax(max, unit) {
+    if (max <= 0) return { top: 1, step: 1 };
+    let step;
+    if (unit === "min") {
+      const steps = [5, 10, 15, 20, 30, 60, 90, 120, 180, 240, 360];
+      step = steps.find(s => max / s <= 5) || 360;
+    } else {
+      const raw = max / 4, mag = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / mag;
+      step = (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * mag;
+    }
+    return { top: Math.ceil(max / step) * step, step };
+  }
+  const SVGNS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function markTip(node, html, label) {
+    node.setAttribute("class", (node.getAttribute("class") || "") + " mark");
+    node.setAttribute("tabindex", "0");
+    node.setAttribute("role", "img");
+    node.setAttribute("aria-label", label);
+    attachTip(node, () => html);
+  }
+
+  function chooseChart() {
+    if (cmp.a.years.size > 1 || cmp.b.years.size > 1) return "line";
+    if (cmp.a.acts.size > 1 || cmp.b.acts.size > 1) return "pie";
+    return "bar";
+  }
+
+  function lineChart(box, st, unit) {
+    const years = D.periods.filter(p => cmp.a.years.has(p) || cmp.b.years.has(p));
+    const series = ["a", "b"].map(k => {
+      const s = cmp[k], acts = ordered(s.acts, CAT_IDS), gens = ordered(s.gens, GEN_IDS);
+      return {
+        k, s, st: st[k],
+        pts: years.filter(y => s.years.has(y)).map(y => {
+          const a = agg(gens, acts, y);
+          return { y, a, v: unitValue(a, unit) };
+        })
+      };
+    });
+    const W = Math.max(300, box.clientWidth), H = Math.round(Math.min(380, Math.max(240, W * 0.5)));
+    const m = { l: unit === "total" ? 54 : 62, r: 24, t: 18, b: 34 };
+    const vals = series.flatMap(s => s.pts.map(p => p.v)).filter(v => v != null);
+    const { top, step } = niceMax(Math.max(...vals), unit);
+    const x = i => years.length === 1 ? (m.l + (W - m.r)) / 2 : m.l + 20 + i * ((W - m.l - m.r - 40) / (years.length - 1));
+    const y = v => m.t + (H - m.t - m.b) * (1 - v / top);
+    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "group", "aria-label": "Line chart by year" });
+    for (let v = 0; v <= top + 1e-9; v += step) {
+      el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), style: "stroke:var(--rule);stroke-width:1" + (v ? ";stroke-dasharray:2 4" : "") }, svg);
+      const t = el("text", { x: m.l - 8, y: y(v) + 4, "text-anchor": "end", "font-size": 12 }, svg);
+      t.textContent = fmtTick(v, unit);
+    }
+    years.forEach((yr, i) => {
+      const t = el("text", { x: x(i), y: H - 10, "text-anchor": "middle", "font-size": 13, "font-weight": 700 }, svg);
+      t.textContent = yr;
+    });
+    series.forEach(s => {
+      const pts = s.pts.filter(p => p.v != null);
+      const d = pts.map((p, i) => (i ? "L" : "M") + x(years.indexOf(p.y)) + " " + y(p.v)).join(" ");
+      if (pts.length > 1) el("path", { d, style: "fill:none;stroke:" + s.st.color + ";stroke-width:3;stroke-linejoin:round;stroke-linecap:round" + (s.st.dash ? ";stroke-dasharray:7 6" : "") }, svg);
+      pts.forEach(p => {
+        const c = el("circle", { cx: x(years.indexOf(p.y)), cy: y(p.v), r: 6, style: "fill:" + (s.st.dash ? "var(--paper)" : s.st.color) + ";stroke:" + s.st.color + ";stroke-width:3" }, svg);
+        const html = "<strong>" + p.a.gens.map(genLabel).join(" + ") + ", " + p.y + "</strong><br>" + actsTitle(s.s) + "<br>" + fmtVal(p.v, unit) +
+          (unit !== "min" ? " · " + durShort(p.a.minPP) + " per person" : "");
+        markTip(c, html, gensTitle(s.s) + " " + p.y + ": " + fmtVal(p.v, unit));
+      });
+    });
+    box.appendChild(svg);
+    legend(box, st);
+  }
+
+  function barChart(box, st, unit) {
+    const rows = ["a", "b"].map(k => {
+      const s = cmp[k], yr = ordered(s.years, D.periods)[0];
+      const a = agg(ordered(s.gens, GEN_IDS), ordered(s.acts, CAT_IDS), yr);
+      return { k, s, yr, a, v: unitValue(a, unit), st: st[k] };
+    });
+    const W = Math.max(300, box.clientWidth), H = Math.round(Math.min(360, Math.max(240, W * 0.45)));
+    const m = { l: unit === "total" ? 54 : 62, r: 16, t: 26, b: 34 };
+    const { top, step } = niceMax(Math.max(...rows.map(r => r.v || 0)), unit);
+    const y = v => m.t + (H - m.t - m.b) * (1 - v / top);
+    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "group", "aria-label": "Bar chart" });
+    for (let v = 0; v <= top + 1e-9; v += step) {
+      el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), style: "stroke:var(--rule);stroke-width:1" + (v ? ";stroke-dasharray:2 4" : "") }, svg);
+      const t = el("text", { x: m.l - 8, y: y(v) + 4, "text-anchor": "end", "font-size": 12 }, svg);
+      t.textContent = fmtTick(v, unit);
+    }
+    const slot = (W - m.l - m.r) / 2, bw = Math.min(140, slot * 0.55);
+    rows.forEach((r, i) => {
+      const cx = m.l + slot * i + slot / 2;
+      if (r.v == null) return;
+      const rect = el("rect", { x: cx - bw / 2, y: y(r.v), width: bw, height: Math.max(0, y(0) - y(r.v)), rx: 4,
+        style: "fill:" + r.st.color + (r.st.dash ? ";fill-opacity:.45;stroke:" + r.st.color + ";stroke-width:2;stroke-dasharray:6 4" : "") }, svg);
+      const html = "<strong>" + gensTitle(r.s) + ", " + r.yr + "</strong><br>" + actsTitle(r.s) + "<br>" + fmtVal(r.v, unit) +
+        (unit !== "min" ? " · " + durShort(r.a.minPP) + " per person" : "");
+      markTip(rect, html, gensTitle(r.s) + " " + r.yr + ": " + fmtVal(r.v, unit));
+      const vt = el("text", { x: cx, y: y(r.v) - 8, "text-anchor": "middle", "font-size": 14, "font-weight": 800, style: "fill:var(--ink)" }, svg);
+      vt.textContent = fmtVal(r.v, unit);
+      const lt = el("text", { x: cx, y: H - 10, "text-anchor": "middle", "font-size": 13, "font-weight": 700 }, svg);
+      lt.textContent = (gensTitle(r.s).length > 26 ? (i ? "B" : "A") : gensTitle(r.s)) + (rows[0].yr !== rows[1].yr ? " · " + r.yr : "");
+    });
+    box.appendChild(svg);
+    legend(box, st);
+  }
+
+  function pieCharts(box, st, unit) {
+    const wrap = document.createElement("div");
+    wrap.className = "pies";
+    ["a", "b"].forEach(k => {
+      const s = cmp[k], yr = ordered(s.years, D.periods)[0];
+      const acts = ordered(s.acts, CAT_IDS), gens = ordered(s.gens, GEN_IDS);
+      const a = agg(gens, acts, yr);
+      const fig = document.createElement("figure");
+      fig.className = "pie"; fig.style.margin = "0";
+      const h = document.createElement("h4");
+      h.textContent = gensTitle(s) + " · " + yr;
+      fig.appendChild(h);
+      const color = st[k].color;
+      const slices = acts.map((id, i) => ({ id, label: catLabel(id), share: a.perShare(id), min: a.perMin(id), op: Math.max(0.28, 1 - i * (0.72 / Math.max(1, acts.length))) }));
+      const rest = Math.max(0, 1 - slices.reduce((t, x) => t + x.share, 0));
+      slices.push({ id: "rest", label: "Everything else", share: rest, min: a.basePP - a.minPP, rest: true });
+      const size = 220, R = 100, c0 = size / 2;
+      const svg = el("svg", { viewBox: "0 0 " + size + " " + size, width: size, height: size, role: "group", "aria-label": "Pie chart", style: "max-width:240px;margin:0 auto" });
+      let ang = -Math.PI / 2;
+      slices.forEach(sl => {
+        if (sl.share < 0.0005) return;
+        const a1 = ang + sl.share * Math.PI * 2;
+        let node;
+        const fill = sl.rest ? "fill:var(--rule)" : "fill:" + color + ";fill-opacity:" + sl.op;
+        if (sl.share > 0.9995) node = el("circle", { cx: c0, cy: c0, r: R, style: fill + ";stroke:var(--paper);stroke-width:2" }, svg);
+        else {
+          const large = a1 - ang > Math.PI ? 1 : 0;
+          const d = "M" + c0 + " " + c0 + " L" + (c0 + R * Math.cos(ang)) + " " + (c0 + R * Math.sin(ang)) +
+            " A" + R + " " + R + " 0 " + large + " 1 " + (c0 + R * Math.cos(a1)) + " " + (c0 + R * Math.sin(a1)) + " Z";
+          node = el("path", { d, style: fill + ";stroke:var(--paper);stroke-width:2" }, svg);
+        }
+        const valTxt = unit === "total" ? fmt0.format(sl.min * a.pop / 60) + " hours" : durShort(sl.min) + " per person";
+        const html = "<strong>" + sl.label + "</strong><br>" + fmt1.format(sl.share * 100) + "% of " + baseWord() + "<br>" + valTxt;
+        markTip(node, html, sl.label + ": " + fmt1.format(sl.share * 100) + "% of " + baseWord());
+        sl.drawnStyle = fill;
+        ang = a1;
+      });
+      fig.appendChild(svg);
+      const ul = document.createElement("ul");
+      slices.forEach(sl => {
+        const li = document.createElement("li");
+        const sw = document.createElement("i");
+        sw.style.cssText = sl.rest ? "background:var(--rule)" : "background:" + color + ";opacity:" + sl.op;
+        const n = document.createElement("span"); n.textContent = sl.label;
+        const v = document.createElement("b");
+        v.textContent = unit === "min" ? durShort(sl.min) : unit === "total" ? fmtTick(Math.round(sl.min * a.pop / 60), "total") + " h" : fmt1.format(sl.share * 100) + "%";
+        li.append(sw, n, v);
+        ul.appendChild(li);
+      });
+      fig.appendChild(ul);
+      const cap2 = document.createElement("figcaption");
+      cap2.className = "hint"; cap2.style.marginTop = "6px";
+      cap2.textContent = "Slices are shares of " + baseWord() + " (" + durShort(a.basePP) + " per person).";
+      fig.appendChild(cap2);
+      wrap.appendChild(fig);
+    });
+    box.appendChild(wrap);
+  }
+  const baseWord = () => state.base === "total" ? "the day" : baseOf(state.base).word + " hours";
+
+  function legend(box, st) {
+    const lg = document.createElement("div");
+    lg.className = "legend";
+    ["a", "b"].forEach(k => {
+      const sp = document.createElement("span");
+      const i = document.createElement("i");
+      i.style.background = st[k].dash ? "repeating-linear-gradient(90deg," + st[k].color + " 0 6px,transparent 6px 10px)" : st[k].color;
+      const t = document.createElement("span");
+      t.textContent = sideTitle(cmp[k]);
+      sp.append(i, t);
+      lg.appendChild(sp);
+    });
+    box.appendChild(lg);
+  }
+
+  /* ---------- template sentences */
+  function sideName(s, yr) {
+    const g = ordered(s.gens, GEN_IDS);
+    const base = g.length === 1 ? SENT[g[0]] : g.map(genLabel).join(" + ");
+    return base + (yr ? " in " + yr : "");
+  }
+  function sidePoss(s) {
+    const g = ordered(s.gens, GEN_IDS);
+    return g.length === 1 ? POSS[g[0]] : "the " + g.map(genLabel).join(" + ") + " group's";
+  }
+  const spends = s => { const g = ordered(s.gens, GEN_IDS); return g.length === 1 && !PLURAL_GEN.has(g[0]) ? "spends" : "spend"; };
+  function nounTime(acts) {
+    if (acts.length === 1) return NOUN[acts[0]] + " time";
+    if (acts.length <= 3) return "combined " + joinList(acts.map(id => NOUN[id])) + " time";
+    return "time on these " + acts.length + " activities";
+  }
+  function shareSubject(acts) {
+    if (acts.length === 1) return { t: catLabel(acts[0]).replace(" / unknown", "/unknown time"), plural: PLURAL_ACT.has(acts[0]) };
+    return { t: "These activities", plural: true };
+  }
+  // whole percent, or one decimal under 10%
+  const pctTxt = share => share * 100 < 9.95 ? fmt1.format(share * 100) : String(Math.round(share * 100));
+  function relative(big, small) {
+    if (small <= 0 || big <= 0) return null;
+    const r = big / small;
+    if (r < 1.1) return null;
+    if (r < 1.95) return "That's about " + (Math.round(r * 10) / 10) + "× as much.";
+    return "That's about " + Math.round(r) + "× as much.";
+  }
+  function change(s, acts, y0, a0, y1, a1) {
+    const d = a1.minPP - a0.minPP;
+    const subj = cap(sidePoss(s)) + " " + nounTime(acts);
+    // a combined group can lose a member in early years (no Gen Z in 2005); say so
+    const mix = a0.gens.length !== a1.gens.length ? "; the " + y0 + " figure covers " + a0.gens.map(genLabel).join(" + ") + " only" : "";
+    if (Math.abs(d) < 1) return subj + " held about steady between " + y0 + " and " + y1 + " (" + durShort(a1.minPP) + " a day" + mix + ").";
+    return subj + (d > 0 ? " rose " : " fell ") + durLong(Math.abs(d)) + " between " + y0 + " and " + y1 + " (" + durShort(a0.minPP) + " to " + durShort(a1.minPP) + mix + ").";
+  }
+  function bullets() {
+    const out = [], A = cmp.a, Bs = cmp.b;
+    const aActs = ordered(A.acts, CAT_IDS), bActs = ordered(Bs.acts, CAT_IDS);
+    const aGens = ordered(A.gens, GEN_IDS), bGens = ordered(Bs.gens, GEN_IDS);
+    const sameActs = aActs.join() === bActs.join(), sameGens = aGens.join() === bGens.join();
+    const yrsWith = (s, g, a) => ordered(s.years, D.periods).filter(y => agg(g, a, y));
+    const ya = yrsWith(A, aGens, aActs), yb = yrsWith(Bs, bGens, bActs);
+    if (!ya.length || !yb.length) return ["One side has no data for the years chosen."];
+    const ra = ya[ya.length - 1], rb = yb[yb.length - 1];
+    const aa = agg(aGens, aActs, ra), ab = agg(bGens, bActs, rb);
+    const yearDiff = ra !== rb;
+    const primary = [], secondary = [];
+    let relTxt = null;
+
+    // change over time within a side (line charts)
+    [[A, aGens, aActs, ya], [Bs, bGens, bActs, yb]].forEach(([s, g, a, ys]) => {
+      if (ys.length > 1) primary.push(change(s, a, ys[0], agg(g, a, ys[0]), ys[ys.length - 1], agg(g, a, ys[ys.length - 1])));
+    });
+    if (primary.length === 2 && sameGens && sameActs) primary.length = 1; // identical sides: one change is enough
+
+    if (sameGens && sameActs && yearDiff && primary.length === 0) {
+      const [y0, a0, y1, a1] = ra < rb ? [ra, aa, rb, ab] : [rb, ab, ra, aa];
+      primary.push(change(A, aActs, y0, a0, y1, a1));
+    } else if (sameActs) {
+      const nA = sideName(A, yearDiff ? ra : null), nB = sideName(Bs, yearDiff ? rb : null);
+      const d = aa.minPP - ab.minPP;
+      const [bigN, bigS, bigV, smallN, smallV] = d >= 0 ? [nA, A, aa.minPP, nB, ab.minPP] : [nB, Bs, ab.minPP, nA, aa.minPP];
+      if (Math.abs(d) < 1) primary.push(cap(nA) + " and " + nB + " spend about the same time " + actPhrase(aActs) + " (" + durShort(aa.minPP) + " a day).");
+      else {
+        primary.push(cap(bigN) + " " + spends(bigS) + " " + durLong(Math.abs(d)) + " more per day " + actPhrase(aActs) + " than " + smallN + " (" + durShort(bigV) + " vs " + durShort(smallV) + ").");
+        relTxt = relative(bigV, smallV);
+      }
+    } else {
+      primary.push(cap(sideName(A, yearDiff ? ra : null)) + " " + spends(A) + " " + durShort(aa.minPP) + " a day " + actPhrase(aActs) +
+        "; " + sideName(Bs, yearDiff ? rb : null) + " " + spends(Bs) + " " + durShort(ab.minPP) + " " + actPhrase(bActs) + ".");
+    }
+
+    // share of base: leads when the base is waking/leisure; otherwise only fills in when there's no relative line
+    if (state.base === "total" && relTxt) secondary.push(relTxt);
+    if (state.base !== "total" || secondary.length === 0) {
+      const word = state.base === "total" ? "day" : baseOf(state.base).word + " time";
+      if (sameActs) {
+        const sub = shareSubject(aActs);
+        const pa = pctTxt(aa.share), pb = pctTxt(ab.share);
+        if (sameGens && !yearDiff) { /* identical sides; skip */ }
+        else if (sameGens) secondary.push(sub.t + (sub.plural ? " take up " : " takes up ") + pa + "% of " + sidePoss(A) + " " + word + " in " + ra + " vs " + pb + "% in " + rb + ".");
+        else secondary.push(sub.t + (sub.plural ? " take up " : " takes up ") + pa + "% of " + sidePoss(A) + " " + word + " vs " + pb + "% of " + sidePoss(Bs) + ".");
+      } else {
+        secondary.push("Those choices take up " + pctTxt(aa.share) + "% of " + sidePoss(A) + " " + word + " and " + pctTxt(ab.share) + "% of " + sidePoss(Bs) + " " + word + ".");
+      }
+    }
+
+    if (state.base !== "total" && relTxt) secondary.push(relTxt);
+
+    // age caveat: different generations compared in a shared year
+    const shared = ordered(A.years, D.periods).some(y => Bs.years.has(y));
+    const caveat = !sameGens && shared ? "Part of this gap reflects age and life stage, not just generation." : null;
+
+    let list = primary.slice(0, 2).concat(secondary);
+    list = caveat ? list.slice(0, 2).concat(caveat) : list.slice(0, 3);
+    return list;
+  }
+
+  let lastChartW = 0;
+  function renderResults() {
+    const st = sideStyles();
+    const h = $("res-h");
+    h.innerHTML = "";
+    ["a", "b"].forEach((k, i) => {
+      if (i) { const v = document.createElement("span"); v.className = "v"; v.textContent = "vs"; h.appendChild(v); }
+      const sp = document.createElement("span"); sp.className = "side";
+      const sw = document.createElement("span"); sw.className = "sw" + (st[k].dash ? " dashed" : "");
+      sw.style.background = st[k].color; sw.style.setProperty("--sw", st[k].color);
+      const t = document.createElement("span"); t.textContent = sideTitle(cmp[k]);
+      sp.append(sw, t); h.appendChild(sp);
+    });
+    const unit = cmp.unit;
+    const notes = [];
+    if (unit === "total") notes.push("Totals reflect generation size as well as behavior.");
+    const gz = ["a", "b"].map(k => cmp[k]).filter(s => s.gens.has("genz") && s.years.has("2005"));
+    if (gz.length) {
+      notes.push("No Gen Z data for 2005: " + NO_GENZ);
+      gz.filter(s => s.gens.size > 1).forEach(s => {
+        const rest = ordered(s.gens, GEN_IDS).filter(g => g !== "genz").map(genLabel).join(" + ");
+        notes.push("The 2005 figure for " + gensTitle(s) + " covers " + rest + " only.");
+      });
+    }
+    $("res-note").textContent = notes.join(" ");
+    const box = $("chart");
+    box.innerHTML = "";
+    const type = chooseChart();
+    box.dataset.type = type;
+    if (type === "line") lineChart(box, st, unit);
+    else if (type === "pie") pieCharts(box, st, unit);
+    else barChart(box, st, unit);
+    lastChartW = box.clientWidth;
+    const ul = $("bullets");
+    ul.innerHTML = "";
+    bullets().forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+  }
+  window.addEventListener("resize", () => {
+    if (!$("view-results").hidden && Math.abs($("chart").clientWidth - lastChartW) > 4) renderResults();
+  });
+
+  $("res-edit").addEventListener("click", () => { location.hash = "compare"; });
+  $("res-new").addEventListener("click", () => { cmp.a = emptySide(); cmp.b = emptySide(); location.hash = "compare"; });
+  $("res-main").addEventListener("click", () => { location.hash = ""; });
+
+  /* ======================= routing ======================= */
+  let view = "main";
+  function route() {
+    const h = location.hash.replace(/^#/, "");
+    let v = h === "compare" ? "a" : h === "compare-to" ? "b" : h === "results" ? "c" : "main";
+    if (v === "b" && !complete(cmp.a)) { location.replace("#compare"); return; }
+    if (v === "c" && !(complete(cmp.a) && complete(cmp.b))) { location.replace(complete(cmp.a) ? "#compare-to" : "#compare"); return; }
+    const prev = view;
+    view = v;
+    hideTip();
+    $("view-main").hidden = v !== "main";
+    $("view-pick").hidden = !(v === "a" || v === "b");
+    $("view-results").hidden = v !== "c";
+    if (v === "a" || v === "b") pickSide = v;
+    renderAll();
+    if (prev !== v) {
+      window.scrollTo(0, 0);
+      const focusEl = v === "main" ? $("compare-go") : v === "c" ? $("res-h") : $("pick-h");
+      if (prev !== "main" || v !== "main") focusEl.focus({ preventScroll: true });
+    }
+  }
+  function renderAll() {
+    segs.forEach(s => s.sync());
+    if (view === "main") renderMain();
+    else if (view === "c") renderResults();
+    else renderPick();
+  }
+  window.addEventListener("hashchange", route);
+
+  $("year").setAttribute("aria-valuetext", P() + " (" + D.periodYears[P()] + " average)");
+  route();
+})();
+</script>
+
+<script src="bridge.js"></script>
+</body></html>
