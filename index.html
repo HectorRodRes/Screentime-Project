@@ -97,28 +97,129 @@
     <div class="chapter-head">
       <p class="chapter-num">Chapter 2</p>
       <h2>What it does to our minds</h2>
-      <!-- TODO (Aiden): intro to section -->
-      <!-- Each line fades in on its own as you scroll (see .lede-stack in css/style.css) -->
+      <!-- Intro (Aiden). Each line fades in on its own as you scroll (see .lede-stack in css/style.css).
+           Framing comes from the white paper, Section 1 and Section 4.3. -->
       <div class="lede-stack">
-        <p class="lede reveal">The effect of screen time is not negligible at all.</p>
-        <p class="lede reveal">Especially for younger individuals with developing brains.</p>
-        <p class="lede reveal">A few of the many effects can be seen in an individual's mental health, stress, and their academics.</p>
+        <p class="lede reveal">Most arguments about screens come down to one number: <strong>hours per day</strong>.</p>
+        <p class="lede reveal">But that number counts a video call with a grandparent and an hour of an endless, algorithm-picked feed as the same hour.</p>
+        <p class="lede reveal">So we asked a different question: does <em>how</em> we use screens matter more than <em>how long</em>?</p>
+        <p class="lede reveal">The American Psychological Association has asked Americans about their stress every year since 2007. In 2018 and 2024 it asked two questions with exactly the same wording, so we can compare each generation six years apart.</p>
       </div>
     </div>
 
-    <div class="viz-block">
+    <div class="stat-hook reveal">
+      <p class="stat-num">39%</p>
+      <p class="stat-text">of Gen Z adults rated their mental health <strong>fair or poor</strong> in 2024. Among Boomers &amp; older it was <strong>9%</strong>.</p>
+    </div>
+
+    <!-- APA chart. Desktop: the chart stays pinned while the steps scroll past it.
+         Phones and small windows: the full chart shows as a normal block (.apa-flow) and the steps follow as cards. -->
+    <div class="viz-block apa-flow">
       <h3>Mental health and stress, 2018 vs. 2024, by generation</h3>
-      <iframe class="viz-frame" src="viz/aiden.html" title="Mental health across time: how each generation rated its mental health and stress in 2018 and 2024" loading="lazy"></iframe>
+      <iframe class="viz-frame" data-src="viz/aiden.html" title="Mental health across time: how each generation rated its mental health and stress in 2018 and 2024" loading="lazy"></iframe>
       <p class="viz-note">Source: American Psychological Association, Stress in America survey, 2018 and 2024. Chart by Aiden.</p>
     </div>
 
-    <aside class="fact reveal right">
+    <div class="scrolly apa-scrolly" data-kind="frame">
+      <div class="sticky">
+        <iframe class="sticky-frame" data-src="viz/aiden.html?embed=sticky" title="Mental health across time: how each generation rated its mental health and stress in 2018 and 2024" loading="lazy"></iframe>
+      </div>
+      <div class="steps">
+        <!-- Chart steps: data-state goes to the chart. q = question (0 mental health, 1 stress), gen = highlighted generation (0 Gen Z … 3 Boomers & older, null = all).
+             Fact steps (.step-fact) just clear the highlight. Their bars come from data-gens: Gen Z, Millennials, Gen X, Boomers & older (weighted %).
+             All numbers: APA Stress in America respondent files, weighted, adults 18+ unless marked teens. -->
+        <div class="step" data-state='{"q":0,"gen":null}'>
+          <p>Each dot is about <strong>1 in 800 U.S. adults</strong>, colored by generation. The top field is 2018 and the bottom is 2024.</p>
+          <p>Both years asked: <em>“In general, would you say your mental health is excellent, very good, good, fair or poor?”</em> Across all adults, fair or poor rose from <strong>15% to 21%</strong>.</p>
+        </div>
+        <div class="step" data-state='{"gen":0}'>
+          <p><strong class="gen-z">Gen Z</strong> reports the worst mental health of any generation. In 2018, <strong>32%</strong> of Gen Z adults called their mental health fair or poor. By 2024 it was <strong>39%</strong>, and only 30% said very good or excellent.</p>
+        </div>
+        <div class="step" data-state='{"gen":1}'>
+          <p><strong class="gen-mill">Millennials</strong> had the biggest rise: fair or poor nearly doubled, from <strong>15% to 27%</strong>.</p>
+        </div>
+        <div class="step" data-state='{"gen":3}'>
+          <p>Compare <strong class="gen-boomer">Boomers &amp; older</strong>: fair or poor went from <strong>6% to 9%</strong>, and 62% still say very good or excellent.</p>
+        </div>
+
+        <div class="step step-fact" data-state='{"gen":null}' data-gens="45.6,34.3,24.2,17.1">
+          <p class="fact-label">Fun fact <span class="asked">Asked only in 2024</span></p>
+          <p><strong>46%</strong> of Gen Z adults say they've <strong>lost hours to screens without meaning to</strong>, and 73% say they fill time scrolling social media without realizing it.</p>
+        </div>
+        <div class="step step-fact" data-state='{"gen":null}' data-gens="41.9,31.6,14.4,5.2">
+          <p class="fact-label">Fun fact <span class="asked">Asked only in 2024</span></p>
+          <p><strong>42%</strong> of Gen Z adults say they <strong>use their phone to avoid people</strong>. Among Boomers &amp; older, 5% do.</p>
+        </div>
+
+        <div class="step" data-state='{"q":1,"gen":null}'>
+          <p>Now stress: <em>“On a scale of 1 to 10, how would you rate your average level of stress during the past month?”</em></p>
+          <p>Across all adults, the share at 8–10 barely moved, from <strong>19% to 22%</strong>.</p>
+        </div>
+        <div class="step" data-state='{"gen":0}'>
+          <p>But <strong class="gen-z">Gen Z</strong>'s high-stress share rose from <strong>23% to 31%</strong>, the biggest jump of any generation. Boomers &amp; older stayed at 11%.</p>
+        </div>
+
+        <div class="step step-fact" data-state='{"gen":null}' data-gens="43.1,31.7,21.2,6.7">
+          <p class="fact-label">Fun fact <span class="asked">Asked only in 2018</span></p>
+          <p><strong>43%</strong> of Gen Z adults said they check social media <strong>“constantly”</strong>. Only 7% of Boomers &amp; older did.</p>
+        </div>
+        <div class="step step-fact" data-state='{"gen":null}'>
+          <p class="fact-label">Fun fact <span class="asked">Teens 15–17, 2018 only</span></p>
+          <p>The 2018 survey also asked teens. <strong>39%</strong> said <strong>how they're seen on social media</strong> is a significant source of stress in their lives, and 41% check social media constantly.</p>
+        </div>
+        <div class="step step-fact" data-state='{"gen":null}' data-gens="41.6,29.1,16.1,4.3">
+          <p class="fact-label">Fun fact <span class="asked">Asked only in 2024</span></p>
+          <p><strong>42%</strong> of Gen Z adults say they <strong>compare themselves to others</strong> on social media. Among them, 51% rate their mental health fair or poor, compared with 30% of Gen Z who don't compare.</p>
+        </div>
+        <div class="step step-fact" data-state='{"gen":null}'>
+          <p class="fact-label">Fun fact <span class="asked">Asked only in 2018</span></p>
+          <p>Social media cuts both ways. In 2018, <strong>55%</strong> of Gen Z adults said it makes them <strong>feel supported</strong>, and <strong>52%</strong> said it makes them <strong>feel judged</strong>. About 1 in 3 said both.</p>
+        </div>
+        <div class="step step-fact" data-state='{"gen":null}' data-gens="44.0,30.2,17.8,11.7">
+          <p class="fact-label">Fun fact <span class="asked">Asked 2016–2018</span></p>
+          <p>When stressed, <strong>44%</strong> of Gen Z adults <strong>play video games</strong> to cope. Among teens 15–17, it's more than half (52%).</p>
+        </div>
+
+        <div class="step" data-state='{"gen":null}'>
+          <p>Your turn: tap a generation or a question on the chart to explore it yourself.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amount vs. manner: the white paper's hypothesis, tested with the 2018 APA survey (adults 18+, weighted). -->
+    <div class="versus">
+      <h3>Hours online vs. how it feels</h3>
+      <p class="versus-dek">Share of U.S. adults with <strong>high stress</strong> (8–10 out of 10) in 2018, split two ways.</p>
+      <div class="versus-grid">
+        <figure class="versus-panel">
+          <figcaption>By <strong>hours online</strong> per week</figcaption>
+          <div class="hbar"><span>Under 5 h</span><i style="--v:17.8"></i><b>18%</b></div>
+          <div class="hbar"><span>5–9 h</span><i style="--v:16.3"></i><b>16%</b></div>
+          <div class="hbar"><span>10–19 h</span><i style="--v:17.5"></i><b>18%</b></div>
+          <div class="hbar"><span>20+ h</span><i style="--v:21.2"></i><b>21%</b></div>
+        </figure>
+        <figure class="versus-panel">
+          <figcaption>By <strong>“Social media makes me feel bad about myself”</strong></figcaption>
+          <div class="hbar"><span>Strongly disagree</span><i style="--v:12.9"></i><b>13%</b></div>
+          <div class="hbar"><span>Somewhat disagree</span><i style="--v:15.2"></i><b>15%</b></div>
+          <div class="hbar"><span>Somewhat agree</span><i style="--v:26.3"></i><b>26%</b></div>
+          <div class="hbar"><span>Strongly agree</span><i style="--v:38.8"></i><b>39%</b></div>
+        </figure>
+      </div>
+      <p class="viz-note">APA Stress in America, 2018, adults 18+, weighted. Hours online: 3,841 adults. “Feel bad” was asked of 3,292 adults. Both panels use the same scale. A link, not proof of cause: people who are already struggling may also feel worse online.</p>
+    </div>
+
+    <aside class="fact reveal">
       <p class="fact-label">Fun fact</p>
-      <p>[Aiden or Eli — fun fact from your dataset.]</p>
+      <p>People online <strong>20+ hours a week</strong> were exactly as likely to rate their mental health fair or poor as people online <strong>under 5 hours</strong>: <strong>15%</strong> each.</p>
     </aside>
 
+    <div class="takeaway reveal">
+      <p>Hours online barely moved stress. How social media made people feel moved it a lot. That's the bet our white paper makes: the way we use screens matters more than the amount.</p>
+    </div>
+
     <div class="bridge-text reveal">
-      <p>[Aiden — one or two sentences that hand off to Eli's chart.]</p>
+      <p>The APA survey captures how people <em>feel</em> about their stress and mental health, not a clinical diagnosis. Next, Eli looks at how screen time lines up with depression.</p>
     </div>
 
     <div class="viz-block">
@@ -203,7 +304,7 @@
       <dd>U.S. Bureau of Labor Statistics, activity summary file, 2003–25 (<a href="https://www.bls.gov/tus/">bls.gov/tus</a>). Periods are 3-year averages: 2004–06, 2014–16 and 2023–25. People coded 85 and older are excluded. Generations follow Pew Research Center definitions (2019), and population weights come from U.S. Census Bureau July 1 estimates. Phone calls are voice calls only. The survey does not directly measure smartphone or social media scrolling, so screen time is undercounted. Differences between generations partly reflect age and life stage.</dd>
 
       <dt>APA Stress in America</dt>
-      <dd>American Psychological Association survey of U.S. adults 18 and older, 2018 (3,858 adults) and 2024 (3,936 adults), weighted. Both years asked the same mental health and stress questions with the same wording. In the chart, each year shows 800 adults drawn in proportion to the survey weights, so one dot stands for about 1 in 800 U.S. adults; percentages come from the full weighted surveys. Generations use fixed birth years: Gen Z 1997–2012, Millennials 1981–1996, Gen X 1965–1980, Boomers &amp; older 1964 and earlier. The 2018 and 2024 respondents are different people. [Aiden — add anything else from the white paper.]</dd>
+      <dd>American Psychological Association survey of U.S. adults 18 and older, 2018 (3,858 adults) and 2024 (3,936 adults), weighted. Both years asked the same mental health and stress questions with the same wording. In the chart, each year shows 800 adults drawn in proportion to the survey weights, so one dot stands for about 1 in 800 U.S. adults; percentages come from the full weighted surveys. Generations use fixed birth years: Gen Z 1997–2012, Millennials 1981–1996, Gen X 1965–1980, Boomers &amp; older 1964 and earlier. The 2018 and 2024 respondents are different people. The fun facts use questions that were asked in only one survey year (2016–2018 or 2024), or only of the 2018 teen sample (692 teens aged 15–17, weighted separately from adults), so they can't be compared across years. “Boomers &amp; older” includes the Silent Generation. All answers are self-reported: the survey measures how people rate their own stress and mental health, not clinical diagnoses, and its social media questions ask how people feel about their use rather than measuring it. Links between answers show association, not cause and effect.</dd>
 
       <dt>[Eli — dataset name]</dt>
       <dd>[Eli — description from the white paper.]</dd>

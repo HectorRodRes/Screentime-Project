@@ -82,6 +82,29 @@ const stepObserver = new IntersectionObserver(entries => {
 
 document.querySelectorAll(".step").forEach(s => stepObserver.observe(s));
 
+/* ---------- Load only the visible copy of a chart (chapter 2) ---------- */
+// The APA chart has a pinned desktop copy and a normal phone copy; only one is shown at a time.
+// Hidden iframes would still load and animate, so they get data-src and load once visible.
+function loadVisibleFrames() {
+  document.querySelectorAll("iframe[data-src]").forEach(f => {
+    if (f.offsetParent !== null) { f.src = f.dataset.src; f.removeAttribute("data-src"); }
+  });
+}
+loadVisibleFrames();
+addEventListener("resize", loadVisibleFrames, { passive: true });
+
+/* ---------- Mini generation bars on fun-fact cards (chapter 2) ---------- */
+// data-gens="GenZ,Millennials,GenX,Boomers" (weighted %), drawn on a 0–100% scale.
+const GENS = ["Gen Z", "Millennials", "Gen X", "Boomers & older"];
+document.querySelectorAll("[data-gens]").forEach(card => {
+  const vals = card.dataset.gens.split(",").map(Number);
+  const box = document.createElement("div");
+  box.className = "genbars";
+  box.innerHTML = vals.map((v, i) =>
+    `<div><span>${GENS[i]}</span><i style="--v:${v};--c:var(--gen-${i})"></i><b>${Math.round(v)}%</b></div>`).join("");
+  card.appendChild(box);
+});
+
 /* ---------- Fade-in for fun facts ---------- */
 const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
