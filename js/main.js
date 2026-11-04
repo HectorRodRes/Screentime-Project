@@ -120,9 +120,51 @@ document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
 addEventListener("message", e => {
   if (!e.data || e.data.type !== "viz-height") return;
   document.querySelectorAll(".viz-frame").forEach(frame => {
-    if (frame.contentWindow === e.source) frame.style.height = Math.max(300, e.data.height) + "px";
+    if (frame.contentWindow !== e.source) return;
+    frame.dataset.h = e.data.height; // full chart height
+    if (frame.closest(".viz-pin")) layoutPins(); // pinned frames are capped to the screen
+    else frame.style.height = Math.max(300, e.data.height) + "px";
   });
 });
+
+/* ---------- Pinned charts (.viz-pin) ---------- */
+// The chart sticks centered below the nav. If it's taller than the screen, its frame is
+// shrunk to fit and the reader scrolls inside the chart before the page moves on.
+const pins = [...document.querySelectorAll(".viz-pin")];
+const navH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nav-h")) || 48;
+
+function layoutPins() {
+  pins.forEach(pin => {
+    const block = pin.querySelector(".viz-block");
+    const frame = block.querySelector(".viz-frame");
+    const avail = innerHeight - navH();
+    if (frame && frame.dataset.h) {
+      const others = block.offsetHeight - frame.offsetHeight; // title + notes
+      frame.style.height = Math.max(300, Math.min(+frame.dataset.h, avail - others - 16)) + "px";
+    }
+    const h = block.offsetHeight;
+    const top = h <= avail ? navH() + (avail - h) / 2 : innerHeight - h;
+    pin.style.setProperty("--pin-h", h + "px");
+    pin.style.setProperty("--pin-top", top + "px");
+  });
+}
+
+function updatePinned() {
+  pins.forEach(pin => {
+    const r = pin.getBoundingClientRect();
+    const blockTop = pin.querySelector(".viz-block").getBoundingClientRect().top;
+    const stuck = r.top < blockTop - 1 && r.bottom > innerHeight * 0.6;
+    pin.classList.toggle("is-pinned", stuck);
+  });
+}
+
+if (pins.length) {
+  const ro = new ResizeObserver(layoutPins);
+  pins.forEach(pin => ro.observe(pin.querySelector(".viz-block")));
+  addEventListener("resize", layoutPins);
+  addEventListener("scroll", updatePinned, { passive: true });
+  layoutPins();
+}
 
 /* ---------- Progress bar + active chapter ---------- */
 const bar = document.getElementById("progress");

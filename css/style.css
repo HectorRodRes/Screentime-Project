@@ -161,6 +161,20 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 }
 .viz-note { font-size: 14px; color: var(--muted); margin-top: 8px; }
 
+/* Pinned chart: the block sticks while the reader scrolls through extra "pause" space.
+   js/main.js sets --pin-h (block height) and --pin-top (where it sticks). */
+.viz-pin {
+  --pin-dwell: 90vh; /* how much scrolling the chart stays pinned for */
+  position: relative; margin: 48px 0;
+  height: calc(var(--pin-h, 600px) + var(--pin-dwell));
+}
+.viz-pin > .viz-block { position: sticky; top: var(--pin-top, var(--nav-h)); margin: 0 auto; }
+.pin-hint {
+  font-size: 14px; font-weight: 600; color: var(--accent);
+  margin-top: 4px; opacity: 0; transition: opacity .5s ease;
+}
+.viz-pin.is-pinned .pin-hint { opacity: 1; }
+
 /* ---------- Fun facts & takeaways ---------- */
 .fact {
   max-width: 420px; margin: 56px auto 56px max(16px, 10vw);
@@ -275,6 +289,7 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
   .scrolly .steps { max-width: none; margin-left: 0; }
   .scrolly .sticky { padding: 12px; }
   .fact, .fact.right { margin-left: 16px; margin-right: 16px; }
+  .viz-pin { --pin-dwell: 60vh; }
 }
 
 @media (prefers-reduced-motion: reduce) {

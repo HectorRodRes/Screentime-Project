@@ -1,5 +1,4 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>American Time Use</title>
@@ -7,21 +6,22 @@
 <meta name="description" content="How Americans 15 and older spend their 24 hours, by generation, from the American Time Use Survey.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,900;1,8..60,400&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&display=swap">
 <style>
 /* Layout: a survey "almanac" plate. Activities rail on the left, the day's total as one
    condensed hero figure in the centre, generations as a colour key beneath it, year dial,
-   unit switch and Compare in the right column. Compare views replace the plate (hash routes). */
+   unit switch and Compare in the right column. "Your comparison" sits under the hero on the
+   same page; the Compare selection screen replaces the plate (hash route). */
 :root {
-  /* Colors and fonts match the story site (css/style.css) */
-  --paper: #fbfaf7;
-  --panel: #efebe3;
-  --ink: #1a1a1a;
-  --ink-2: #4a4a4a;
-  --rule: #e2ded5;
-  --accent: #d6461f;
-  --on-ink: #fbfaf7;
+  --paper: #f2f4f6;
+  --panel: #e6eaee;
+  --ink: #151a21;
+  --ink-2: #4a5360;
+  --rule: #c9d0d8;
+  --accent: #1f4fd1;
+  --on-ink: #f2f4f6;
   --on-accent: #ffffff;
+  --accent-b: #b3195f;
 
   --silent: #7a5aa8;
   --boomers: #b84a24;
@@ -29,9 +29,23 @@
   --millennials: #a87406;
   --genz: #2d63c8;
 
-  --display: "Source Serif 4", Georgia, serif;
-  --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --ui: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --ui: "Archivo", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #10141a; --panel: #1a2029; --ink: #e9edf2; --ink-2: #a3adba; --rule: #2e3742;
+    --accent: #8fb0ff; --on-ink: #10141a; --on-accent: #10141a; --accent-b: #f07ab0;
+    --silent: #b79ae6; --boomers: #f08a62; --genx: #4fc4b2; --millennials: #e3b448; --genz: #79a3f5;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #10141a; --panel: #1a2029; --ink: #e9edf2; --ink-2: #a3adba; --rule: #2e3742;
+  --accent: #8fb0ff; --on-ink: #10141a; --on-accent: #10141a; --accent-b: #f07ab0;
+  --silent: #b79ae6; --boomers: #f08a62; --genx: #4fc4b2; --millennials: #e3b448; --genz: #79a3f5;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -53,9 +67,11 @@ button, input { font: inherit; color: inherit; }
 .plate {
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr) 250px;
+  grid-template-rows: auto auto 1fr; /* a tall activities rail stretches the last row, not the hero */
   grid-template-areas:
     "brand base  ctrl"
-    "acts  stage ctrl";
+    "acts  stage ctrl"
+    "acts  cmp   cmp";
   column-gap: 32px;
   row-gap: 20px;
   align-items: start;
@@ -65,13 +81,16 @@ button, input { font: inherit; color: inherit; }
 .ctrl   { grid-area: ctrl; display: grid; gap: 18px; justify-items: end; }
 .acts   { grid-area: acts; }
 .stage  { grid-area: stage; min-width: 0; text-align: center; }
+.your-cmp { grid-area: cmp; min-width: 0; }
 
 /* ---- brand */
 .brand h1 {
   font-family: var(--display);
-  font-weight: 900;
-  font-size: 1.4rem;
-  line-height: 1.1;
+  font-variation-settings: "wdth" 80;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
   margin: 0;
 }
 .brand p { margin: 2px 0 0; color: var(--ink-2); font-size: .9rem; }
@@ -80,9 +99,9 @@ button, input { font: inherit; color: inherit; }
   font-family: var(--ui);
   font-size: .72rem;
   font-weight: 700;
-  letter-spacing: .1em;
+  letter-spacing: .12em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--ink-2);
 }
 
 /* ---- segmented controls (base hours, compare units) */
@@ -156,14 +175,14 @@ button, input { font: inherit; color: inherit; }
   padding: 16px 18px;
   border: 0; border-radius: 12px; cursor: pointer;
   background: var(--accent); color: var(--on-accent);
-  font-family: var(--display); font-weight: 900;
+  font-family: var(--display); font-variation-settings: "wdth" 78; font-weight: 800;
   font-size: 1.5rem; letter-spacing: .02em; line-height: 1;
   box-shadow: 0 2px 0 var(--ink);
   transition: transform .1s ease, box-shadow .1s ease;
 }
 .compare-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 0 var(--ink); }
 .compare-btn:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--ink); }
-.compare-btn small { display: block; font-family: var(--ui); font-weight: 600; font-size: .75rem; letter-spacing: 0; margin-top: 5px; opacity: .85; }
+.compare-btn small { display: block; font-family: var(--ui); font-variation-settings: "wdth" 100; font-weight: 600; font-size: .75rem; letter-spacing: 0; margin-top: 5px; opacity: .85; }
 
 /* ---- activities rail */
 .acts h2 { margin: 0 0 10px; }
@@ -206,15 +225,17 @@ button, input { font: inherit; color: inherit; }
 /* ---- stage */
 .number {
   font-family: var(--display);
-  font-weight: 900;
+  font-variation-settings: "wdth" 68;
+  font-weight: 800;
   font-variant-numeric: tabular-nums lining-nums;
-  font-size: clamp(2.2rem, 6.6vw, 6rem);
-  line-height: 1;
-  letter-spacing: -.02em;
+  /* sized to the centre column (viewport minus side columns and gutters) so a full-digit figure,
+     about 5.2em wide, can't run into the controls */
+  font-size: min(8.4rem, calc((100vw - 630px) / 5.2));
+  line-height: .95;
+  letter-spacing: -.01em;
   margin: 18px 0 0;
   white-space: nowrap;
-}
-.number.empty { font-size: clamp(2rem, 6vw, 4.2rem); color: var(--ink-2); white-space: normal; text-wrap: balance; }
+}.number.empty { font-size: clamp(2rem, 6vw, 4.2rem); color: var(--ink-2); white-space: normal; text-wrap: balance; }
 .label {
   font-family: var(--body);
   font-size: clamp(1.05rem, 1.7vw, 1.3rem);
@@ -225,7 +246,15 @@ button, input { font: inherit; color: inherit; }
   font-family: var(--ui); font-variant-numeric: tabular-nums;
   font-size: .95rem; font-weight: 600; color: var(--ink-2);
   margin: 10px 0 0;
+  text-wrap: balance;
 }
+.caveat {
+  font-family: var(--ui); font-size: .78rem; line-height: 1.4; color: var(--ink-2);
+  max-width: 56ch; margin: 10px auto 0; text-wrap: balance;
+}
+.caveat.warn { color: var(--ink); font-weight: 600; }
+.back-headline { margin: 10px 0 0; }
+.back-headline .linkbtn { font-size: .85rem; }
 
 /* stacked bar: share of the selection by generation */
 .share { max-width: 560px; margin: 26px auto 0; }
@@ -265,16 +294,34 @@ button, input { font: inherit; color: inherit; }
 }
 .tip strong { font-weight: 800; }
 
-/* ---- compare views */
+/* ---- compare selection screen */
+.panel {
+  --pc: var(--accent);
+  border: 2px solid var(--pc); border-radius: 12px; padding: 18px;
+}
+.panel-b { --pc: var(--accent-b); }
+.panel-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.badge {
+  width: 28px; height: 28px; border-radius: 50%; flex: none; display: grid; place-items: center;
+  background: var(--pc); color: var(--on-accent);
+  font-family: var(--ui); font-weight: 800; font-size: .9rem;
+}
+.panel-title { font-family: var(--display); font-variation-settings: "wdth" 76; font-weight: 800; font-size: 1.35rem; line-height: 1; margin: 0; }
+.vs-div {
+  display: flex; align-items: center; gap: 14px; margin: 14px 0;
+  font-family: var(--body); font-style: italic; font-size: 1.1rem; color: var(--ink-2);
+}
+.vs-div::before, .vs-div::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
 .view-head { display: grid; gap: 4px; margin-bottom: 22px; }
 .view-head h2 {
-  font-family: var(--display); font-weight: 900;
+  font-family: var(--display); font-variation-settings: "wdth" 72; font-weight: 800;
   font-size: clamp(1.9rem, 4.6vw, 3.2rem); line-height: 1; margin: 0; text-wrap: balance;
 }
 .view-head p { margin: 4px 0 0; color: var(--ink-2); max-width: 62ch; }
 .view-head h2:focus { outline: none; }
 .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start; }
-.col h3 { margin: 0 0 10px; }
+.col h4 { margin: 0 0 10px; }
+.col .hint { margin-top: 10px; }
 .col .gen-stack { display: grid; gap: 8px; }
 .col .gen { width: 100%; min-width: 0; flex-direction: row; align-items: center; justify-content: space-between; }
 .col .gen .meta { font-size: .72rem; }
@@ -297,17 +344,26 @@ button, input { font: inherit; color: inherit; }
 }
 .hint { font-family: var(--ui); font-size: .82rem; color: var(--ink-2); margin: 0; }
 
-/* results */
+/* your comparison */
+.your-cmp { border-top: 1px solid var(--rule); padding-top: 20px; margin-top: 14px; scroll-margin-top: 16px; }
+.cmp-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.cmp-actions { display: flex; gap: 8px; align-items: center; }
+.cmp-actions .btn { padding: 8px 14px; font-size: .88rem; }
+.icon-btn {
+  width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--rule); background: transparent;
+  cursor: pointer; font-family: var(--ui); font-size: 1.25rem; line-height: 1; display: grid; place-items: center; padding: 0;
+}
+.your-cmp h2:focus { outline: none; }
 .vs {
   display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
-  font-family: var(--display); font-weight: 900;
+  font-family: var(--display); font-variation-settings: "wdth" 76; font-weight: 800;
   font-size: clamp(1.25rem, 2.6vw, 1.9rem); line-height: 1.15; margin: 0;
 }
 .vs .side { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
 .vs .sw { width: 14px; height: 14px; border-radius: 50%; flex: none; }
 .vs .sw.dashed { background: transparent !important; border: 3px dashed var(--sw); }
 .vs .v { font-family: var(--body); font-style: italic; font-weight: 400; font-size: .8em; color: var(--ink-2); }
-.res-controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: flex-end; margin: 22px 0 6px; }
+.res-controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: flex-end; margin: 16px 0 6px; }
 .res-controls .grp { display: grid; gap: 6px; }
 .res-controls .seg-row { justify-content: flex-start; }
 .note { font-family: var(--ui); font-size: .82rem; color: var(--ink-2); margin: 6px 0 0; min-height: 1.2em; }
@@ -327,29 +383,31 @@ button, input { font: inherit; color: inherit; }
 .pie li i { width: 12px; height: 12px; border-radius: 3px; display: block; }
 .pie li b { font-variant-numeric: tabular-nums; font-weight: 700; }
 .bullets { margin: 22px 0 0; padding-left: 1.2em; display: grid; gap: 8px; max-width: 70ch; font-size: 1.05rem; }
-.res-foot { margin-top: 26px; }
 
-/* ---- footer */
+/* ---- footer: Notes dropdown + one source line */
 footer {
   margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--rule);
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 40px;
   font-size: .9rem; color: var(--ink-2);
 }
-footer p { margin: 0; max-width: 62ch; }
-footer .src { grid-column: 1 / -1; font-size: .82rem; }
+.notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 40px; margin-top: 14px; }
+.notes p { margin: 0; max-width: 62ch; }
+.notes .src { grid-column: 1 / -1; font-size: .82rem; }
 footer a { color: var(--ink); }
+.source-line { margin: 12px 0 0; font-family: var(--ui); font-size: .72rem; }
 
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* ---- mobile: base, slider, toggle, Compare!, number, generations, activities */
+/* ---- mobile: base, slider, toggle, Compare!, number, generations, comparison, activities */
 @media (max-width: 860px) {
   .plate {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
     grid-template-areas:
       "brand"
       "base"
       "ctrl"
       "stage"
+      "cmp"
       "acts";
     row-gap: 16px;
   }
@@ -358,13 +416,12 @@ footer a { color: var(--ink); }
   .year { max-width: none; }
   .year label { text-align: left; }
   .compare-btn { max-width: none; }
-  .number { font-size: clamp(2rem, 9.5vw, 4.4rem); margin-top: 8px; }
-  .gen { min-width: 0; flex: 1 1 calc(50% - 8px); }
+  .number { font-size: clamp(2.3rem, 12.5vw, 5.5rem); margin-top: 8px; }  .gen { min-width: 0; flex: 1 1 calc(50% - 8px); }
   .act-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
   .cols { grid-template-columns: minmax(0, 1fr); gap: 22px; }
   .col .act-list { grid-template-columns: minmax(0, 1fr); }
   .pies { grid-template-columns: minmax(0, 1fr); }
-  footer { grid-template-columns: minmax(0, 1fr); }
+  .notes { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 420px) {
   .seg button { padding: 7px 9px; font-size: .82rem; }
@@ -414,83 +471,67 @@ footer a { color: var(--ink); }
       <p class="number" id="number" aria-hidden="true">0</p>
       <p class="label" id="label"></p>
       <p class="subline" id="subline"></p>
+      <p class="subline" id="subline2" hidden></p>
+      <p class="caveat" id="caveat" hidden>Compared at the same life stage. ATUS doesn't measure phone scrolling, and other changes besides screens may contribute.</p>
+      <p class="caveat warn" id="caveat2" hidden></p>
+      <p class="back-headline" id="back-wrap" hidden><button type="button" class="linkbtn" id="back-headline">↺ Back to headline</button></p>
       <p class="sr" id="live" aria-live="polite"></p>
 
       <div class="share" aria-hidden="true"><div class="share-bar" id="share"></div></div>
       <div class="gens" id="gens" role="group" aria-label="Generations"></div>
     </main>
+
+    <section class="your-cmp" id="your-cmp" aria-labelledby="cmp-title">
+      <div class="cmp-top">
+        <span class="eyebrow" id="cmp-title">Your comparison</span>
+        <div class="cmp-actions">
+          <button type="button" class="btn" id="res-edit">Edit comparison</button>
+          <button type="button" class="icon-btn" id="res-close" aria-label="Close comparison">×</button>
+        </div>
+      </div>
+      <h2 id="res-h" class="vs" tabindex="-1"></h2>
+      <div class="res-controls">
+        <div class="grp"><span class="eyebrow">Show</span><div class="seg-row" id="unit-res"></div></div>
+      </div>
+      <p class="note" id="res-note"></p>
+      <div class="chart" id="chart"></div>
+      <ul class="bullets" id="bullets"></ul>
+    </section>
   </div>
 
-  <!-- ======================= COMPARE: SIDE A / SIDE B ======================= -->
+  <!-- ======================= COMPARE: SELECTION SCREEN ======================= -->
   <section id="view-pick" hidden aria-labelledby="pick-h">
     <div class="view-head">
-      <span class="eyebrow" id="pick-step">Compare · Step 1 of 2</span>
       <h2 id="pick-h" tabindex="-1">Select What to Compare</h2>
-      <p id="pick-sub">Pick one or more of each. Several generations combine into one group; several activities are added together.</p>
+      <p>Pick one or more of each. Several generations combine into one group; several activities are added together.</p>
     </div>
-    <div class="cols">
-      <div class="col">
-        <h3 class="eyebrow" id="pk-gen-h">Generations</h3>
-        <div class="gen-stack" id="pk-gens" role="group" aria-labelledby="pk-gen-h"></div>
-      </div>
-      <div class="col">
-        <h3 class="eyebrow" id="pk-act-h">Activities</h3>
-        <ul class="act-list" id="pk-acts" aria-labelledby="pk-act-h"></ul>
-        <div class="act-tools">
-          <button type="button" class="more-btn" id="pk-more" aria-expanded="false" aria-controls="pk-more-list">More<span class="chev" aria-hidden="true">▾</span></button>
-        </div>
-        <ul class="act-list more-list" id="pk-more-list" hidden></ul>
-      </div>
-      <div class="col">
-        <h3 class="eyebrow" id="pk-yr-h">Year</h3>
-        <ul class="act-list" id="pk-years" aria-labelledby="pk-yr-h"></ul>
-        <p class="hint" style="margin-top:10px">Pick two or more years to see a trend line.</p>
-      </div>
-    </div>
+    <div class="panel panel-a" id="panel-a" role="group"></div>
+    <div class="vs-div">vs</div>
+    <div class="panel panel-b" id="panel-b" role="group"></div>
     <div class="view-foot">
-      <button type="button" class="linkbtn" id="pk-main">Back to main</button>
-      <div class="right">
-        <button type="button" class="btn" id="pk-back">Back</button>
-        <button type="button" class="btn primary" id="pk-next" disabled>Next</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ======================= COMPARE: RESULTS ======================= -->
-  <section id="view-results" hidden aria-labelledby="res-h">
-    <div class="view-head">
-      <span class="eyebrow">Compare · Results</span>
-      <h2 id="res-h" class="vs" tabindex="-1"></h2>
-    </div>
-    <div class="res-controls">
-      <div class="grp"><span class="eyebrow">Base</span><div class="seg-row" id="base-res"></div></div>
-      <div class="grp"><span class="eyebrow">Show</span><div class="seg-row" id="unit-res"></div></div>
-    </div>
-    <p class="note" id="res-note"></p>
-    <div class="chart" id="chart"></div>
-    <ul class="bullets" id="bullets"></ul>
-    <div class="view-foot res-foot">
-      <button type="button" class="linkbtn" id="res-main">Back to main</button>
-      <div class="right">
-        <button type="button" class="btn" id="res-new">New comparison</button>
-        <button type="button" class="btn primary" id="res-edit">Edit comparison</button>
-      </div>
+      <button type="button" class="btn" id="pk-cancel">Cancel</button>
+      <button type="button" class="btn primary" id="pk-done" disabled>Done</button>
     </div>
   </section>
 
   <footer>
-    <p id="note-pop"></p>
-    <p>Phone calls are voice calls only. ATUS does not directly measure smartphone or social media scrolling, so screen time is undercounted.</p>
-    <p>Years are 3-year averages (2004–06, 2014–16, 2023–25). Generation differences within one year partly reflect age and life stage.</p>
-    <p>People coded 85 and older are left out in every period, because that group always includes people born before 1928 (before the Silent Generation). Ages 80–84 are included.</p>
-    <p>Base hours are figured from each generation's own averages. Total hours = the full 24-hour day. Waking hours = 24 hours minus average sleep. Leisure hours = 24 hours minus average sleep and average work; it still includes eating, chores, caregiving, commuting, and school.</p>
-    <p class="src">Sources: U.S. Bureau of Labor Statistics, <a href="https://www.bls.gov/tus/" target="_blank" rel="noopener">American Time Use Survey</a>, activity summary file 2003–25; Pew Research Center <a href="https://www.pewresearch.org/short-reads/2019/01/17/where-millennials-end-and-generation-z-begins/" target="_blank" rel="noopener">generation definitions</a>; U.S. Census Bureau <a href="https://www.census.gov/programs-surveys/popest.html" target="_blank" rel="noopener">population estimates</a> (July 1 resident population).</p>
+    <button type="button" class="more-btn" id="notes-btn" aria-expanded="false" aria-controls="notes">Notes<span class="chev" aria-hidden="true">▾</span></button>
+    <div class="notes" id="notes" hidden>
+      <p>The headline compares Gen Z in 2023–25 with Millennials in 2004–06, both limited to ages 15–25, so both groups are at a similar life stage. The age range matches but the mix isn't identical: 24–25-year-olds are 20% of this Gen Z group and 9% of the Millennial group. Each headline number is the per-person gap (minutes a day × 365 days) multiplied by the 48.7 million Gen Zers ages 15–25. It is not the difference between the two groups' actual totals, which also reflects how many people each group had. The figures are survey estimates, so the full digits are more exact than the data can support. Margin-of-error cautions use about 2 standard errors, calculated without the survey's replicate weights, so they are approximate.</p>
+      <p id="note-pop"></p>
+      <p>Phone calls are voice calls only. ATUS does not directly measure smartphone or social media scrolling, so screen time is undercounted.</p>
+      <p>Years are 3-year averages (2004–06, 2014–16, 2023–25). Generation differences within one year partly reflect age and life stage.</p>
+      <p>People coded 85 and older are left out in every period, because that group always includes people born before 1928 (before the Silent Generation). Ages 80–84 are included.</p>
+      <p>Base hours are figured from each generation's own averages. Total hours = the full 24-hour day. Waking hours = 24 hours minus average sleep. Leisure hours = 24 hours minus average sleep and average work; it still includes eating, chores, caregiving, commuting, and school.</p>
+      <p class="src">Sources: U.S. Bureau of Labor Statistics, <a href="https://www.bls.gov/tus/" target="_blank" rel="noopener">American Time Use Survey</a>, activity summary file 2003–25; Pew Research Center <a href="https://www.pewresearch.org/short-reads/2019/01/17/where-millennials-end-and-generation-z-begins/" target="_blank" rel="noopener">generation definitions</a>; U.S. Census Bureau <a href="https://www.census.gov/programs-surveys/popest.html" target="_blank" rel="noopener">population estimates</a> (July 1 resident population).</p>
+    </div>
+    <p class="source-line">Source: U.S. Bureau of Labor Statistics, American Time Use Survey</p>
   </footer>
 </div>
 
 <div class="tip" id="tip" role="tooltip" hidden></div>
 
-<script id="atus-data" type="application/json">{"periods":["2005","2015","2025"],"periodYears":{"2005":"2004–2006","2015":"2014–2016","2025":"2023–2025"},"census":{"2005":295516599,"2015":321815121,"2025":341784857},"categories":[{"id":"tv","label":"Watching TV","main":true},{"id":"social","label":"Socializing in person","main":true},{"id":"phone","label":"Phone calls","main":true},{"id":"computer","label":"Computer use for leisure","main":true},{"id":"sleep","label":"Sleep","main":false},{"id":"personal","label":"Other personal care","main":false},{"id":"eating","label":"Eating and drinking","main":false},{"id":"household","label":"Household activities","main":false},{"id":"purchasing","label":"Purchasing goods and services","main":false},{"id":"care_hh","label":"Caring for household members","main":false},{"id":"care_nonhh","label":"Caring for non-household members","main":false},{"id":"work","label":"Work and work-related","main":false},{"id":"education","label":"Education","main":false},{"id":"civic","label":"Organizational, civic, and religious","main":false},{"id":"sports","label":"Sports, exercise, and recreation","main":false},{"id":"games","label":"Playing games","main":false},{"id":"reading","label":"Reading for personal interest","main":false},{"id":"relaxing","label":"Relaxing and thinking","main":false},{"id":"other_leisure","label":"Other leisure","main":false},{"id":"travel","label":"Travel","main":false},{"id":"other","label":"Other / unknown","main":false}],"generations":[{"id":"silent","label":"Silent","born":[1928,1945]},{"id":"boomers","label":"Boomers","born":[1946,1964]},{"id":"genx","label":"Gen X","born":[1965,1980]},{"id":"millennials","label":"Millennials","born":[1981,1996]},{"id":"genz","label":"Gen Z","born":[1997,2012]}],"cells":{"2005":{"silent":{"n":7066,"pop":36779453,"ageMin":59,"ageMax":78,"ageMaxLabel":"78","excludes85":false,"small":false,"min":{"tv":213.808,"social":39.572,"phone":8.21,"computer":8.192,"sleep":518.13,"personal":48.441,"eating":78.568,"household":149.136,"purchasing":36.492,"care_hh":6.405,"care_nonhh":16.209,"work":93.222,"education":2.61,"civic":21.271,"sports":15.391,"games":11.274,"reading":45.299,"relaxing":30.817,"other_leisure":19.109,"travel":64.874,"other":12.97}},"boomers":{"n":14136,"pop":77311842,"ageMin":40,"ageMax":60,"ageMaxLabel":"60","excludes85":false,"small":false,"min":{"tv":146.235,"social":35.417,"phone":5.794,"computer":7.96,"sleep":494.835,"personal":48.002,"eating":67.031,"household":123.576,"purchasing":31.137,"care_hh":20.618,"care_nonhh":10.638,"work":265.524,"education":5.133,"civic":16.347,"sports":16.094,"games":5.403,"reading":21.304,"relaxing":17.013,"other_leisure":15.437,"travel":78.534,"other":7.966}},"genx":{"n":11830,"pop":64171608,"ageMin":24,"ageMax":41,"ageMaxLabel":"41","excludes85":false,"small":false,"min":{"tv":130.64,"social":38.768,"phone":4.892,"computer":7.115,"sleep":508.699,"personal":43.097,"eating":63.825,"household":99.627,"purchasing":31.881,"care_hh":58.54,"care_nonhh":7.673,"work":267.361,"education":14.242,"civic":10.799,"sports":16.984,"games":8.936,"reading":10.515,"relaxing":11.63,"other_leisure":15.5,"travel":82.133,"other":7.144}},"millennials":{"n":4704,"pop":40752346,"ageMin":15,"ageMax":25,"ageMaxLabel":"25","excludes85":false,"small":false,"min":{"tv":138.361,"social":49.438,"phone":10.138,"computer":15.266,"sleep":555.323,"personal":46.074,"eating":56.509,"household":55.75,"purchasing":25.019,"care_hh":17.812,"care_nonhh":8.012,"work":145.459,"education":112.494,"civic":14.996,"sports":34.523,"games":22.231,"reading":8.383,"relaxing":11.467,"other_leisure":25.386,"travel":77.683,"other":9.674}},"genz":null},"2015":{"silent":{"n":4076,"pop":25982872,"ageMin":69,"ageMax":80,"ageMaxLabel":"84","excludes85":true,"small":false,"min":{"tv":258.763,"social":37.425,"phone":7.605,"computer":12.061,"sleep":537.999,"personal":48.543,"eating":75.739,"household":150.514,"purchasing":35.236,"care_hh":5.041,"care_nonhh":10.077,"work":32.726,"education":0.389,"civic":27.479,"sports":15.421,"games":16.967,"reading":51.053,"relaxing":31.592,"other_leisure":17.032,"travel":52.558,"other":15.78}},"boomers":{"n":10599,"pop":73948299,"ageMin":50,"ageMax":70,"ageMaxLabel":"70","excludes85":false,"small":false,"min":{"tv":196.439,"social":34.778,"phone":6.132,"computer":11.997,"sleep":512.969,"personal":47.903,"eating":65.88,"household":131.026,"purchasing":31.188,"care_hh":7.947,"care_nonhh":12.804,"work":197.667,"education":1.912,"civic":21.219,"sports":17.011,"games":7.903,"reading":22.692,"relaxing":20.286,"other_leisure":13.585,"travel":68.276,"other":10.385}},"genx":{"n":9528,"pop":65152346,"ageMin":34,"ageMax":51,"ageMaxLabel":"51","excludes85":false,"small":false,"min":{"tv":137.334,"social":33.868,"phone":4.21,"computer":8.478,"sleep":509.261,"personal":44.198,"eating":62.209,"household":113.344,"purchasing":28.493,"care_hh":45.926,"care_nonhh":6.264,"work":272.986,"education":5.759,"civic":15.842,"sports":18.28,"games":6.737,"reading":10.573,"relaxing":14.855,"other_leisure":13.073,"travel":78.448,"other":9.861}},"millennials":{"n":6606,"pop":68116546,"ageMin":18,"ageMax":35,"ageMaxLabel":"35","excludes85":false,"small":false,"min":{"tv":128.865,"social":41.089,"phone":5.152,"computer":13.1,"sleep":540.665,"personal":45.851,"eating":60.353,"household":82.975,"purchasing":24.838,"care_hh":42.861,"care_nonhh":5.005,"work":241.406,"education":35.74,"civic":9.446,"sports":20.891,"games":18.724,"reading":9.069,"relaxing":12.303,"other_leisure":15.087,"travel":75.394,"other":11.185}},"genz":{"n":1393,"pop":17124058,"ageMin":15,"ageMax":19,"ageMaxLabel":"19","excludes85":false,"small":false,"min":{"tv":129.324,"social":39.248,"phone":13.538,"computer":18.326,"sleep":590.362,"personal":46.685,"eating":56.643,"household":35.495,"purchasing":17.975,"care_hh":5.4,"care_nonhh":6.331,"work":46.959,"education":209.537,"civic":13.712,"sports":44.641,"games":41.648,"reading":9.104,"relaxing":10.538,"other_leisure":22.592,"travel":70.855,"other":11.086}}},"2025":{"silent":{"n":1304,"pop":9557150,"ageMin":78,"ageMax":80,"ageMaxLabel":"84","excludes85":true,"small":false,"min":{"tv":282.406,"social":28.655,"phone":13.72,"computer":11.827,"sleep":553.246,"personal":44.071,"eating":80.24,"household":161.461,"purchasing":29.411,"care_hh":6.136,"care_nonhh":4.032,"work":12.862,"education":0.688,"civic":25.206,"sports":17.691,"games":17.226,"reading":41.371,"relaxing":38.513,"other_leisure":16.968,"travel":40.367,"other":13.903}},"boomers":{"n":7970,"pop":66953724,"ageMin":59,"ageMax":79,"ageMaxLabel":"79","excludes85":false,"small":false,"min":{"tv":231.509,"social":31.292,"phone":8.772,"computer":9.56,"sleep":538.146,"personal":44.306,"eating":72.476,"household":158.613,"purchasing":30.855,"care_hh":6.286,"care_nonhh":13.136,"work":100.077,"education":1.686,"civic":21.229,"sports":19.554,"games":13.58,"reading":26.636,"relaxing":28.318,"other_leisure":15.494,"travel":56.649,"other":11.825}},"genx":{"n":4857,"pop":63860370,"ageMin":43,"ageMax":60,"ageMaxLabel":"60","excludes85":false,"small":false,"min":{"tv":144.951,"social":29.568,"phone":6.172,"computer":9.232,"sleep":525.428,"personal":45.518,"eating":66.311,"household":125.137,"purchasing":25.918,"care_hh":20.631,"care_nonhh":8.991,"work":263.928,"education":2.26,"civic":13.848,"sports":17.418,"games":9.827,"reading":11.977,"relaxing":22.38,"other_leisure":12.027,"travel":68.646,"other":9.835}},"millennials":{"n":5363,"pop":71869791,"ageMin":27,"ageMax":44,"ageMaxLabel":"44","excludes85":false,"small":false,"min":{"tv":112.161,"social":31.012,"phone":5.482,"computer":9.98,"sleep":528.634,"personal":42.797,"eating":64.706,"household":108.393,"purchasing":24.689,"care_hh":58.442,"care_nonhh":3.656,"work":272.696,"education":9.63,"civic":8.542,"sports":19.006,"games":20.864,"reading":10.252,"relaxing":16.392,"other_leisure":11.935,"travel":68.501,"other":12.23}},"genz":{"n":2209,"pop":56819462,"ageMin":15,"ageMax":28,"ageMaxLabel":"28","excludes85":false,"small":false,"min":{"tv":109.306,"social":33.096,"phone":10.626,"computer":23.349,"sleep":580.635,"personal":48.024,"eating":60.465,"household":68.459,"purchasing":17.007,"care_hh":15.383,"care_nonhh":3.614,"work":163.301,"education":97.648,"civic":11.87,"sports":31.319,"games":51.002,"reading":9.099,"relaxing":17.166,"other_leisure":15.657,"travel":64.458,"other":8.517}}}},"smallSample":300,"validation":[{"year":2023,"measure":"sleep","ours":9.071,"bls":9.07,"diff_min":0.1},{"year":2023,"measure":"tv","ours":2.667,"bls":2.67,"diff_min":-0.2},{"year":2023,"measure":"household","ours":1.916,"bls":1.92,"diff_min":-0.3},{"year":2024,"measure":"sleep","ours":9.036,"bls":9.04,"diff_min":-0.2},{"year":2024,"measure":"tv","ours":2.6,"bls":2.6,"diff_min":0.0},{"year":2024,"measure":"household","ours":2.014,"bls":2.01,"diff_min":0.2},{"year":2025,"measure":"sleep","ours":9.033,"bls":9.03,"diff_min":0.2},{"year":2025,"measure":"tv","ours":2.611,"bls":2.61,"diff_min":0.0},{"year":2025,"measure":"household","ours":1.993,"bls":1.99,"diff_min":0.2}]}</script>
+<script id="atus-data" type="application/json">{"periods":["2005","2015","2025"],"periodYears":{"2005":"2004–2006","2015":"2014–2016","2025":"2023–2025"},"census":{"2005":295516599,"2015":321815121,"2025":341784857},"categories":[{"id":"tv","label":"Watching TV","main":true},{"id":"social","label":"Socializing in person","main":true},{"id":"phone","label":"Phone calls","main":true},{"id":"computer","label":"Computer use for leisure","main":true},{"id":"sleep","label":"Sleep","main":false},{"id":"personal","label":"Other personal care","main":false},{"id":"eating","label":"Eating and drinking","main":false},{"id":"household","label":"Household activities","main":false},{"id":"purchasing","label":"Purchasing goods and services","main":false},{"id":"care_hh","label":"Caring for household members","main":false},{"id":"care_nonhh","label":"Caring for non-household members","main":false},{"id":"work","label":"Work and work-related","main":false},{"id":"education","label":"Education","main":false},{"id":"civic","label":"Organizational, civic, and religious","main":false},{"id":"sports","label":"Sports, exercise, and recreation","main":false},{"id":"games","label":"Playing games","main":false},{"id":"reading","label":"Reading for personal interest","main":false},{"id":"relaxing","label":"Relaxing and thinking","main":false},{"id":"other_leisure","label":"Other leisure","main":false},{"id":"travel","label":"Travel","main":false},{"id":"other","label":"Other / unknown","main":false}],"generations":[{"id":"silent","label":"Silent","born":[1928,1945]},{"id":"boomers","label":"Boomers","born":[1946,1964]},{"id":"genx","label":"Gen X","born":[1965,1980]},{"id":"millennials","label":"Millennials","born":[1981,1996]},{"id":"genz","label":"Gen Z","born":[1997,2012]}],"cells":{"2005":{"silent":{"n":7066,"pop":36779453,"ageMin":59,"ageMax":78,"ageMaxLabel":"78","excludes85":false,"small":false,"min":{"tv":213.808,"social":39.572,"phone":8.21,"computer":8.192,"sleep":518.13,"personal":48.441,"eating":78.568,"household":149.136,"purchasing":36.492,"care_hh":6.405,"care_nonhh":16.209,"work":93.222,"education":2.61,"civic":21.271,"sports":15.391,"games":11.274,"reading":45.299,"relaxing":30.817,"other_leisure":19.109,"travel":64.874,"other":12.97}},"boomers":{"n":14136,"pop":77311842,"ageMin":40,"ageMax":60,"ageMaxLabel":"60","excludes85":false,"small":false,"min":{"tv":146.235,"social":35.417,"phone":5.794,"computer":7.96,"sleep":494.835,"personal":48.002,"eating":67.031,"household":123.576,"purchasing":31.137,"care_hh":20.618,"care_nonhh":10.638,"work":265.524,"education":5.133,"civic":16.347,"sports":16.094,"games":5.403,"reading":21.304,"relaxing":17.013,"other_leisure":15.437,"travel":78.534,"other":7.966}},"genx":{"n":11830,"pop":64171608,"ageMin":24,"ageMax":41,"ageMaxLabel":"41","excludes85":false,"small":false,"min":{"tv":130.64,"social":38.768,"phone":4.892,"computer":7.115,"sleep":508.699,"personal":43.097,"eating":63.825,"household":99.627,"purchasing":31.881,"care_hh":58.54,"care_nonhh":7.673,"work":267.361,"education":14.242,"civic":10.799,"sports":16.984,"games":8.936,"reading":10.515,"relaxing":11.63,"other_leisure":15.5,"travel":82.133,"other":7.144}},"millennials":{"n":4704,"pop":40752346,"ageMin":15,"ageMax":25,"ageMaxLabel":"25","excludes85":false,"small":false,"min":{"tv":138.361,"social":49.438,"phone":10.138,"computer":15.266,"sleep":555.323,"personal":46.074,"eating":56.509,"household":55.75,"purchasing":25.019,"care_hh":17.812,"care_nonhh":8.012,"work":145.459,"education":112.494,"civic":14.996,"sports":34.523,"games":22.231,"reading":8.383,"relaxing":11.467,"other_leisure":25.386,"travel":77.683,"other":9.674}},"genz":null},"2015":{"silent":{"n":4076,"pop":25982872,"ageMin":69,"ageMax":80,"ageMaxLabel":"84","excludes85":true,"small":false,"min":{"tv":258.763,"social":37.425,"phone":7.605,"computer":12.061,"sleep":537.999,"personal":48.543,"eating":75.739,"household":150.514,"purchasing":35.236,"care_hh":5.041,"care_nonhh":10.077,"work":32.726,"education":0.389,"civic":27.479,"sports":15.421,"games":16.967,"reading":51.053,"relaxing":31.592,"other_leisure":17.032,"travel":52.558,"other":15.78}},"boomers":{"n":10599,"pop":73948299,"ageMin":50,"ageMax":70,"ageMaxLabel":"70","excludes85":false,"small":false,"min":{"tv":196.439,"social":34.778,"phone":6.132,"computer":11.997,"sleep":512.969,"personal":47.903,"eating":65.88,"household":131.026,"purchasing":31.188,"care_hh":7.947,"care_nonhh":12.804,"work":197.667,"education":1.912,"civic":21.219,"sports":17.011,"games":7.903,"reading":22.692,"relaxing":20.286,"other_leisure":13.585,"travel":68.276,"other":10.385}},"genx":{"n":9528,"pop":65152346,"ageMin":34,"ageMax":51,"ageMaxLabel":"51","excludes85":false,"small":false,"min":{"tv":137.334,"social":33.868,"phone":4.21,"computer":8.478,"sleep":509.261,"personal":44.198,"eating":62.209,"household":113.344,"purchasing":28.493,"care_hh":45.926,"care_nonhh":6.264,"work":272.986,"education":5.759,"civic":15.842,"sports":18.28,"games":6.737,"reading":10.573,"relaxing":14.855,"other_leisure":13.073,"travel":78.448,"other":9.861}},"millennials":{"n":6606,"pop":68116546,"ageMin":18,"ageMax":35,"ageMaxLabel":"35","excludes85":false,"small":false,"min":{"tv":128.865,"social":41.089,"phone":5.152,"computer":13.1,"sleep":540.665,"personal":45.851,"eating":60.353,"household":82.975,"purchasing":24.838,"care_hh":42.861,"care_nonhh":5.005,"work":241.406,"education":35.74,"civic":9.446,"sports":20.891,"games":18.724,"reading":9.069,"relaxing":12.303,"other_leisure":15.087,"travel":75.394,"other":11.185}},"genz":{"n":1393,"pop":17124058,"ageMin":15,"ageMax":19,"ageMaxLabel":"19","excludes85":false,"small":false,"min":{"tv":129.324,"social":39.248,"phone":13.538,"computer":18.326,"sleep":590.362,"personal":46.685,"eating":56.643,"household":35.495,"purchasing":17.975,"care_hh":5.4,"care_nonhh":6.331,"work":46.959,"education":209.537,"civic":13.712,"sports":44.641,"games":41.648,"reading":9.104,"relaxing":10.538,"other_leisure":22.592,"travel":70.855,"other":11.086}}},"2025":{"silent":{"n":1304,"pop":9557150,"ageMin":78,"ageMax":80,"ageMaxLabel":"84","excludes85":true,"small":false,"min":{"tv":282.406,"social":28.655,"phone":13.72,"computer":11.827,"sleep":553.246,"personal":44.071,"eating":80.24,"household":161.461,"purchasing":29.411,"care_hh":6.136,"care_nonhh":4.032,"work":12.862,"education":0.688,"civic":25.206,"sports":17.691,"games":17.226,"reading":41.371,"relaxing":38.513,"other_leisure":16.968,"travel":40.367,"other":13.903}},"boomers":{"n":7970,"pop":66953724,"ageMin":59,"ageMax":79,"ageMaxLabel":"79","excludes85":false,"small":false,"min":{"tv":231.509,"social":31.292,"phone":8.772,"computer":9.56,"sleep":538.146,"personal":44.306,"eating":72.476,"household":158.613,"purchasing":30.855,"care_hh":6.286,"care_nonhh":13.136,"work":100.077,"education":1.686,"civic":21.229,"sports":19.554,"games":13.58,"reading":26.636,"relaxing":28.318,"other_leisure":15.494,"travel":56.649,"other":11.825}},"genx":{"n":4857,"pop":63860370,"ageMin":43,"ageMax":60,"ageMaxLabel":"60","excludes85":false,"small":false,"min":{"tv":144.951,"social":29.568,"phone":6.172,"computer":9.232,"sleep":525.428,"personal":45.518,"eating":66.311,"household":125.137,"purchasing":25.918,"care_hh":20.631,"care_nonhh":8.991,"work":263.928,"education":2.26,"civic":13.848,"sports":17.418,"games":9.827,"reading":11.977,"relaxing":22.38,"other_leisure":12.027,"travel":68.646,"other":9.835}},"millennials":{"n":5363,"pop":71869791,"ageMin":27,"ageMax":44,"ageMaxLabel":"44","excludes85":false,"small":false,"min":{"tv":112.161,"social":31.012,"phone":5.482,"computer":9.98,"sleep":528.634,"personal":42.797,"eating":64.706,"household":108.393,"purchasing":24.689,"care_hh":58.442,"care_nonhh":3.656,"work":272.696,"education":9.63,"civic":8.542,"sports":19.006,"games":20.864,"reading":10.252,"relaxing":16.392,"other_leisure":11.935,"travel":68.501,"other":12.23}},"genz":{"n":2209,"pop":56819462,"ageMin":15,"ageMax":28,"ageMaxLabel":"28","excludes85":false,"small":false,"min":{"tv":109.306,"social":33.096,"phone":10.626,"computer":23.349,"sleep":580.635,"personal":48.024,"eating":60.465,"household":68.459,"purchasing":17.007,"care_hh":15.383,"care_nonhh":3.614,"work":163.301,"education":97.648,"civic":11.87,"sports":31.319,"games":51.002,"reading":9.099,"relaxing":17.166,"other_leisure":15.657,"travel":64.458,"other":8.517}}}},"headline":{"genz":{"n":1781,"pop":48745471,"ageMin":15,"ageMax":25,"ageMaxLabel":"25","excludes85":false,"small":false,"min":{"tv":110.402,"social":32.377,"phone":11.057,"computer":22.642,"sleep":584.371,"personal":48.719,"eating":60.148,"household":65.39,"purchasing":17.11,"care_hh":13.353,"care_nonhh":3.931,"work":144.672,"education":110.905,"civic":12.712,"sports":33.43,"games":52.735,"reading":9.556,"relaxing":17.761,"other_leisure":16.078,"travel":64.169,"other":8.48}},"noisy":["phone","personal","work","education","civic","sports","reading","other"]},"smallSample":300,"validation":[{"year":2023,"measure":"sleep","ours":9.071,"bls":9.07,"diff_min":0.1},{"year":2023,"measure":"tv","ours":2.667,"bls":2.67,"diff_min":-0.2},{"year":2023,"measure":"household","ours":1.916,"bls":1.92,"diff_min":-0.3},{"year":2024,"measure":"sleep","ours":9.036,"bls":9.04,"diff_min":-0.2},{"year":2024,"measure":"tv","ours":2.6,"bls":2.6,"diff_min":0.0},{"year":2024,"measure":"household","ours":2.014,"bls":2.01,"diff_min":0.2},{"year":2025,"measure":"sleep","ours":9.033,"bls":9.03,"diff_min":0.2},{"year":2025,"measure":"tv","ours":2.611,"bls":2.61,"diff_min":0.0},{"year":2025,"measure":"household","ours":1.993,"bls":1.99,"diff_min":0.2}]}</script>
 <script>
 (function () {
   const D = JSON.parse(document.getElementById("atus-data").textContent);
@@ -539,16 +580,28 @@ footer a { color: var(--ink); }
   const NO_GENZ = "Oldest Gen Z were 8 in 2005; ATUS starts at 15.";
   const CHECK = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.2 10 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink)"/></svg>';
 
+  // Headline: Gen Z 2025 vs Millennials 2005, both ages 15-25, for whichever activities are checked.
+  // Opens on in-person socializing. gapMin > 0 means Gen Z spends less time.
+  const HEAD = { a: D.headline.genz, b: D.cells["2005"].millennials };
+  function headGap(actIds) {
+    const gapMin = actIds.reduce((t, id) => t + HEAD.b.min[id] - HEAD.a.min[id], 0);
+    const hoursYr = Math.abs(gapMin) * 365 / 60;
+    return { gapMin, more: gapMin < 0, same: Math.abs(gapMin) < 0.05, hoursYr, daysYr: hoursYr / 24, aggregate: HEAD.a.pop * hoursYr };
+  }
+
   const state = {
     period: D.periods.length - 1,
     pct: false,
     base: "total",
-    acts: new Set(),
-    gens: new Set(D.generations.map(g => g.id)),
+    acts: new Set(["social"]),
+    gens: new Set(["genz"]),
+    headline: true,
     shown: 0
   };
   const emptySide = () => ({ gens: new Set(), acts: new Set(), years: new Set() });
-  const cmp = { a: emptySide(), b: emptySide(), unit: "min" };
+  const headSide = (gen, year, acts = ["social"]) => ({ gens: new Set([gen]), acts: new Set(acts), years: new Set([year]) });
+  // matched: this comparison is the headline's, so its Gen Z side uses the ages 15-25 data
+  const cmp = { a: headSide("genz", "2025"), b: headSide("millennials", "2005"), unit: "min", open: true, matched: true };
 
   const $ = id => document.getElementById(id);
   const P = () => D.periods[state.period];
@@ -567,13 +620,13 @@ footer a { color: var(--ink); }
     return 1440;
   }
   // Population-weighted aggregate of a group of generations in one period.
-  function agg(genIds, actIds, p, base = state.base) {
+  function agg(genIds, actIds, p, base = state.base, matched = false) {
     const gs = genIds.filter(g => D.cells[p][g]);
     if (!gs.length) return null;
     let pop = 0, sel = 0, bas = 0;
     const per = {};
     gs.forEach(g => {
-      const c = D.cells[p][g];
+      const c = matched && g === "genz" && p === "2025" ? D.headline.genz : D.cells[p][g];
       const s = actIds.reduce((t, id) => t + c.min[id], 0);
       pop += c.pop; sel += c.pop * s; bas += c.pop * baseMin(c, base);
       actIds.forEach(id => { per[id] = (per[id] || 0) + c.pop * c.min[id]; });
@@ -589,7 +642,15 @@ footer a { color: var(--ink); }
       perMin: id => per[id] / pop
     };
   }
-  window.__atus = { D, agg, baseMin, state, cmp }; // inspection hook for checking numbers
+  // A comparison keeps its activities when the main base changes. If the base would exclude one
+  // of them (Sleep in Leisure, say), its percentages use the full day instead.
+  function cmpExcludedAct() {
+    const chosen = [...cmp.a.acts, ...cmp.b.acts];
+    return EXCL[state.base].find(x => chosen.includes(x));
+  }
+  const cmpBase = () => cmpExcludedAct() ? "total" : state.base;
+  const cagg = (genIds, actIds, p) => agg(genIds, actIds, p, cmpBase(), cmp.matched);
+  window.__atus = { D, agg, baseMin, state, cmp, HEAD, headGap }; // inspection hook for checking numbers
 
   /* ---------- text helpers */
   function joinList(a) {
@@ -700,29 +761,51 @@ footer a { color: var(--ink); }
     return seg;
   }
 
-  function setBase(id) {
-    state.base = id;
-    EXCL[id].forEach(x => state.acts.delete(x));
-    // compare selections follow the same rule
-    [cmp.a, cmp.b].forEach(s => EXCL[id].forEach(x => s.acts.delete(x)));
+  /* ---------- headline state */
+  // Activities stay in the headline, which recalculates for them and keeps its chart in step.
+  function syncHeadCmp() {
+    const acts = CAT_IDS.filter(id => state.acts.has(id));
+    if (!acts.length) return;
+    cmp.a = headSide("genz", "2025", acts);
+    cmp.b = headSide("millennials", "2005", acts);
+  }
+  // Generation, year, base or Hours/% drops to normal daily behavior, keeping the selections.
+  function leaveHeadline() {
+    if (!state.headline) return;
+    state.headline = false;
+    state.shown = 0;
+  }
+  function restoreHeadline() {
+    state.headline = true;
+    state.shown = 0;
+    state.period = D.periods.length - 1;
+    state.pct = false;
+    state.pctLast = false;
+    state.base = "total";
+    state.acts = new Set(["social"]);
+    state.gens = new Set(["genz"]);
+    cmp.a = headSide("genz", "2025");
+    cmp.b = headSide("millennials", "2005");
+    cmp.unit = "min";
+    cmp.open = true;
+    cmp.matched = true;
+    $("year").value = state.period;
+    $("year").setAttribute("aria-valuetext", P() + " (" + D.periodYears[P()] + " average)");
     hideTip();
     renderAll();
   }
-  // In results, a base that would exclude a chosen activity is disabled.
-  function baseOptsFor(sides) {
-    return () => BASES.map(b => {
-      if (!sides) return { id: b.id, label: b.label };
-      const chosen = new Set([...cmp.a.acts, ...cmp.b.acts]);
-      const hit = EXCL[b.id].find(x => chosen.has(x));
-      return hit
-        ? { id: b.id, label: b.label, disabled: true, why: "Your comparison includes " + catLabel(hit) + ", which isn't part of " + b.word + (b.id === "leisure" ? " hours." : " hours.") }
-        : { id: b.id, label: b.label };
-    });
+
+  function setBase(id) {
+    if (id === state.base) return;
+    leaveHeadline();
+    state.base = id;
+    EXCL[id].forEach(x => state.acts.delete(x));
+    hideTip();
+    renderAll();
   }
-  makeSeg($("base-main"), baseOptsFor(false), () => state.base, setBase, "Base hours", true);
-  makeSeg($("base-res"), baseOptsFor(true), () => state.base, setBase, "Base hours", true);
+  makeSeg($("base-main"), () => BASES.map(b => ({ id: b.id, label: b.label })), () => state.base, setBase, "Base hours", true);
   makeSeg($("unit-res"),
-    () => [{ id: "min", label: "Minutes per person" }, { id: "pct", label: baseOf(state.base).pct }, { id: "total", label: "Total hours" }],
+    () => [{ id: "min", label: "Minutes per person" }, { id: "pct", label: baseOf(cmpBase()).pct }, { id: "total", label: "Total hours" }],
     () => cmp.unit, v => { cmp.unit = v; renderAll(); }, "Unit", false);
 
   /* ---------- main controls */
@@ -730,10 +813,14 @@ footer a { color: var(--ink); }
   D.periods.forEach((p, i) => {
     const b = document.createElement("button");
     b.type = "button"; b.textContent = p; b.tabIndex = -1;
-    b.addEventListener("click", () => { $("year").value = i; setPeriod(i); });
+    b.addEventListener("click", () => {
+      if (i === state.period) return;
+      leaveHeadline();
+      $("year").value = i; setPeriod(i);
+    });
     stops.appendChild(b);
   });
-  $("year").addEventListener("input", e => setPeriod(+e.target.value));
+  $("year").addEventListener("input", e => { leaveHeadline(); setPeriod(+e.target.value); });
 
   function actButton(c, isOn, toggle) {
     const li = document.createElement("li");
@@ -761,7 +848,12 @@ footer a { color: var(--ink); }
     }
     b.setAttribute("aria-pressed", String(on && !ex));
   }
-  const toggleMain = id => { state.acts.has(id) ? state.acts.delete(id) : state.acts.add(id); renderAll(); };
+  function activitiesChanged() {
+    if (state.headline) syncHeadCmp();
+    renderMain();
+    if (state.headline) renderResults();
+  }
+  const toggleMain = id => { state.acts.has(id) ? state.acts.delete(id) : state.acts.add(id); activitiesChanged(); };
   D.categories.forEach(c => $(c.main ? "main-list" : "more-list").appendChild(actButton(c, null, toggleMain)));
 
   $("more").addEventListener("click", () => {
@@ -770,9 +862,18 @@ footer a { color: var(--ink); }
     $("more-list").hidden = !open;
     renderMain();
   });
-  $("clear").addEventListener("click", () => { state.acts.clear(); renderMain(); });
-  $("mode").addEventListener("click", () => { state.pct = !state.pct; renderMain(); });
-  $("compare-go").addEventListener("click", () => { location.hash = "compare"; });
+  $("clear").addEventListener("click", () => { state.acts.clear(); activitiesChanged(); });
+  $("mode").addEventListener("click", () => { leaveHeadline(); state.pct = !state.pct; renderMain(); });
+  $("compare-go").addEventListener("click", () => openPicker(false));
+  $("back-headline").addEventListener("click", () => {
+    restoreHeadline();
+    $("compare-go").focus({ preventScroll: true });
+  });
+  $("notes-btn").addEventListener("click", () => {
+    const open = $("notes-btn").getAttribute("aria-expanded") !== "true";
+    $("notes-btn").setAttribute("aria-expanded", String(open));
+    $("notes").hidden = !open;
+  });
 
   D.generations.forEach(g => {
     const b = document.createElement("button");
@@ -781,6 +882,7 @@ footer a { color: var(--ink); }
     b.querySelector(".name span:last-child").textContent = g.label;
     b.addEventListener("click", () => {
       if (b.getAttribute("aria-disabled") === "true") return;
+      leaveHeadline();
       state.gens.has(g.id) ? state.gens.delete(g.id) : state.gens.add(g.id);
       renderMain();
     });
@@ -794,8 +896,10 @@ footer a { color: var(--ink); }
     renderMain();
   }
 
+  // While the headline shows, the Gen Z button describes the ages 15-25 group it is using.
+  const genCell = id => state.headline && id === "genz" ? HEAD.a : cell(id);
   function tipText(g) {
-    const p = P(), c = cell(g.id);
+    const p = P(), c = genCell(g.id);
     if (!c) return "<strong>" + g.label + ", " + p + ": no data.</strong> " + NO_GENZ;
     const all = c.ageMin === 15 || g.id === "silent" ? " only" : "";
     let s = "<strong>" + g.label + ", " + p + ": ages " + c.ageMin + "–" + c.ageMaxLabel + all + "</strong>";
@@ -807,13 +911,13 @@ footer a { color: var(--ink); }
   }
 
   /* ---------- number animation */
-  let anim = null;
-  function animateTo(target, decimals) {
+  let anim = null, animTimer = null;
+  function animateTo(target, decimals, unit) {
     cancelAnimationFrame(anim);
     const el = $("number"), from = state.shown, t0 = performance.now();
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const dur = reduce ? 0 : 550;
-    const f = decimals ? fmt1 : fmt0, suffix = decimals ? "%" : "";
+    const f = decimals ? fmt1 : fmt0, suffix = unit || (decimals ? "%" : "");
     const step = now => {
       const k = dur ? Math.min(1, (now - t0) / dur) : 1;
       const e = 1 - Math.pow(1 - k, 3);
@@ -824,6 +928,67 @@ footer a { color: var(--ink); }
       else state.shown = target;
     };
     anim = requestAnimationFrame(step);
+    // Animation frames pause in background tabs; the final figure still has to land.
+    clearTimeout(animTimer);
+    animTimer = setTimeout(() => {
+      cancelAnimationFrame(anim);
+      el.textContent = f.format(target) + suffix;
+      state.shown = target;
+    }, dur + 150);
+  }
+
+  /* ---------- render: headline */
+  function renderHeadline(actIds) {
+    const numEl = $("number"), share = $("share");
+    share.innerHTML = "";
+    if (!actIds.length) {
+      cancelAnimationFrame(anim);
+      clearTimeout(animTimer);
+      numEl.classList.add("empty");
+      numEl.textContent = "Select an activity";
+      $("label").textContent = "Pick any activity to see how Gen Z's time compares with Millennials at the same age.";
+      $("subline").textContent = "";
+      $("subline2").hidden = true;
+      $("caveat").hidden = true;
+      $("live").textContent = "No activity selected.";
+      state.shown = 0;
+      return;
+    }
+    numEl.classList.remove("empty");
+    state.pctLast = false;
+    const G = headGap(actIds), what = actPhrase(actIds);
+    const ages = HEAD.a.ageMin + "–" + HEAD.a.ageMaxLabel;
+    let label, sub;
+    if (G.same) {
+      animateTo(0, 0);
+      label = "hours a year of difference: Gen Z and Millennials spend about the same time " + what + " at the same age";
+      sub = "Less than a minute's difference a day per person";
+      $("subline2").hidden = true;
+    } else {
+      // The hero is the per-person gap scaled to today's Gen Z. It is not the gap between the two
+      // groups' actual totals, which also depends on how many people each group had.
+      const dir = G.more ? "more" : "fewer";
+      animateTo(Math.round(G.aggregate), 0);
+      label = dir + " hours a year that Gen Z spends " + what + " than if they matched Millennials at the same age";
+      const m = Math.round(Math.abs(G.gapMin)), h = Math.round(G.hoursYr), d = Math.round(G.daysYr);
+      const perDay = m < 1 ? "Under 1 " + dir + " minute" : "≈ " + m + " " + dir + (m === 1 ? " minute" : " minutes");
+      const perYear = d >= 1 ? h + " hours, or " + d + (d === 1 ? " full day" : " full days") + ", a year" : h + (h === 1 ? " hour" : " hours") + " a year";
+      sub = perDay + " a day per person · about " + perYear;
+      $("subline2").textContent = "Multiplied across all " + Math.round(HEAD.a.pop / 1e6) + " million Gen Zers ages " + ages + ".";
+    }
+    $("label").textContent = label;
+    $("subline").textContent = sub;
+    const noisy = actIds.filter(id => D.headline.noisy.includes(id));
+    if (noisy.length) {
+      $("caveat2").textContent = "Caution: the gap for " + joinList(noisy.map(catLabel)) +
+        " is within the survey's margin of error, so it may not be a real difference.";
+      $("caveat2").hidden = false;
+    }
+    $("live").textContent = fmt0.format(G.same ? 0 : Math.round(G.aggregate)) + " " + label + ". " + sub + ".";
+    const s = document.createElement("span");
+    s.style.flexBasis = "100%";
+    s.style.background = "var(--genz)";
+    share.appendChild(s);
   }
 
   /* ---------- render: main */
@@ -840,7 +1005,7 @@ footer a { color: var(--ink); }
     $("mode").setAttribute("aria-label", "Show as percent of " + (state.base === "total" ? "day" : B.word + " hours"));
 
     [...$("gens").children].forEach(b => {
-      const g = D.generations.find(x => x.id === b.dataset.id), c = cell(g.id);
+      const g = D.generations.find(x => x.id === b.dataset.id), c = genCell(g.id);
       const meta = b.querySelector(".meta");
       if (!c) {
         b.setAttribute("aria-disabled", "true");
@@ -860,7 +1025,7 @@ footer a { color: var(--ink); }
 
     $("view-main").querySelectorAll(".act").forEach(b => {
       syncActButton(b, state.acts.has(b.dataset.id));
-      b.querySelector(".t").textContent = popSum ? hm(avgMin(b.dataset.id)) : "";
+      b.querySelector(".t").textContent = popSum ? hm(state.headline ? HEAD.a.min[b.dataset.id] : avgMin(b.dataset.id)) : "";
     });
     const moreSel = D.categories.filter(c => !c.main && actIds.includes(c.id)).length;
     const moreOpen = $("more").getAttribute("aria-expanded") === "true";
@@ -872,9 +1037,17 @@ footer a { color: var(--ink); }
       fmt1.format(census / 1e6) + " million (" + fmt0.format(census) + ") because ATUS only surveys people 15 and older, " +
       "and excludes people in institutions such as nursing homes and prisons, as well as active-duty military.";
 
+    $("subline2").hidden = !state.headline;
+    $("caveat").hidden = !state.headline;
+    $("caveat2").hidden = true;
+    const onDefault = actIds.length === 1 && actIds[0] === "social";
+    $("back-wrap").hidden = state.headline && cmp.open && onDefault;
+    if (state.headline) { renderHeadline(actIds); return; }
+
     const numEl = $("number");
     if (active.length === 0) {
       cancelAnimationFrame(anim);
+      clearTimeout(animTimer);
       numEl.classList.add("empty");
       const onlyNoData = state.gens.size > 0;
       numEl.textContent = "Select a generation";
@@ -932,92 +1105,123 @@ footer a { color: var(--ink); }
     });
   }
 
-  /* ======================= COMPARE: pickers ======================= */
-  let pickSide = "a";
-  const S = () => cmp[pickSide];
+  /* ======================= COMPARE: selection screen ======================= */
   const complete = s => s.gens.size > 0 && s.acts.size > 0 && s.years.size > 0;
   const genzBlocked = s => s.years.size === 1 && s.years.has("2005");
+  const cloneSide = s => ({ gens: new Set(s.gens), acts: new Set(s.acts), years: new Set(s.years) });
+  const sameSet = (x, y) => x.size === y.size && [...x].every(v => y.has(v));
+  const sameSide = (x, y) => sameSet(x.gens, y.gens) && sameSet(x.acts, y.acts) && sameSet(x.years, y.years);
 
-  D.generations.forEach(g => {
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "gen " + g.id; b.dataset.id = g.id;
-    b.innerHTML = '<span class="name"><span class="dot" aria-hidden="true"></span><span></span></span><span class="meta"></span>';
-    b.querySelector(".name span:last-child").textContent = g.label;
-    b.querySelector(".meta").textContent = "b. " + g.born[0] + "–" + g.born[1];
-    b.addEventListener("click", () => {
-      if (b.getAttribute("aria-disabled") === "true") return;
-      const s = S(); s.gens.has(g.id) ? s.gens.delete(g.id) : s.gens.add(g.id);
+  // Selections live in a draft until Done, so Cancel changes nothing.
+  let draft = null;
+  let cameFromHome = false, savedY = 0, pendingScroll = false;
+
+  function buildPanel(k, title) {
+    const root = $("panel-" + k), id = "p-" + k;
+    root.setAttribute("aria-labelledby", id + "-h");
+    root.innerHTML =
+      '<div class="panel-head"><span class="badge" aria-hidden="true">' + k.toUpperCase() + '</span><h3 class="panel-title" id="' + id + '-h">' + title + '</h3></div>' +
+      '<div class="cols">' +
+        '<div class="col"><h4 class="eyebrow" id="' + id + '-gen-h">Generations</h4><div class="gen-stack" role="group" aria-labelledby="' + id + '-gen-h"></div></div>' +
+        '<div class="col"><h4 class="eyebrow" id="' + id + '-act-h">Activities</h4><ul class="act-list main-acts" aria-labelledby="' + id + '-act-h"></ul>' +
+          '<div class="act-tools"><button type="button" class="more-btn" aria-expanded="false" aria-controls="' + id + '-more-list">More<span class="chev" aria-hidden="true">▾</span></button></div>' +
+          '<ul class="act-list more-list" id="' + id + '-more-list" hidden></ul></div>' +
+        '<div class="col"><h4 class="eyebrow" id="' + id + '-yr-h">Year</h4><ul class="act-list years" aria-labelledby="' + id + '-yr-h"></ul><p class="hint">Pick two or more years to see a trend line.</p></div>' +
+      '</div>';
+    const side = () => draft[k];
+    D.generations.forEach(g => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "gen " + g.id; b.dataset.id = g.id;
+      b.innerHTML = '<span class="name"><span class="dot" aria-hidden="true"></span><span></span></span><span class="meta"></span>';
+      b.querySelector(".name span:last-child").textContent = g.label;
+      b.querySelector(".meta").textContent = "b. " + g.born[0] + "–" + g.born[1];
+      b.addEventListener("click", () => {
+        if (b.getAttribute("aria-disabled") === "true") return;
+        const s = side(); s.gens.has(g.id) ? s.gens.delete(g.id) : s.gens.add(g.id);
+        renderPick();
+      });
+      attachTip(b, () => (b.getAttribute("aria-disabled") === "true" ? "<strong>Gen Z, 2005: no data.</strong> " + NO_GENZ : ""));
+      root.querySelector(".gen-stack").appendChild(b);
+    });
+    const toggle = id2 => { const s = side(); s.acts.has(id2) ? s.acts.delete(id2) : s.acts.add(id2); renderPick(); };
+    D.categories.forEach(c => root.querySelector(c.main ? ".main-acts" : ".more-list").appendChild(actButton(c, null, toggle)));
+    D.periods.forEach(p => {
+      const li = document.createElement("li");
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "act"; b.dataset.year = p;
+      b.innerHTML = '<span class="box" aria-hidden="true">' + CHECK + '</span><span class="n"></span><span class="t"></span>';
+      b.querySelector(".n").textContent = p;
+      b.querySelector(".t").textContent = D.periodYears[p] + " avg.";
+      b.addEventListener("click", () => {
+        const s = side(); s.years.has(p) ? s.years.delete(p) : s.years.add(p);
+        renderPick();
+      });
+      li.appendChild(b);
+      root.querySelector(".years").appendChild(li);
+    });
+    const more = root.querySelector(".more-btn");
+    more.addEventListener("click", () => {
+      const open = more.getAttribute("aria-expanded") !== "true";
+      more.setAttribute("aria-expanded", String(open));
+      root.querySelector(".more-list").hidden = !open;
       renderPick();
     });
-    attachTip(b, () => (b.getAttribute("aria-disabled") === "true" ? "<strong>Gen Z, 2005: no data.</strong> " + NO_GENZ : ""));
-    $("pk-gens").appendChild(b);
-  });
-  const togglePick = id => { const s = S(); s.acts.has(id) ? s.acts.delete(id) : s.acts.add(id); renderPick(); };
-  D.categories.forEach(c => $(c.main ? "pk-acts" : "pk-more-list").appendChild(actButton(c, null, togglePick)));
-  D.periods.forEach(p => {
-    const li = document.createElement("li");
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "act"; b.dataset.year = p;
-    b.innerHTML = '<span class="box" aria-hidden="true">' + CHECK + '</span><span class="n"></span><span class="t"></span>';
-    b.querySelector(".n").textContent = p;
-    b.querySelector(".t").textContent = D.periodYears[p] + " avg.";
-    b.addEventListener("click", () => {
-      const s = S(); s.years.has(p) ? s.years.delete(p) : s.years.add(p);
-      renderPick();
-    });
-    li.appendChild(b);
-    $("pk-years").appendChild(li);
-  });
-  $("pk-more").addEventListener("click", () => {
-    const open = $("pk-more").getAttribute("aria-expanded") !== "true";
-    $("pk-more").setAttribute("aria-expanded", String(open));
-    $("pk-more-list").hidden = !open;
-    renderPick();
-  });
-  $("pk-main").addEventListener("click", () => { location.hash = ""; });
-  $("pk-back").addEventListener("click", () => { location.hash = pickSide === "a" ? "" : "compare"; });
-  $("pk-next").addEventListener("click", () => {
-    if (!complete(S())) return;
-    location.hash = pickSide === "a" ? "compare-to" : "results";
+  }
+  buildPanel("a", "Compare");
+  buildPanel("b", "To");
+
+  function openPicker(prefill) {
+    draft = prefill ? { a: cloneSide(cmp.a), b: cloneSide(cmp.b) } : { a: emptySide(), b: emptySide() };
+    cameFromHome = true;
+    savedY = window.scrollY;
+    location.hash = "compare";
+  }
+  // Undo the #compare history entry when we can, so Back from home doesn't reopen the screen.
+  function goHome() {
+    if (cameFromHome) history.back();
+    else location.hash = "";
+  }
+  $("pk-cancel").addEventListener("click", goHome);
+  $("pk-done").addEventListener("click", () => {
+    if (!complete(draft.a) || !complete(draft.b)) return;
+    if (!sameSide(draft.a, cmp.a) || !sameSide(draft.b, cmp.b)) { leaveHeadline(); cmp.matched = false; }
+    cmp.a = draft.a; cmp.b = draft.b; cmp.open = true;
+    pendingScroll = true;
+    goHome();
   });
 
   function renderPick() {
-    const s = S();
-    if (genzBlocked(s)) s.gens.delete("genz");
-    EXCL[state.base].forEach(x => s.acts.delete(x));
-    $("pick-step").textContent = pickSide === "a" ? "Compare · Step 1 of 2" : "Compare · Step 2 of 2";
-    $("pick-h").textContent = pickSide === "a" ? "Select What to Compare" : "Select What to Compare To";
-    $("pick-sub").textContent = pickSide === "a"
-      ? "Pick one or more of each. Several generations combine into one group; several activities are added together."
-      : "Now the other side: " + sideTitle(cmp.a) + " vs …";
-    $("pk-back").textContent = pickSide === "a" ? "Cancel" : "Back";
-    $("pk-back").hidden = pickSide === "a";
-    $("pk-next").textContent = pickSide === "a" ? "Next" : "Done";
-    $("pk-next").disabled = !complete(s);
-
-    [...$("pk-gens").children].forEach(b => {
-      const blocked = b.dataset.id === "genz" && genzBlocked(s);
-      if (blocked) {
-        b.setAttribute("aria-disabled", "true");
-        b.setAttribute("aria-label", "Gen Z, no data for 2005. " + NO_GENZ);
-        b.querySelector(".meta").innerHTML = '<span class="flag">no data</span>';
-      } else {
-        b.removeAttribute("aria-disabled");
-        b.removeAttribute("aria-label");
-        const g = D.generations.find(x => x.id === b.dataset.id);
-        b.querySelector(".meta").textContent = "b. " + g.born[0] + "–" + g.born[1];
-      }
-      b.setAttribute("aria-pressed", String(s.gens.has(b.dataset.id)));
+    ["a", "b"].forEach(k => {
+      const s = draft[k], root = $("panel-" + k);
+      if (genzBlocked(s)) s.gens.delete("genz");
+      EXCL[state.base].forEach(x => s.acts.delete(x));
+      [...root.querySelector(".gen-stack").children].forEach(b => {
+        const blocked = b.dataset.id === "genz" && genzBlocked(s);
+        if (blocked) {
+          b.setAttribute("aria-disabled", "true");
+          b.setAttribute("aria-label", "Gen Z, no data for 2005. " + NO_GENZ);
+          b.querySelector(".meta").innerHTML = '<span class="flag">no data</span>';
+        } else {
+          b.removeAttribute("aria-disabled");
+          b.removeAttribute("aria-label");
+          const g = D.generations.find(x => x.id === b.dataset.id);
+          b.querySelector(".meta").textContent = "b. " + g.born[0] + "–" + g.born[1];
+        }
+        b.setAttribute("aria-pressed", String(s.gens.has(b.dataset.id)));
+      });
+      root.querySelectorAll(".act[data-id]").forEach(b => syncActButton(b, s.acts.has(b.dataset.id)));
+      root.querySelectorAll(".act[data-year]").forEach(b => b.setAttribute("aria-pressed", String(s.years.has(b.dataset.year))));
+      const more = root.querySelector(".more-btn");
+      const moreSel = D.categories.filter(c => !c.main && s.acts.has(c.id)).length;
+      const open = more.getAttribute("aria-expanded") === "true";
+      more.firstChild.textContent = open ? "Fewer" : (moreSel ? "More (" + moreSel + " selected)" : "More");
     });
-    $("view-pick").querySelectorAll(".act[data-id]").forEach(b => syncActButton(b, s.acts.has(b.dataset.id)));
-    $("view-pick").querySelectorAll(".act[data-year]").forEach(b => b.setAttribute("aria-pressed", String(s.years.has(b.dataset.year))));
-    const moreSel = D.categories.filter(c => !c.main && s.acts.has(c.id)).length;
-    const open = $("pk-more").getAttribute("aria-expanded") === "true";
-    $("pk-more").firstChild.textContent = open ? "Fewer" : (moreSel ? "More (" + moreSel + " selected)" : "More");
+    $("pk-done").disabled = !(complete(draft.a) && complete(draft.b));
   }
 
   /* ======================= COMPARE: results ======================= */
-  function gensTitle(s) { return ordered(s.gens, GEN_IDS).map(genLabel).join(" + "); }
+  function gensShort(s) { return ordered(s.gens, GEN_IDS).map(genLabel).join(" + "); }
+  function gensTitle(s) { return gensShort(s) + (cmp.matched ? " ages 15–25" : ""); }
   function actsTitle(s) {
     const a = ordered(s.acts, CAT_IDS);
     return a.length > 3 ? a.length + " activities" : a.map(catLabel).join(" + ");
@@ -1099,7 +1303,7 @@ footer a { color: var(--ink); }
       return {
         k, s, st: st[k],
         pts: years.filter(y => s.years.has(y)).map(y => {
-          const a = agg(gens, acts, y);
+          const a = cagg(gens, acts, y);
           return { y, a, v: unitValue(a, unit) };
         })
       };
@@ -1138,7 +1342,7 @@ footer a { color: var(--ink); }
   function barChart(box, st, unit) {
     const rows = ["a", "b"].map(k => {
       const s = cmp[k], yr = ordered(s.years, D.periods)[0];
-      const a = agg(ordered(s.gens, GEN_IDS), ordered(s.acts, CAT_IDS), yr);
+      const a = cagg(ordered(s.gens, GEN_IDS), ordered(s.acts, CAT_IDS), yr);
       return { k, s, yr, a, v: unitValue(a, unit), st: st[k] };
     });
     const W = Math.max(300, box.clientWidth), H = Math.round(Math.min(360, Math.max(240, W * 0.45)));
@@ -1163,7 +1367,7 @@ footer a { color: var(--ink); }
       const vt = el("text", { x: cx, y: y(r.v) - 8, "text-anchor": "middle", "font-size": 14, "font-weight": 800, style: "fill:var(--ink)" }, svg);
       vt.textContent = fmtVal(r.v, unit);
       const lt = el("text", { x: cx, y: H - 10, "text-anchor": "middle", "font-size": 13, "font-weight": 700 }, svg);
-      lt.textContent = (gensTitle(r.s).length > 26 ? (i ? "B" : "A") : gensTitle(r.s)) + (rows[0].yr !== rows[1].yr ? " · " + r.yr : "");
+      lt.textContent = (gensShort(r.s).length > 26 ? (i ? "B" : "A") : gensShort(r.s)) + (rows[0].yr !== rows[1].yr ? " · " + r.yr : "");
     });
     box.appendChild(svg);
     legend(box, st);
@@ -1175,7 +1379,7 @@ footer a { color: var(--ink); }
     ["a", "b"].forEach(k => {
       const s = cmp[k], yr = ordered(s.years, D.periods)[0];
       const acts = ordered(s.acts, CAT_IDS), gens = ordered(s.gens, GEN_IDS);
-      const a = agg(gens, acts, yr);
+      const a = cagg(gens, acts, yr);
       const fig = document.createElement("figure");
       fig.className = "pie"; fig.style.margin = "0";
       const h = document.createElement("h4");
@@ -1227,7 +1431,7 @@ footer a { color: var(--ink); }
     });
     box.appendChild(wrap);
   }
-  const baseWord = () => state.base === "total" ? "the day" : baseOf(state.base).word + " hours";
+  const baseWord = () => cmpBase() === "total" ? "the day" : baseOf(cmpBase()).word + " hours";
 
   function legend(box, st) {
     const lg = document.createElement("div");
@@ -1286,18 +1490,19 @@ footer a { color: var(--ink); }
     const aActs = ordered(A.acts, CAT_IDS), bActs = ordered(Bs.acts, CAT_IDS);
     const aGens = ordered(A.gens, GEN_IDS), bGens = ordered(Bs.gens, GEN_IDS);
     const sameActs = aActs.join() === bActs.join(), sameGens = aGens.join() === bGens.join();
-    const yrsWith = (s, g, a) => ordered(s.years, D.periods).filter(y => agg(g, a, y));
+    const base = cmpBase();
+    const yrsWith = (s, g, a) => ordered(s.years, D.periods).filter(y => cagg(g, a, y));
     const ya = yrsWith(A, aGens, aActs), yb = yrsWith(Bs, bGens, bActs);
     if (!ya.length || !yb.length) return ["One side has no data for the years chosen."];
     const ra = ya[ya.length - 1], rb = yb[yb.length - 1];
-    const aa = agg(aGens, aActs, ra), ab = agg(bGens, bActs, rb);
+    const aa = cagg(aGens, aActs, ra), ab = cagg(bGens, bActs, rb);
     const yearDiff = ra !== rb;
     const primary = [], secondary = [];
     let relTxt = null;
 
     // change over time within a side (line charts)
     [[A, aGens, aActs, ya], [Bs, bGens, bActs, yb]].forEach(([s, g, a, ys]) => {
-      if (ys.length > 1) primary.push(change(s, a, ys[0], agg(g, a, ys[0]), ys[ys.length - 1], agg(g, a, ys[ys.length - 1])));
+      if (ys.length > 1) primary.push(change(s, a, ys[0], cagg(g, a, ys[0]), ys[ys.length - 1], cagg(g, a, ys[ys.length - 1])));
     });
     if (primary.length === 2 && sameGens && sameActs) primary.length = 1; // identical sides: one change is enough
 
@@ -1307,10 +1512,11 @@ footer a { color: var(--ink); }
     } else if (sameActs) {
       const nA = sideName(A, yearDiff ? ra : null), nB = sideName(Bs, yearDiff ? rb : null);
       const d = aa.minPP - ab.minPP;
-      const [bigN, bigS, bigV, smallN, smallV] = d >= 0 ? [nA, A, aa.minPP, nB, ab.minPP] : [nB, Bs, ab.minPP, nA, aa.minPP];
+      const [bigN, bigS, bigV, smallN, smallV, bigY, smallY] = d >= 0 ? [nA, A, aa.minPP, nB, ab.minPP, ra, rb] : [nB, Bs, ab.minPP, nA, aa.minPP, rb, ra];
       if (Math.abs(d) < 1) primary.push(cap(nA) + " and " + nB + " spend about the same time " + actPhrase(aActs) + " (" + durShort(aa.minPP) + " a day).");
       else {
-        primary.push(cap(bigN) + " " + spends(bigS) + " " + durLong(Math.abs(d)) + " more per day " + actPhrase(aActs) + " than " + smallN + " (" + durShort(bigV) + " vs " + durShort(smallV) + ").");
+        const verb = bigY < smallY ? "spent" : spends(bigS); // the earlier period reads in past tense
+        primary.push(cap(bigN) + " " + verb + " " + durLong(Math.abs(d)) + " more per day " + actPhrase(aActs) + " than " + smallN + " (" + durShort(bigV) + " vs " + durShort(smallV) + ").");
         relTxt = relative(bigV, smallV);
       }
     } else {
@@ -1319,9 +1525,9 @@ footer a { color: var(--ink); }
     }
 
     // share of base: leads when the base is waking/leisure; otherwise only fills in when there's no relative line
-    if (state.base === "total" && relTxt) secondary.push(relTxt);
-    if (state.base !== "total" || secondary.length === 0) {
-      const word = state.base === "total" ? "day" : baseOf(state.base).word + " time";
+    if (base === "total" && relTxt) secondary.push(relTxt);
+    if (base !== "total" || secondary.length === 0) {
+      const word = base === "total" ? "day" : baseOf(base).word + " time";
       if (sameActs) {
         const sub = shareSubject(aActs);
         const pa = pctTxt(aa.share), pb = pctTxt(ab.share);
@@ -1333,11 +1539,12 @@ footer a { color: var(--ink); }
       }
     }
 
-    if (state.base !== "total" && relTxt) secondary.push(relTxt);
-
     // age caveat: different generations compared in a shared year
     const shared = ordered(A.years, D.periods).some(y => Bs.years.has(y));
     const caveat = !sameGens && shared ? "Part of this gap reflects age and life stage, not just generation." : null;
+
+    // "That's about 2×" must follow the minutes sentence it refers to, never the share sentence
+    if (base !== "total" && relTxt && !caveat) secondary.unshift(relTxt);
 
     let list = primary.slice(0, 2).concat(secondary);
     list = caveat ? list.slice(0, 2).concat(caveat) : list.slice(0, 3);
@@ -1346,6 +1553,8 @@ footer a { color: var(--ink); }
 
   let lastChartW = 0;
   function renderResults() {
+    $("your-cmp").hidden = !cmp.open;
+    if (!cmp.open) return;
     const st = sideStyles();
     const h = $("res-h");
     h.innerHTML = "";
@@ -1360,6 +1569,8 @@ footer a { color: var(--ink); }
     const unit = cmp.unit;
     const notes = [];
     if (unit === "total") notes.push("Totals reflect generation size as well as behavior.");
+    const hit = cmpExcludedAct();
+    if (hit) notes.push("Your comparison includes " + catLabel(hit) + ", which isn't part of " + baseOf(state.base).word + " hours, so percentages use the full day.");
     const gz = ["a", "b"].map(k => cmp[k]).filter(s => s.gens.has("genz") && s.years.has("2005"));
     if (gz.length) {
       notes.push("No Gen Z data for 2005: " + NO_GENZ);
@@ -1382,38 +1593,47 @@ footer a { color: var(--ink); }
     bullets().forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
   }
   window.addEventListener("resize", () => {
-    if (!$("view-results").hidden && Math.abs($("chart").clientWidth - lastChartW) > 4) renderResults();
+    if (view === "main" && cmp.open && Math.abs($("chart").clientWidth - lastChartW) > 4) renderResults();
   });
 
-  $("res-edit").addEventListener("click", () => { location.hash = "compare"; });
-  $("res-new").addEventListener("click", () => { cmp.a = emptySide(); cmp.b = emptySide(); location.hash = "compare"; });
-  $("res-main").addEventListener("click", () => { location.hash = ""; });
+  $("res-edit").addEventListener("click", () => openPicker(true));
+  $("res-close").addEventListener("click", () => {
+    cmp.open = false;
+    hideTip();
+    renderAll();
+    $("compare-go").focus({ preventScroll: true });
+  });
 
   /* ======================= routing ======================= */
   let view = "main";
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   function route() {
-    const h = location.hash.replace(/^#/, "");
-    let v = h === "compare" ? "a" : h === "compare-to" ? "b" : h === "results" ? "c" : "main";
-    if (v === "b" && !complete(cmp.a)) { location.replace("#compare"); return; }
-    if (v === "c" && !(complete(cmp.a) && complete(cmp.b))) { location.replace(complete(cmp.a) ? "#compare-to" : "#compare"); return; }
+    const v = location.hash === "#compare" ? "pick" : "main";
     const prev = view;
     view = v;
     hideTip();
     $("view-main").hidden = v !== "main";
-    $("view-pick").hidden = !(v === "a" || v === "b");
-    $("view-results").hidden = v !== "c";
-    if (v === "a" || v === "b") pickSide = v;
+    $("view-pick").hidden = v !== "pick";
+    if (v === "pick" && !draft) draft = { a: emptySide(), b: emptySide() };
+    if (v === "main") { draft = null; cameFromHome = false; }
     renderAll();
-    if (prev !== v) {
+    if (prev === v) return;
+    if (v === "pick") {
       window.scrollTo(0, 0);
-      const focusEl = v === "main" ? $("compare-go") : v === "c" ? $("res-h") : $("pick-h");
-      if (prev !== "main" || v !== "main") focusEl.focus({ preventScroll: true });
+      $("pick-h").focus({ preventScroll: true });
+    } else if (pendingScroll) {
+      pendingScroll = false;
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      $("your-cmp").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      $("res-h").focus({ preventScroll: true });
+    } else {
+      window.scrollTo(0, savedY);
+      $("compare-go").focus({ preventScroll: true });
     }
   }
   function renderAll() {
     segs.forEach(s => s.sync());
-    if (view === "main") renderMain();
-    else if (view === "c") renderResults();
+    if (view === "main") { renderMain(); renderResults(); }
     else renderPick();
   }
   window.addEventListener("hashchange", route);
