@@ -206,6 +206,16 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 .lede-stack .lede:last-child { margin-bottom: 0; }
 .lede-stack.is-visible .lede { opacity: 1; transform: none; }
 
+/* ---------- Interlude between chapters ---------- */
+.interlude {
+  border-top: 1px solid var(--line);
+  padding: 22vh 16px;
+  text-align: center;
+}
+.interlude .lede-stack { max-width: 760px; margin: 0 auto; }
+.interlude .lede { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.35; color: var(--ink); margin-bottom: 28px; }
+.interlude .lede:last-child { margin-bottom: 0; }
+
 /* ---------- Chapter 2: APA mental health & stress (Aiden) ---------- */
 :root {
   /* Generation colors, same as the charts (viz/aiden.html, viz/valay.html) */
