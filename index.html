@@ -102,19 +102,14 @@
     <div class="chapter-head">
       <p class="chapter-num">Chapter 2</p>
       <h2>What it does to our minds</h2>
-      <!-- Intro (Aiden). Each line fades in on its own as you scroll (see .lede-stack in css/style.css).
-           Framing comes from the white paper, Section 1 and Section 4.3. -->
+      <!-- Intro (Aiden). When the block scrolls into view, the lines fly in one after another
+           from alternating sides (see .lede-stack in css/style.css). -->
       <div class="lede-stack">
-        <p class="lede reveal">Most arguments about screens come down to one number: <strong>hours per day</strong>.</p>
-        <p class="lede reveal">But that number counts a video call with a grandparent and an hour of an endless, algorithm-picked feed as the same hour.</p>
-        <p class="lede reveal">So we asked a different question: does <em>how</em> we use screens matter more than <em>how long</em>?</p>
-        <p class="lede reveal">The American Psychological Association has asked Americans about their stress every year since 2007. In 2018 and 2024 it asked two questions with exactly the same wording, so we can compare each generation six years apart.</p>
+        <p class="lede" style="--i:0">More than <strong>three hours a day</strong> on screens for fun, and that's before counting most of the time spent scrolling on phones.</p>
+        <p class="lede" style="--i:1">By 2024, <strong>58%</strong> of Gen Z adults said they're online <strong>“almost constantly.”</strong></p>
+        <p class="lede" style="--i:2">So what has all that time done to how we feel?</p>
+        <p class="lede" style="--i:3">The American Psychological Association asked Americans the same two questions in 2018 and 2024: <em>How is your mental health?</em> and <em>How stressed are you?</em> Here's how each generation answered.</p>
       </div>
-    </div>
-
-    <div class="stat-hook reveal">
-      <p class="stat-num">39%</p>
-      <p class="stat-text">of Gen Z adults rated their mental health <strong>fair or poor</strong> in 2024. Among Boomers &amp; older it was <strong>9%</strong>.</p>
     </div>
 
     <!-- APA chart. Desktop: the chart stays pinned while the steps scroll past it.
@@ -191,36 +186,33 @@
       </div>
     </div>
 
-    <!-- Amount vs. manner: the white paper's hypothesis, tested with the 2018 APA survey (adults 18+, weighted). -->
+    <!-- Linking it back to screens: stress and mental health split by screen habits, APA survey, adults 18+, weighted. -->
     <div class="versus">
-      <h3>Hours online vs. how it feels</h3>
-      <p class="versus-dek">Share of U.S. adults with <strong>high stress</strong> (8–10 out of 10) in 2018, split two ways.</p>
+      <h3>Can we link it back to screens?</h3>
+      <p class="versus-dek">Split people by their screen habits, and the heaviest users report the most stress, in both surveys.</p>
       <div class="versus-grid">
         <figure class="versus-panel">
-          <figcaption>By <strong>hours online</strong> per week</figcaption>
-          <div class="hbar"><span>Under 5 h</span><i style="--v:17.8"></i><b>18%</b></div>
-          <div class="hbar"><span>5–9 h</span><i style="--v:16.3"></i><b>16%</b></div>
-          <div class="hbar"><span>10–19 h</span><i style="--v:17.5"></i><b>18%</b></div>
-          <div class="hbar"><span>20+ h</span><i style="--v:21.2"></i><b>21%</b></div>
+          <figcaption><strong>2018:</strong> high stress (8–10), by how often people check social media</figcaption>
+          <div class="hbar"><span>Never / rarely</span><i style="--v:15.3"></i><b>15%</b></div>
+          <div class="hbar"><span>Sometimes</span><i style="--v:14.9"></i><b>15%</b></div>
+          <div class="hbar"><span>Often</span><i style="--v:17.5"></i><b>18%</b></div>
+          <div class="hbar"><span>Constantly</span><i style="--v:27.2"></i><b>27%</b></div>
         </figure>
         <figure class="versus-panel">
-          <figcaption>By <strong>“Social media makes me feel bad about myself”</strong></figcaption>
-          <div class="hbar"><span>Strongly disagree</span><i style="--v:12.9"></i><b>13%</b></div>
-          <div class="hbar"><span>Somewhat disagree</span><i style="--v:15.2"></i><b>15%</b></div>
-          <div class="hbar"><span>Somewhat agree</span><i style="--v:26.3"></i><b>26%</b></div>
-          <div class="hbar"><span>Strongly agree</span><i style="--v:38.8"></i><b>39%</b></div>
+          <figcaption><strong>2024:</strong> by whether people say they've <strong>lost hours to screens</strong> without meaning to</figcaption>
+          <p class="hbar-group">High stress (8–10)</p>
+          <div class="hbar"><span>Haven't</span><i style="--v:17.4"></i><b>17%</b></div>
+          <div class="hbar"><span>Have</span><i style="--v:31.8"></i><b>32%</b></div>
+          <p class="hbar-group">Fair or poor mental health</p>
+          <div class="hbar"><span>Haven't</span><i style="--v:17.4"></i><b>17%</b></div>
+          <div class="hbar"><span>Have</span><i style="--v:31.7"></i><b>32%</b></div>
         </figure>
       </div>
-      <p class="viz-note">APA Stress in America, 2018, adults 18+, weighted. Hours online: 3,841 adults. “Feel bad” was asked of 3,292 adults. Both panels use the same scale. A link, not proof of cause: people who are already struggling may also feel worse online.</p>
+      <p class="viz-note">APA Stress in America, adults 18+, weighted: 2018 (3,727 adults answered the checking question) and 2024 (3,936 adults). Both panels use the same scale. In 2018, plain hours online showed a smaller link: 18% of people online under 5 hours a week had high stress, against 21% at 20+ hours. These are links, not proof that screens cause stress: people who are already struggling may also turn to their phones more.</p>
     </div>
 
-    <aside class="fact reveal">
-      <p class="fact-label">Fun fact</p>
-      <p>People online <strong>20+ hours a week</strong> were exactly as likely to rate their mental health fair or poor as people online <strong>under 5 hours</strong>: <strong>15%</strong> each.</p>
-    </aside>
-
     <div class="takeaway reveal">
-      <p>Hours online barely moved stress. How social media made people feel moved it a lot. That's the bet our white paper makes: the way we use screens matters more than the amount.</p>
+      <p>More time on screens goes hand in hand with more stress and worse mental health, and the youngest adults, who report the heaviest screen habits, also report the most stress. A survey can't prove screens are the cause, but the link keeps showing up.</p>
     </div>
 
     <div class="bridge-text reveal">

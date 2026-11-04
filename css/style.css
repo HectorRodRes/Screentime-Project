@@ -193,9 +193,18 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
 .reveal.is-visible { opacity: 1; transform: none; }
 
-/* Intro lines that appear one at a time: the gap means each line scrolls in separately */
-.lede-stack .lede { margin: 0 0 30vh; }
+/* Intro lines that fly in one after another, from alternating sides, once the block is in view.
+   Each line sets --i (its order) for the delay; js/main.js adds .is-visible to the stack. */
+.lede-stack { overflow-x: clip; } /* no sideways scrollbar while lines are offscreen */
+.lede-stack .lede {
+  margin: 0 0 18px;
+  opacity: 0; transform: translateX(-80px);
+  transition: opacity .6s ease, transform .8s cubic-bezier(.2, .8, .2, 1);
+  transition-delay: calc(var(--i, 0) * .45s);
+}
+.lede-stack .lede:nth-child(even) { transform: translateX(80px); }
 .lede-stack .lede:last-child { margin-bottom: 0; }
+.lede-stack.is-visible .lede { opacity: 1; transform: none; }
 
 /* ---------- Chapter 2: APA mental health & stress (Aiden) ---------- */
 :root {
@@ -209,13 +218,6 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 .gen-mill { color: var(--gen-1); }
 .gen-boomer { color: var(--gen-3); }
 
-/* Big opening number */
-.stat-hook { max-width: 680px; margin: 30vh auto 48px; padding: 0 16px; }
-.stat-num {
-  font-family: var(--serif); font-weight: 900; line-height: 1; margin: 0 0 8px;
-  font-size: clamp(88px, 18vw, 160px); color: var(--gen-0); letter-spacing: -.03em;
-}
-.stat-text { font-family: var(--serif); font-size: clamp(22px, 3vw, 28px); line-height: 1.35; max-width: 26ch; }
 
 /* Fun-fact steps that scroll past the chart */
 .step-fact { border-left: 4px solid var(--accent); }
@@ -269,6 +271,8 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
   width: calc(var(--v) / 40 * 100%); /* shared 0–40% scale for both panels */
 }
 .hbar b { text-align: right; font-variant-numeric: tabular-nums; }
+.hbar-group { font-size: 13px; font-weight: 700; color: var(--ink-2); margin: 12px 0 0; }
+.hbar-group:first-of-type { margin-top: 0; }
 @media (max-width: 720px) {
   .versus-grid { grid-template-columns: 1fr; }
   .versus-panel figcaption { min-height: 0; }
@@ -294,6 +298,6 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal, .step, .day-grid div { transition: none; }
+  .reveal, .step, .day-grid div, .lede-stack .lede { transition: none; }
   .scroll-cue span { animation: none; }
 }

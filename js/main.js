@@ -114,7 +114,7 @@ const revealObserver = new IntersectionObserver(entries => {
     }
   });
 }, { threshold: 0.3 });
-document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
+document.querySelectorAll(".reveal, .lede-stack").forEach(el => revealObserver.observe(el));
 
 /* ---------- Resize chart frames to fit their content ---------- */
 addEventListener("message", e => {
