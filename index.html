@@ -6,7 +6,7 @@
   <title>Screened Out</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -20,11 +20,17 @@
     <a href="#sources" data-chapter="sources">Sources</a>
   </nav>
 
-  <!-- ================= HERO ================= -->
-  <header class="hero">
-    <p class="kicker">A data story</p>
-    <h1>Screentime Project</h1>
-    <p class="dek">How much of our day goes to screens, and what does it cost our minds and our grades?</p>
+  <!-- ================= HERO (Valay's headline finding) =================
+       From Valay's time-use chart (viz/valay.html). Gen Z 2023–25 vs Millennials 2004–06, both ages 15–25,
+       socializing in person: 17.06 fewer minutes a day × 365 ÷ 60 × 48.7 million Gen Zers = 5,059,182,758 hours a year.
+       js/main.js counts the number up from 0 to data-target. -->
+  <header class="hero hero-finding">
+    <h1 class="f-title">Gen Z Is Spending Less Time Together</h1>
+    <p class="f-subtitle">And it's costing them their minds &amp; grades</p>
+    <p class="f-number" id="fNumber" data-target="5059182758" aria-hidden="true">5,059,182,758</p>
+    <p class="f-label"><span class="sr-only">5,059,182,758 </span>fewer hours a year of in-person socializing across all 49 million Gen Zers ages 15–25, compared with Millennials at the same age</p>
+    <p class="f-sub">≈ 17 fewer minutes a day per person · about 104 hours a year each</p>
+    <p class="f-caveat">Compared at the same life stage. ATUS doesn't measure phone scrolling, and other changes besides screens may contribute.</p>
     <p class="byline">By Valay, Aiden, Eli &amp; Hector</p>
     <div class="scroll-cue" aria-hidden="true">Scroll<span>↓</span></div>
   </header>
@@ -80,21 +86,42 @@
       <p>The survey doesn't directly measure phone scrolling or social media, so real screen time is likely <strong>even higher</strong>.</p>
     </aside>
 
-    <!-- .viz-pin holds the chart still for a stretch of scrolling, so readers pause on it.
-         Wrap any other .viz-block the same way to pin it too. -->
+    <!-- Explore the data (Valay): the main viz. .viz-pin holds it still for a stretch of scrolling so readers
+         pause on it, then the page moves on. The frame is always full height, so nothing scrolls inside it. -->
     <div class="viz-pin">
       <div class="viz-block">
-        <h3>A day in the life, by generation</h3>
-        <iframe class="viz-frame" src="viz/valay.html" title="American Time Use: a day in the life, by generation"></iframe>
+        <iframe class="viz-frame" src="viz/valay.html" title="Explore the data: how each generation of Americans spends its day, from the American Time Use Survey"></iframe>
         <p class="viz-note">Source: American Time Use Survey, U.S. Bureau of Labor Statistics. Chart by Valay.</p>
         <p class="pin-hint">Take a moment to explore the chart. Keep scrolling when you're ready.</p>
       </div>
     </div>
 
-    <div class="takeaway reveal">
-      <!-- TODO (Valay): concluding remark -->
-      <p>[Valay — concluding remark that leads into the effects of all this screen time.]</p>
+    <!-- Gen Z breakdown (Valay). Moved out of his chart so it's part of the page scroll.
+         Gen Z 2023–25 vs Millennials 2004–06, both ages 15–25, minutes per person per day, from his data.json.
+         Activities that differ by under 5 minutes are combined into "Everything else", as in his chart.
+         Bar widths: gap ÷ largest gap (30.5 min) × 36% of the track, as in his chart. Bars grow in when scrolled into view (js/main.js). -->
+    <div class="breakdown">
+      <h3>What Gen Z does more of, and less of</h3>
+      <p class="breakdown-dek">Those 17 fewer minutes of socializing didn't vanish. Everyone gets 24 hours, so time lost in one place shows up somewhere else. Here's how Gen Z's day compares with Millennials' at the same age.</p>
+      <figure class="to-chart">
+        <div class="to-axis" aria-hidden="true"><span></span><span class="to-axis-labels"><span>← Less time</span><span>More time →</span></span></div>
+        <div role="list" aria-label="Minutes a day, Gen Z compared with Millennials at ages 15 to 25">
+          <div class="to-row loss" role="listitem" tabindex="0" title="Watching TV: Gen Z 110.4 min, Millennials 138.4 min a day (−28.0 min)" aria-label="Watching TV: Gen Z 110.4 min, Millennials 138.4 min a day (−28.0 min)" style="--w:33.0%;--i:0"><span class="to-name">Watching TV</span><span class="to-track"><i></i><b>−28 m</b></span></div>
+          <div class="to-row loss to-social" role="listitem" tabindex="0" title="Socializing in person: Gen Z 32.4 min, Millennials 49.4 min a day (−17.1 min)" aria-label="Socializing in person: Gen Z 32.4 min, Millennials 49.4 min a day (−17.1 min)" style="--w:20.1%;--i:1"><span class="to-name">Socializing in person</span><span class="to-track"><i></i><b>−17 m</b></span></div>
+          <div class="to-row loss" role="listitem" tabindex="0" title="Travel: Gen Z 64.2 min, Millennials 77.7 min a day (−13.5 min)" aria-label="Travel: Gen Z 64.2 min, Millennials 77.7 min a day (−13.5 min)" style="--w:15.9%;--i:2"><span class="to-name">Travel</span><span class="to-track"><i></i><b>−14 m</b></span></div>
+          <div class="to-row loss" role="listitem" tabindex="0" title="Other leisure: Gen Z 16.1 min, Millennials 25.4 min a day (−9.3 min)" aria-label="Other leisure: Gen Z 16.1 min, Millennials 25.4 min a day (−9.3 min)" style="--w:11.0%;--i:3"><span class="to-name">Other leisure</span><span class="to-track"><i></i><b>−9 m</b></span></div>
+          <div class="to-row loss" role="listitem" tabindex="0" title="Purchasing goods and services: Gen Z 17.1 min, Millennials 25.0 min a day (−7.9 min)" aria-label="Purchasing goods and services: Gen Z 17.1 min, Millennials 25.0 min a day (−7.9 min)" style="--w:9.3%;--i:4"><span class="to-name">Purchasing goods and services</span><span class="to-track"><i></i><b>−8 m</b></span></div>
+          <div class="to-row loss" role="listitem" tabindex="0" title="Everything else: Gen Z 457.0 min, Millennials 464.1 min a day (−7.1 min)" aria-label="Everything else: Gen Z 457.0 min, Millennials 464.1 min a day (−7.1 min)" style="--w:8.4%;--i:5"><span class="to-name">Everything else</span><span class="to-track"><i></i><b>−7 m</b></span></div>
+          <div class="to-row gain" role="listitem" tabindex="0" title="Playing games: Gen Z 52.7 min, Millennials 22.2 min a day (+30.5 min)" aria-label="Playing games: Gen Z 52.7 min, Millennials 22.2 min a day (+30.5 min)" style="--w:36.0%;--i:6"><span class="to-name">Playing games</span><span class="to-track"><i></i><b>+31 m</b></span></div>
+          <div class="to-row gain" role="listitem" tabindex="0" title="Sleep: Gen Z 584.4 min, Millennials 555.3 min a day (+29.1 min)" aria-label="Sleep: Gen Z 584.4 min, Millennials 555.3 min a day (+29.1 min)" style="--w:34.3%;--i:7"><span class="to-name">Sleep</span><span class="to-track"><i></i><b>+29 m</b></span></div>
+          <div class="to-row gain" role="listitem" tabindex="0" title="Household activities: Gen Z 65.4 min, Millennials 55.8 min a day (+9.6 min)" aria-label="Household activities: Gen Z 65.4 min, Millennials 55.8 min a day (+9.6 min)" style="--w:11.4%;--i:8"><span class="to-name">Household activities</span><span class="to-track"><i></i><b>+10 m</b></span></div>
+          <div class="to-row gain" role="listitem" tabindex="0" title="Computer use for leisure: Gen Z 22.6 min, Millennials 15.3 min a day (+7.4 min)" aria-label="Computer use for leisure: Gen Z 22.6 min, Millennials 15.3 min a day (+7.4 min)" style="--w:8.7%;--i:9"><span class="to-name">Computer use for leisure</span><span class="to-track"><i></i><b>+7 m</b></span></div>
+          <div class="to-row gain" role="listitem" tabindex="0" title="Relaxing and thinking: Gen Z 17.8 min, Millennials 11.5 min a day (+6.3 min)" aria-label="Relaxing and thinking: Gen Z 17.8 min, Millennials 11.5 min a day (+6.3 min)" style="--w:7.4%;--i:10"><span class="to-name">Relaxing and thinking</span><span class="to-track"><i></i><b>+6 m</b></span></div>
+        </div>
+        <figcaption class="viz-note">Minutes per person per day, Gen Z (2023–25) vs Millennials (2004–06), ages 15–25. Gains and losses balance because everyone has 24 hours. Activities that differ by less than 5 minutes are combined into “Everything else.” Source: American Time Use Survey. Chart by Valay.</figcaption>
+      </figure>
     </div>
+
   </section>
 
   <!-- ================= CHAPTER 2: MIND (Aiden) ================= -->

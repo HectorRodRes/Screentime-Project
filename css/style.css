@@ -81,6 +81,35 @@ h1 { font-size: clamp(56px, 11vw, 120px); font-weight: 900; letter-spacing: -.02
 .scroll-cue span { font-size: 24px; animation: bob 1.6s ease-in-out infinite; }
 @keyframes bob { 50% { transform: translateY(6px); } }
 
+/* Title page: Valay's headline finding, in his chart's type (Archivo condensed + Source Serif 4) */
+.hero-finding { max-width: 1100px; align-items: center; text-align: center; }
+.hero-finding .f-title, .hero-finding .f-subtitle, .hero-finding .f-number {
+  font-family: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  font-variation-settings: "wdth" 76; text-wrap: balance; margin: 0;
+}
+.hero-finding .f-title { font-weight: 800; font-size: clamp(1.9rem, 4.4vw, 3.2rem); line-height: 1.05; letter-spacing: 0; }
+.hero-finding .f-subtitle { font-weight: 600; font-size: clamp(1.35rem, 3vw, 2.2rem); line-height: 1.1; color: var(--ink-2); margin-top: 8px; }
+.hero-finding .f-number {
+  font-variation-settings: "wdth" 68; font-weight: 800; line-height: .95; letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums lining-nums; white-space: nowrap;
+  font-size: clamp(2.6rem, 11vw, 9.5rem); margin-top: 30px;
+}
+.hero-finding .f-label {
+  font-family: var(--serif); font-size: clamp(1.05rem, 1.7vw, 1.3rem); line-height: 1.5;
+  max-width: 48ch; margin: 14px auto 0; text-wrap: balance;
+}
+.hero-finding .f-sub {
+  font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-weight: 600; font-size: .95rem;
+  color: var(--ink-2); margin: 10px 0 0; text-wrap: balance;
+}
+.hero-finding .f-caveat {
+  font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: .8rem; line-height: 1.4;
+  color: var(--ink-2); max-width: 56ch; margin: 10px auto 0; text-wrap: balance;
+}
+.hero-finding .byline { margin: 36px 0 0; }
+.hero-finding .scroll-cue { margin-top: 28px; align-items: center; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
 /* ---------- Chapters ---------- */
 .chapter { padding: 64px 0 32px; border-top: 1px solid var(--line); }
 .chapter-head, .takeaway, .bridge-text, .summary, .sources {
@@ -206,6 +235,44 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 .lede-stack .lede:last-child { margin-bottom: 0; }
 .lede-stack.is-visible .lede { opacity: 1; transform: none; }
 
+/* ---------- Chapter 1: Gen Z breakdown (Valay's trade-off chart) ---------- */
+.breakdown { max-width: 900px; margin: 72px auto 48px; padding: 0 16px; }
+.breakdown-dek { font-family: var(--serif); font-size: 20px; line-height: 1.5; color: var(--ink-2); max-width: 62ch; }
+.to-chart { margin: 24px 0 0; }
+.to-axis, .to-row { display: grid; grid-template-columns: 230px minmax(0, 1fr); column-gap: 12px; align-items: center; }
+.to-axis { padding: 0 6px 6px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.to-axis-labels { display: flex; justify-content: space-between; }
+.to-row { padding: 5px 6px; border-radius: 6px; cursor: default; }
+.to-row:hover, .to-row:focus-visible { background: var(--line); outline: none; }
+.to-name { font-size: 15px; font-weight: 600; line-height: 1.2; }
+.to-track { position: relative; height: 24px; }
+.to-track::before { /* zero line */
+  content: ""; position: absolute; left: 50%; top: -5px; bottom: -5px; width: 1px; background: var(--ink-2);
+}
+.to-track i {
+  position: absolute; top: 3px; bottom: 3px; width: 0; border-radius: 3px;
+  transition: width .8s cubic-bezier(.2, .8, .2, 1); transition-delay: calc(var(--i, 0) * 60ms);
+}
+.to-track b {
+  position: absolute; top: 50%; transform: translateY(-50%); white-space: nowrap;
+  font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink-2);
+  opacity: 0; transition: opacity .4s ease; transition-delay: calc(var(--i, 0) * 60ms + .5s);
+}
+.loss .to-track i { right: 50%; background: #5f6b7a; }
+.gain .to-track i { left: 50%; background: #98a3b0; }
+.loss .to-track b { right: calc(50% + var(--w) + 6px); }
+.gain .to-track b { left: calc(50% + var(--w) + 6px); }
+.to-chart.is-visible .to-track i { width: var(--w); }
+.to-chart.is-visible .to-track b { opacity: 1; }
+.to-social .to-name, .to-social .to-track b { color: var(--gen-0); font-weight: 800; }
+.to-social .to-track i { background: var(--gen-0); }
+.to-chart .viz-note { margin-top: 14px; }
+@media (max-width: 640px) {
+  .to-axis, .to-row { grid-template-columns: minmax(0, 1fr); }
+  .to-axis > span:first-child { display: none; }
+  .to-row { row-gap: 2px; }
+}
+
 /* ---------- Interlude between chapters ---------- */
 .interlude {
   border-top: 1px solid var(--line);
@@ -308,6 +375,6 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal, .step, .day-grid div, .lede-stack .lede { transition: none; }
+  .reveal, .step, .day-grid div, .lede-stack .lede, .to-track i, .to-track b { transition: none; }
   .scroll-cue span { animation: none; }
 }
