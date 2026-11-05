@@ -37,6 +37,11 @@
       const hl = document.getElementById("hl");
       if (hl && (hl.getAttribute("aria-pressed") === "true") !== m.hl) hl.click();
     }
+    // Room of 100: survey year per room, e.g. roomYears: ["2014","2014","2014","2006","2014"]
+    if (Array.isArray(m.roomYears)) m.roomYears.forEach(function (y, i) {
+      const b = document.querySelector('.seg[data-i="' + i + '"] button[data-v="' + y + '"]');
+      if (b && b.getAttribute("aria-pressed") !== "true") b.click();
+    });
     // Pick a room (screen-time level) by index
     if (m.lv != null) click('.bar[data-i="' + m.lv + '"]');
     // Scroll inside the viz to an element

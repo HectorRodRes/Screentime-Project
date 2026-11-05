@@ -146,40 +146,43 @@
       <p class="lede">Does more screen time mean worse grades? We put 100 students in a classroom to find out.</p>
     </div>
 
-    <!-- Scrolly: the classroom stays put while the steps change it -->
+    <!-- Scrolly: the classrooms stay put while the steps scroll through them -->
     <div class="scrolly" data-kind="frame">
       <div class="sticky">
         <iframe class="sticky-frame" id="roomFrame" src="viz/hector-room-of-100.html?embed=scrolly" title="Room of 100: screen time and how teachers rate schoolwork"></iframe>
       </div>
       <div class="steps">
-        <!-- data-state is sent to the chart: scr (total|tv|comp|game), year (2006|2010|2014), day (wd|we), lv (room index), hl (true|false) -->
-        <div class="step" data-state='{"scr":"total","year":"2014","day":"wd","lv":0,"hl":false}'>
+        <!-- data-state is sent to the chart (see viz/bridge.js):
+             scrollTo = what to show (".key", ".takes" = peak card, '.seg[data-i="0"]' = room 0 ... room 3)
+             roomYears = survey year for the rooms <2 h, 2–4 h, 4–8 h, 8 h+, and the peak card.
+             Numbers in the text are from the chart's data (2014 unless stated). -->
+        <div class="step" data-state='{"scrollTo":".key","roomYears":["2014","2014","2014","2014","2014"]}'>
           <p>Each figure is <strong>1% of real students</strong> aged 11, 13 and 15 in the HBSC survey. Their color shows how their teacher rates their schoolwork compared with their classmates.</p>
         </div>
-        <div class="step" data-state='{"lv":0,"hl":true}'>
-          <p>This room spends <strong>less than an hour</strong> on screens on a school day.</p>
+        <div class="step" data-state='{"scrollTo":".takes","roomYears":["2014","2014","2014","2014","2014"]}'>
+          <p>Students with <strong>under 2 hours</strong> of screens a day are the most likely to be rated good or better. With each step up in screen time, that share drops.</p>
         </div>
-        <div class="step" data-state='{"lv":2,"hl":true}'>
-          <p>Turn screen time up to <strong>2–4 hours</strong>. The screens glow brighter. Watch how the ratings compare.</p>
+        <div class="step" data-state='{"scrollTo":".seg[data-i=\"0\"]","roomYears":["2014","2014","2014","2014","2014"]}'>
+          <p>In the <strong>under 2 hours</strong> room, <strong>76 of 100</strong> students are rated good or better. Only 3 are below average.</p>
         </div>
-        <div class="step" data-state='{"lv":5,"hl":true}'>
-          <p>At <strong>8 hours or more</strong>, the circled students show the gap between this room and the best-rated room.</p>
+        <div class="step" data-state='{"scrollTo":".seg[data-i=\"1\"]","roomYears":["2014","2014","2014","2014","2014"]}'>
+          <p>At <strong>2–4 hours</strong>, it's <strong>74 of 100</strong>, almost the same as the first room.</p>
         </div>
-        <div class="step" data-state='{"lv":5,"day":"we"}'>
-          <p>On <strong>weekends</strong> the pattern holds, even though everyone has more free time.</p>
+        <div class="step" data-state='{"scrollTo":".seg[data-i=\"2\"]","roomYears":["2014","2014","2014","2014","2014"]}'>
+          <p>At <strong>4–8 hours</strong>, it falls to <strong>68 of 100</strong>. This is the biggest room: more than a third of students land here.</p>
         </div>
-        <div class="step" data-state='{"lv":5,"day":"wd","year":"2006"}'>
-          <p>Is this new? Go back to <strong>2006</strong>, before smartphones were everywhere.</p>
+        <div class="step" data-state='{"scrollTo":".seg[data-i=\"3\"]","roomYears":["2014","2014","2014","2014","2014"]}'>
+          <p>At <strong>8 hours or more</strong>, only <strong>59 of 100</strong> are rated good or better, 17 fewer than the lightest users. Below-average ratings more than double, from 3 to 7.</p>
         </div>
-        <div class="step" data-state='{"year":"2014","scrollTo":".strip"}'>
-          <p>Here is <strong>every room side by side</strong>. Tap any room, or use the buttons, to explore it yourself.</p>
+        <div class="step" data-state='{"scrollTo":".seg[data-i=\"3\"]","roomYears":["2014","2014","2014","2006","2014"]}'>
+          <p>Is this new? In <strong>2006</strong>, the 8 hours+ room looked about the same: <strong>58 of 100</strong>. What changed is how full it is. It held about <strong>1 in 5</strong> students in 2006 and nearly <strong>1 in 3</strong> by 2014.</p>
         </div>
       </div>
     </div>
 
     <aside class="fact reveal">
       <p class="fact-label">Fun fact</p>
-      <p>Each survey year asked about <strong>185,000–195,000 students</strong>. With that many, even a tiny link between screens and grades shows up clearly in the data.</p>
+      <p>Each survey year includes about <strong>176,000–190,000 students</strong>. With that many, even a small link between screens and grades shows up clearly in the data.</p>
     </aside>
 
     <aside class="fact reveal right">
@@ -189,7 +192,7 @@
 
     <div class="takeaway reveal">
       <!-- TODO (Hector): tweak the concluding remark once the numbers are final -->
-      <p>The link is small, but it points the same way in almost every year and screen type. More hours on screens goes with lower ratings in class.</p>
+      <p>The link is small, but it points the same way in every survey year. More hours on screens goes with lower ratings in class.</p>
     </div>
   </section>
 
@@ -214,7 +217,7 @@
       <dd>[Eli — description from the white paper.]</dd>
 
       <dt>Health Behaviour in School-aged Children (HBSC)</dt>
-      <dd>International open-access files for 2005/06, 2009/10 and 2013/14, about 185,000–195,000 students per year, ages 11, 13 and 15. The academic rating is self-reported and relative to classmates, not a grade or test score. Shares are unweighted and rounded so each room adds up to 100. Each room is a different group of students, so results show an association, not cause and effect. Correlations are Spearman rank correlations between screen-time level and rating. “All screens” adds TV, computer and game hours together.</dd>
+      <dd>International open-access files for 2005/06, 2009/10 and 2013/14, about 176,000–190,000 students per year who answered every screen-time question, ages 11, 13 and 15. The academic rating is self-reported and relative to classmates, not a grade or test score. Shares are unweighted and rounded so each room adds up to 100. Each room is a different group of students, so results show an association, not cause and effect. Screen time is each student's TV, computer and game hours added together and averaged over the week (5 weekdays, 2 weekend days). Correlations are Spearman rank correlations between that average and the rating.</dd>
     </dl>
   </section>
 
