@@ -3,6 +3,24 @@
    - Fun facts / takeaways (.reveal) fade in as they scroll into view.
    - Progress bar and chapter nav follow the reader. */
 
+/* ---------- Title page: count the headline number up from 0 ---------- */
+(function () {
+  const el = document.getElementById("fNumber");
+  if (!el) return;
+  const target = +el.dataset.target, fmt = new Intl.NumberFormat("en-US");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return; // already shows the final figure
+  const dur = 1400, t0 = performance.now();
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = fmt.format(Math.round(target * e));
+    if (k < 1) requestAnimationFrame(step);
+  };
+  el.textContent = "0";
+  requestAnimationFrame(step);
+  // Animation frames pause in background tabs; the final figure still has to land.
+  setTimeout(() => { el.textContent = fmt.format(target); }, dur + 200);
+})();
+
 /* ---------- Day graphic (chapter 1) ---------- */
 const dayGrid = document.getElementById("dayGrid");
 const dayTitle = document.getElementById("dayTitle");
@@ -82,6 +100,29 @@ const stepObserver = new IntersectionObserver(entries => {
 
 document.querySelectorAll(".step").forEach(s => stepObserver.observe(s));
 
+/* ---------- Load only the visible copy of a chart (chapter 2) ---------- */
+// The APA chart has a pinned desktop copy and a normal phone copy; only one is shown at a time.
+// Hidden iframes would still load and animate, so they get data-src and load once visible.
+function loadVisibleFrames() {
+  document.querySelectorAll("iframe[data-src]").forEach(f => {
+    if (f.offsetParent !== null) { f.src = f.dataset.src; f.removeAttribute("data-src"); }
+  });
+}
+loadVisibleFrames();
+addEventListener("resize", loadVisibleFrames, { passive: true });
+
+/* ---------- Mini generation bars on fun-fact cards (chapter 2) ---------- */
+// data-gens="GenZ,Millennials,GenX,Boomers" (weighted %), drawn on a 0–100% scale.
+const GENS = ["Gen Z", "Millennials", "Gen X", "Boomers & older"];
+document.querySelectorAll("[data-gens]").forEach(card => {
+  const vals = card.dataset.gens.split(",").map(Number);
+  const box = document.createElement("div");
+  box.className = "genbars";
+  box.innerHTML = vals.map((v, i) =>
+    `<div><span>${GENS[i]}</span><i style="--v:${v};--c:var(--gen-${i})"></i><b>${Math.round(v)}%</b></div>`).join("");
+  card.appendChild(box);
+});
+
 /* ---------- Fade-in for fun facts ---------- */
 const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
@@ -91,22 +132,49 @@ const revealObserver = new IntersectionObserver(entries => {
     }
   });
 }, { threshold: 0.3 });
-document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
+document.querySelectorAll(".reveal, .lede-stack, .to-chart").forEach(el => revealObserver.observe(el));
 
 /* ---------- Resize chart frames to fit their content ---------- */
 addEventListener("message", e => {
+  // A chart asks the page to scroll to a spot inside it (e.g. Valay's Compare panel opening).
+  // The chart usually grows at the same moment, so the scroll waits for its new height (below).
+  if (e.data && e.data.type === "viz-scroll") {
+    document.querySelectorAll(".viz-frame").forEach(frame => {
+      if (frame.contentWindow !== e.source) return;
+      clearTimeout(frame._scrollTimer);
+      frame._pendingScroll = e.data.top;
+      frame._scrollTimer = setTimeout(() => scrollIntoFrame(frame), 300); // in case the height doesn't change
+    });
+    return;
+  }
   if (!e.data || e.data.type !== "viz-height") return;
   document.querySelectorAll(".viz-frame").forEach(frame => {
     if (frame.contentWindow !== e.source) return;
     frame.dataset.h = e.data.height; // full chart height
-    if (frame.closest(".viz-pin")) layoutPins(); // pinned frames are capped to the screen
+    if (frame.closest(".viz-pin")) layoutPins();
     else frame.style.height = Math.max(300, e.data.height) + "px";
+    if (frame._pendingScroll != null) { clearTimeout(frame._scrollTimer); requestAnimationFrame(() => scrollIntoFrame(frame)); }
   });
 });
 
+function scrollIntoFrame(frame) {
+  const inner = frame._pendingScroll;
+  if (inner == null) return;
+  frame._pendingScroll = null;
+  // A pinned frame's on-screen spot moves while it's stuck, so measure from where its pin starts on the page.
+  const pin = frame.closest(".viz-pin");
+  const frameTop = pin
+    ? pin.getBoundingClientRect().top + scrollY + (frame.getBoundingClientRect().top - pin.querySelector(".viz-block").getBoundingClientRect().top)
+    : frame.getBoundingClientRect().top + scrollY;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  scrollTo({ top: frameTop + inner - navH() - 8, behavior: reduce ? "auto" : "smooth" });
+}
+
 /* ---------- Pinned charts (.viz-pin) ---------- */
-// The chart sticks centered below the nav. If it's taller than the screen, its frame is
-// shrunk to fit and the reader scrolls inside the chart before the page moves on.
+// The chart holds still for a stretch of scrolling (--pin-dwell in css/style.css), then the page moves on.
+// The frame always gets the chart's full height, so nothing ever scrolls inside it:
+//   - fits the screen: it sticks centered below the nav
+//   - taller (phones): the reader scrolls through it, and it holds once its bottom reaches the screen's bottom
 const pins = [...document.querySelectorAll(".viz-pin")];
 const navH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nav-h")) || 48;
 
@@ -115,10 +183,7 @@ function layoutPins() {
     const block = pin.querySelector(".viz-block");
     const frame = block.querySelector(".viz-frame");
     const avail = innerHeight - navH();
-    if (frame && frame.dataset.h) {
-      const others = block.offsetHeight - frame.offsetHeight; // title + notes
-      frame.style.height = Math.max(300, Math.min(+frame.dataset.h, avail - others - 16)) + "px";
-    }
+    if (frame && frame.dataset.h) frame.style.height = Math.max(300, +frame.dataset.h) + "px";
     const h = block.offsetHeight;
     const top = h <= avail ? navH() + (avail - h) / 2 : innerHeight - h;
     pin.style.setProperty("--pin-h", h + "px");

@@ -81,6 +81,35 @@ h1 { font-size: clamp(56px, 11vw, 120px); font-weight: 900; letter-spacing: -.02
 .scroll-cue span { font-size: 24px; animation: bob 1.6s ease-in-out infinite; }
 @keyframes bob { 50% { transform: translateY(6px); } }
 
+/* Title page: Valay's headline finding, in his chart's type (Archivo condensed + Source Serif 4) */
+.hero-finding { max-width: 1100px; align-items: center; text-align: center; }
+.hero-finding .f-title, .hero-finding .f-subtitle, .hero-finding .f-number {
+  font-family: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  font-variation-settings: "wdth" 76; text-wrap: balance; margin: 0;
+}
+.hero-finding .f-title { font-weight: 800; font-size: clamp(1.9rem, 4.4vw, 3.2rem); line-height: 1.05; letter-spacing: 0; }
+.hero-finding .f-subtitle { font-weight: 600; font-size: clamp(1.35rem, 3vw, 2.2rem); line-height: 1.1; color: var(--ink-2); margin-top: 8px; }
+.hero-finding .f-number {
+  font-variation-settings: "wdth" 68; font-weight: 800; line-height: .95; letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums lining-nums; white-space: nowrap;
+  font-size: clamp(2.6rem, 11vw, 9.5rem); margin-top: 30px;
+}
+.hero-finding .f-label {
+  font-family: var(--serif); font-size: clamp(1.05rem, 1.7vw, 1.3rem); line-height: 1.5;
+  max-width: 48ch; margin: 14px auto 0; text-wrap: balance;
+}
+.hero-finding .f-sub {
+  font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-weight: 600; font-size: .95rem;
+  color: var(--ink-2); margin: 10px 0 0; text-wrap: balance;
+}
+.hero-finding .f-caveat {
+  font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: .8rem; line-height: 1.4;
+  color: var(--ink-2); max-width: 56ch; margin: 10px auto 0; text-wrap: balance;
+}
+.hero-finding .byline { margin: 36px 0 0; }
+.hero-finding .scroll-cue { margin-top: 28px; align-items: center; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
 /* ---------- Chapters ---------- */
 .chapter { padding: 64px 0 32px; border-top: 1px solid var(--line); }
 .chapter-head, .takeaway, .bridge-text, .summary, .sources {
@@ -193,12 +222,156 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
 .reveal.is-visible { opacity: 1; transform: none; }
 
-/* Intro lines that appear one at a time: the gap means each line scrolls in separately */
-.lede-stack .lede { margin: 0 0 30vh; }
+/* Intro lines that fly in one after another, from alternating sides, once the block is in view.
+   Each line sets --i (its order) for the delay; js/main.js adds .is-visible to the stack. */
+.lede-stack { overflow-x: clip; } /* no sideways scrollbar while lines are offscreen */
+.lede-stack .lede {
+  margin: 0 0 18px;
+  opacity: 0; transform: translateX(-80px);
+  transition: opacity .6s ease, transform .8s cubic-bezier(.2, .8, .2, 1);
+  transition-delay: calc(var(--i, 0) * .45s);
+}
+.lede-stack .lede:nth-child(even) { transform: translateX(80px); }
 .lede-stack .lede:last-child { margin-bottom: 0; }
+.lede-stack.is-visible .lede { opacity: 1; transform: none; }
+
+/* ---------- Chapter 1: Gen Z breakdown (Valay's trade-off chart) ---------- */
+.breakdown { max-width: 900px; margin: 72px auto 48px; padding: 0 16px; }
+.breakdown-dek { font-family: var(--serif); font-size: 20px; line-height: 1.5; color: var(--ink-2); max-width: 62ch; }
+.to-chart { margin: 24px 0 0; }
+.to-axis, .to-row { display: grid; grid-template-columns: 230px minmax(0, 1fr); column-gap: 12px; align-items: center; }
+.to-axis { padding: 0 6px 6px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.to-axis-labels { display: flex; justify-content: space-between; }
+.to-row { padding: 5px 6px; border-radius: 6px; cursor: default; }
+.to-row:hover, .to-row:focus-visible { background: var(--line); outline: none; }
+.to-name { font-size: 15px; font-weight: 600; line-height: 1.2; }
+.to-track { position: relative; height: 24px; }
+.to-track::before { /* zero line */
+  content: ""; position: absolute; left: 50%; top: -5px; bottom: -5px; width: 1px; background: var(--ink-2);
+}
+.to-track i {
+  position: absolute; top: 3px; bottom: 3px; width: 0; border-radius: 3px;
+  transition: width .8s cubic-bezier(.2, .8, .2, 1); transition-delay: calc(var(--i, 0) * 60ms);
+}
+.to-track b {
+  position: absolute; top: 50%; transform: translateY(-50%); white-space: nowrap;
+  font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink-2);
+  opacity: 0; transition: opacity .4s ease; transition-delay: calc(var(--i, 0) * 60ms + .5s);
+}
+.loss .to-track i { right: 50%; background: #5f6b7a; }
+.gain .to-track i { left: 50%; background: #98a3b0; }
+.loss .to-track b { right: calc(50% + var(--w) + 6px); }
+.gain .to-track b { left: calc(50% + var(--w) + 6px); }
+.to-chart.is-visible .to-track i { width: var(--w); }
+.to-chart.is-visible .to-track b { opacity: 1; }
+.to-social .to-name, .to-social .to-track b { color: var(--gen-0); font-weight: 800; }
+.to-social .to-track i { background: var(--gen-0); }
+.to-chart .viz-note { margin-top: 14px; }
+@media (max-width: 640px) {
+  .to-axis, .to-row { grid-template-columns: minmax(0, 1fr); }
+  .to-axis > span:first-child { display: none; }
+  .to-row { row-gap: 2px; }
+}
+
+/* ---------- Interlude between chapters ---------- */
+.interlude {
+  border-top: 1px solid var(--line);
+  padding: 22vh 16px;
+  text-align: center;
+}
+.interlude .lede-stack { max-width: 760px; margin: 0 auto; }
+.interlude .lede { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.35; color: var(--ink); margin-bottom: 28px; }
+.interlude .lede:last-child { margin-bottom: 0; }
+
+/* ---------- Chapter 2: APA mental health & stress (Aiden) ---------- */
+:root {
+  /* Generation colors, same as the charts (viz/aiden.html, viz/valay.html) */
+  --gen-0: #2d63c8; /* Gen Z */
+  --gen-1: #a87406; /* Millennials */
+  --gen-2: #1f7f72; /* Gen X */
+  --gen-3: #b84a24; /* Boomers & older */
+}
+.gen-z { color: var(--gen-0); }
+.gen-mill { color: var(--gen-1); }
+.gen-boomer { color: var(--gen-3); }
+
+
+/* Fun-fact steps that scroll past the chart */
+.step-fact { border-left: 4px solid var(--accent); }
+.step-fact .fact-label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.step-fact .asked {
+  font-size: 11px; letter-spacing: .06em; color: var(--ink-2);
+  border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; background: var(--paper);
+}
+/* Mini bars by generation (built from data-gens in js/main.js) */
+.genbars { display: grid; gap: 4px; margin-top: 14px; font-size: 13px; }
+.genbars div { display: grid; grid-template-columns: 112px 1fr 38px; align-items: center; gap: 8px; }
+.genbars span { color: var(--ink-2); white-space: nowrap; }
+.genbars i { display: block; height: 10px; border-radius: 3px; width: calc(var(--v) * 1%); background: var(--c); }
+.genbars b { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Phones and small windows: full chart as a normal block, steps as a plain list of cards */
+.apa-scrolly .sticky { display: none; }
+.apa-scrolly .steps {
+  margin: 0 auto; padding: 0 16px; max-width: 680px; pointer-events: auto;
+}
+.apa-scrolly .step { margin-bottom: 20px; opacity: 1; }
+.apa-scrolly { margin: 24px 0 48px; }
+
+/* Desktop: chart pinned on the right, steps scroll past on the left */
+@media (min-width: 1000px) and (min-height: 640px) {
+  .apa-flow { display: none; }
+  .apa-scrolly { margin: 48px 0; }
+  .apa-scrolly .sticky { display: grid; padding: 0 16px 0 calc(400px + 4vw + 24px); }
+  .apa-scrolly .steps {
+    margin: calc(-100vh + var(--nav-h)) 0 0 4vw;
+    padding: 40vh 0 50vh; max-width: 400px; pointer-events: none;
+  }
+  .apa-scrolly .step { margin-bottom: 55vh; opacity: .35; }
+  .apa-scrolly .step.is-active { opacity: 1; }
+  .apa-scrolly .step:last-child { margin-bottom: 0; }
+}
+
+/* Hours online vs. how it feels */
+.versus { max-width: 1000px; margin: 64px auto; padding: 0 16px; }
+.versus-dek { color: var(--ink-2); }
+.versus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+.versus-panel {
+  margin: 0; padding: 18px 20px; background: #fff;
+  border: 1px solid var(--line); border-radius: 12px;
+}
+.versus-panel figcaption { font-size: 16px; margin-bottom: 14px; min-height: 2.8em; }
+.hbar { display: grid; grid-template-columns: 136px 1fr 44px; align-items: center; gap: 10px; margin: 8px 0; font-size: 15px; }
+.hbar span { color: var(--ink-2); }
+.hbar i {
+  display: block; height: 18px; border-radius: 4px; background: var(--accent);
+  width: calc(var(--v) / 40 * 100%); /* shared 0–40% scale for both panels */
+}
+.hbar b { text-align: right; font-variant-numeric: tabular-nums; }
+.hbar-group { font-size: 13px; font-weight: 700; color: var(--ink-2); margin: 12px 0 0; }
+.hbar-group:first-of-type { margin-top: 0; }
+@media (max-width: 720px) {
+  .versus-grid { grid-template-columns: 1fr; }
+  .versus-panel figcaption { min-height: 0; }
+  .hbar { grid-template-columns: 120px 1fr 40px; font-size: 14px; }
+}
 
 /* ---------- Summary, sources, footer ---------- */
 .summary { padding-top: 80px; padding-bottom: 48px; border-top: 1px solid var(--line); }
+.summary > p { font-family: var(--serif); font-size: 20px; line-height: 1.55; color: var(--ink-2); }
+.summary .summary-close {
+  font-weight: 700; color: var(--ink); font-size: clamp(22px, 3vw, 28px); line-height: 1.4;
+  border-top: 3px solid var(--ink); padding-top: 16px; margin-top: 32px;
+}
+/* One recap card per chapter */
+.recap { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 8px 0 40px; }
+.recap-item { background: #fff; border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: 10px; padding: 16px 18px; }
+.recap-item p { font-size: 15px; line-height: 1.45; color: var(--ink-2); margin: 0; }
+.recap-item .recap-label { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.recap-item .recap-num { font-family: var(--serif); font-weight: 900; font-size: 26px; line-height: 1.1; color: var(--ink); margin-bottom: 8px; }
+.recap-item:nth-child(2) { transition-delay: .12s; }
+.recap-item:nth-child(3) { transition-delay: .24s; }
+@media (max-width: 720px) { .recap { grid-template-columns: 1fr; } }
 .sources { padding-top: 48px; padding-bottom: 64px; }
 .sources h2 { font-size: 32px; }
 .sources dt { font-weight: 700; margin-top: 20px; }
@@ -216,6 +389,6 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal, .step, .day-grid div { transition: none; }
+  .reveal, .step, .day-grid div, .lede-stack .lede, .to-track i, .to-track b { transition: none; }
   .scroll-cue span { animation: none; }
 }

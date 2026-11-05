@@ -9,6 +9,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700;8..60,900&family=Source+Sans+3:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="theme.css">
+<script>
+  // "?embed=sticky": compact layout for the pinned chart on the story page (both years stacked, no title or table).
+  if (new URLSearchParams(location.search).get("embed") === "sticky") document.documentElement.classList.add("embed-sticky");
+</script>
 <style>
 /* Layout: a survey "instrument" — step rail on top, two answer fields side by side (2018 | 2024), table readout below. */
 :root {
@@ -205,6 +209,15 @@ td.hl { font-weight: 600; }
 
 .notes { color: var(--ink-3); font-size: 13px; max-width: 80ch; display: grid; gap: 6px; }
 .notes p { margin: 0; }
+
+/* Compact mode for the sticky chart on the story page: everything fits in one screen */
+.embed-sticky header, .embed-sticky .readout, .embed-sticky .notes { display: none; }
+.embed-sticky .wrap { padding: 10px 12px; gap: 10px; }
+.embed-sticky .panels { grid-template-columns: 1fr; gap: 10px; }
+.embed-sticky .panel { padding: 10px 14px 4px; gap: 2px; }
+.embed-sticky .year { font-size: 24px; }
+.embed-sticky .question { min-height: 0; font-size: 14px; }
+.embed-sticky .field { height: max(170px, calc((100vh - 300px) / 2)); }
 </style>
 
 </head>
@@ -279,14 +292,15 @@ td.hl { font-weight: 600; }
     b.type = "button";
     b.setAttribute("aria-pressed", "false");
     b.innerHTML = `<span class="swatch" style="background:var(--gen-${i})"></span>${g} <span class="ages">${GEN_AGES[i]}</span>`;
-    b.addEventListener("click", () => {
-      highlight = highlight === i ? null : i;
-      legend.querySelectorAll("button").forEach((el, j) => el.setAttribute("aria-pressed", String(highlight === j)));
-      renderTable();
-      panels.forEach((p) => p.draw());
-    });
+    b.addEventListener("click", () => setHighlight(highlight === i ? null : i));
     legend.appendChild(b);
   });
+  function setHighlight(i) {
+    highlight = i;
+    legend.querySelectorAll("button").forEach((el, j) => el.setAttribute("aria-pressed", String(highlight === j)));
+    renderTable();
+    panels.forEach((p) => p.draw());
+  }
 
   // ---------- Panels ----------
   const panelsEl = document.getElementById("panels");
@@ -327,7 +341,7 @@ td.hl { font-weight: 600; }
       canvas.width = Math.round(W * dpr);
       canvas.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      r = Math.max(1.6, Math.min(3, W / 200));
+      r = Math.max(1.6, Math.min(3, W / 200, H / 85)); // shrink dots in short fields so the pies still fit
       sim.force("collide").radius(r + 0.7);
     }
 
@@ -514,6 +528,16 @@ td.hl { font-weight: 600; }
   document.fonts?.ready.then(() => panels.forEach((p) => p.draw()));
   go(0);
   schedule();
+
+  // Story page control (sticky chart): { q: question index, gen: generation index or null }.
+  // Any message stops autoplay so the chart matches the text beside it.
+  addEventListener("message", (e) => {
+    const m = e.data;
+    if (!m || m.type !== "viz-state" || (m.q == null && m.gen === undefined)) return;
+    stop();
+    if (m.gen !== undefined && m.gen !== highlight) setHighlight(m.gen);
+    if (m.q != null && m.q !== step) go(m.q);
+  });
 })();
 </script>
 <script src="bridge.js"></script>

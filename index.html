@@ -6,7 +6,7 @@
   <title>Screened Out</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -20,11 +20,17 @@
     <a href="#sources" data-chapter="sources">Sources</a>
   </nav>
 
-  <!-- ================= HERO ================= -->
-  <header class="hero">
-    <p class="kicker">A data story</p>
-    <h1>Screentime Project</h1>
-    <p class="dek">How much of our day goes to screens, and what does it cost our minds and our grades?</p>
+  <!-- ================= HERO (Valay's headline finding) =================
+       From Valay's time-use chart (viz/valay.html). Gen Z 2023–25 vs Millennials 2004–06, both ages 15–25,
+       socializing in person: 17.06 fewer minutes a day × 365 ÷ 60 × 48.7 million Gen Zers = 5,059,182,758 hours a year.
+       js/main.js counts the number up from 0 to data-target. -->
+  <header class="hero hero-finding">
+    <h1 class="f-title">Gen Z Is Spending Less Time Together</h1>
+    <p class="f-subtitle">And it's costing them their minds &amp; grades</p>
+    <p class="f-number" id="fNumber" data-target="5059182758" aria-hidden="true">5,059,182,758</p>
+    <p class="f-label"><span class="sr-only">5,059,182,758 </span>fewer hours a year of in-person socializing across all 49 million Gen Zers ages 15–25, compared with Millennials at the same age</p>
+    <p class="f-sub">≈ 17 fewer minutes a day per person · about 104 hours a year each</p>
+    <p class="f-caveat">Compared at the same life stage. ATUS doesn't measure phone scrolling, and other changes besides screens may contribute.</p>
     <p class="byline">By Valay, Aiden, Eli &amp; Hector</p>
     <div class="scroll-cue" aria-hidden="true">Scroll<span>↓</span></div>
   </header>
@@ -80,61 +86,172 @@
       <p>The survey doesn't directly measure phone scrolling or social media, so real screen time is likely <strong>even higher</strong>.</p>
     </aside>
 
-    <!-- .viz-pin holds the chart still for a stretch of scrolling, so readers pause on it.
-         Wrap any other .viz-block the same way to pin it too. -->
+    <!-- Explore the data (Valay): the main viz. .viz-pin holds it still for a stretch of scrolling so readers
+         pause on it, then the page moves on. The frame is always full height, so nothing scrolls inside it. -->
     <div class="viz-pin">
       <div class="viz-block">
-        <h3>A day in the life, by generation</h3>
-        <iframe class="viz-frame" src="viz/valay.html" title="American Time Use: a day in the life, by generation"></iframe>
+        <iframe class="viz-frame" src="viz/valay.html" title="Explore the data: how each generation of Americans spends its day, from the American Time Use Survey"></iframe>
         <p class="viz-note">Source: American Time Use Survey, U.S. Bureau of Labor Statistics. Chart by Valay.</p>
         <p class="pin-hint">Take a moment to explore the chart. Keep scrolling when you're ready.</p>
       </div>
     </div>
 
-    <div class="takeaway reveal">
-      <!-- TODO (Valay): concluding remark -->
-      <p>[Valay — concluding remark that leads into the effects of all this screen time.]</p>
+    <!-- Gen Z breakdown (Valay). Moved out of his chart so it's part of the page scroll.
+         Gen Z 2023–25 vs Millennials 2004–06, both ages 15–25, minutes per person per day, from his data.json.
+         Activities that differ by under 5 minutes are combined into "Everything else", as in his chart.
+         Bar widths: gap ÷ largest gap (30.5 min) × 36% of the track, as in his chart. Bars grow in when scrolled into view (js/main.js). -->
+    <div class="breakdown">
+      <h3>What Gen Z does more of, and less of</h3>
+      <p class="breakdown-dek">Those 17 fewer minutes of socializing didn't vanish. Everyone gets 24 hours, so time lost in one place shows up somewhere else. Here's how Gen Z's day compares with Millennials' at the same age.</p>
+      <figure class="to-chart">
+        <div class="to-axis" aria-hidden="true"><span></span><span class="to-axis-labels"><span>← Less time</span><span>More time →</span></span></div>
+        <div role="list" aria-label="Minutes a day, Gen Z compared with Millennials at ages 15 to 25">
+          <div class="to-row loss" role="listitem" tabindex="0" title="Watching TV: Gen Z 110.4 min, Millennials 138.4 min a day (−28.0 min)" aria-label="Watching TV: Gen Z 110.4 min, Millennials 138.4 min a day (−28.0 min)" style="--w:33.0%;--i:0"><span class="to-name">Watching TV</span><span class="to-track"><i></i><b>−28 m</b></span></div>
+          <div class="to-row loss to-social" role="listitem" tabindex="0" title="Socializing in person: Gen Z 32.4 min, Millennials 49.4 min a day (−17.1 min)" aria-label="Socializing in person: Gen Z 32.4 min, Millennials 49.4 min a day (−17.1 min)" style="--w:20.1%;--i:1"><span class="to-name">Socializing in person</span><span class="to-track"><i></i><b>−17 m</b></span></div>
+          <div class="to-row loss" role="listitem" tabindex="0" title="Travel: Gen Z 64.2 min, Millennials 77.7 min a day (−13.5 min)" aria-label="Travel: Gen Z 64.2 min, Millennials 77.7 min a day (−13.5 min)" style="--w:15.9%;--i:2"><span class="to-name">Travel</span><span class="to-track"><i></i><b>−14 m</b></span></div>
+          <div class="to-row loss" role="listitem" tabindex="0" title="Other leisure: Gen Z 16.1 min, Millennials 25.4 min a day (−9.3 min)" aria-label="Other leisure: Gen Z 16.1 min, Millennials 25.4 min a day (−9.3 min)" style="--w:11.0%;--i:3"><span class="to-name">Other leisure</span><span class="to-track"><i></i><b>−9 m</b></span></div>
+          <div class="to-row loss" role="listitem" tabindex="0" title="Purchasing goods and services: Gen Z 17.1 min, Millennials 25.0 min a day (−7.9 min)" aria-label="Purchasing goods and services: Gen Z 17.1 min, Millennials 25.0 min a day (−7.9 min)" style="--w:9.3%;--i:4"><span class="to-name">Purchasing goods and services</span><span class="to-track"><i></i><b>−8 m</b></span></div>
+          <div class="to-row loss" role="listitem" tabindex="0" title="Everything else: Gen Z 457.0 min, Millennials 464.1 min a day (−7.1 min)" aria-label="Everything else: Gen Z 457.0 min, Millennials 464.1 min a day (−7.1 min)" style="--w:8.4%;--i:5"><span class="to-name">Everything else</span><span class="to-track"><i></i><b>−7 m</b></span></div>
+          <div class="to-row gain" role="listitem" tabindex="0" title="Playing games: Gen Z 52.7 min, Millennials 22.2 min a day (+30.5 min)" aria-label="Playing games: Gen Z 52.7 min, Millennials 22.2 min a day (+30.5 min)" style="--w:36.0%;--i:6"><span class="to-name">Playing games</span><span class="to-track"><i></i><b>+31 m</b></span></div>
+          <div class="to-row gain" role="listitem" tabindex="0" title="Sleep: Gen Z 584.4 min, Millennials 555.3 min a day (+29.1 min)" aria-label="Sleep: Gen Z 584.4 min, Millennials 555.3 min a day (+29.1 min)" style="--w:34.3%;--i:7"><span class="to-name">Sleep</span><span class="to-track"><i></i><b>+29 m</b></span></div>
+          <div class="to-row gain" role="listitem" tabindex="0" title="Household activities: Gen Z 65.4 min, Millennials 55.8 min a day (+9.6 min)" aria-label="Household activities: Gen Z 65.4 min, Millennials 55.8 min a day (+9.6 min)" style="--w:11.4%;--i:8"><span class="to-name">Household activities</span><span class="to-track"><i></i><b>+10 m</b></span></div>
+          <div class="to-row gain" role="listitem" tabindex="0" title="Computer use for leisure: Gen Z 22.6 min, Millennials 15.3 min a day (+7.4 min)" aria-label="Computer use for leisure: Gen Z 22.6 min, Millennials 15.3 min a day (+7.4 min)" style="--w:8.7%;--i:9"><span class="to-name">Computer use for leisure</span><span class="to-track"><i></i><b>+7 m</b></span></div>
+          <div class="to-row gain" role="listitem" tabindex="0" title="Relaxing and thinking: Gen Z 17.8 min, Millennials 11.5 min a day (+6.3 min)" aria-label="Relaxing and thinking: Gen Z 17.8 min, Millennials 11.5 min a day (+6.3 min)" style="--w:7.4%;--i:10"><span class="to-name">Relaxing and thinking</span><span class="to-track"><i></i><b>+6 m</b></span></div>
+        </div>
+        <figcaption class="viz-note">Minutes per person per day, Gen Z (2023–25) vs Millennials (2004–06), ages 15–25. Gains and losses balance because everyone has 24 hours. Activities that differ by less than 5 minutes are combined into “Everything else.” Source: American Time Use Survey. Chart by Valay.</figcaption>
+      </figure>
     </div>
+
   </section>
 
-  <!-- ================= CHAPTER 2: MIND (Aiden + Eli) ================= -->
+  <!-- ================= CHAPTER 2: MIND (Aiden) ================= -->
   <section class="chapter" id="mind" data-chapter="mind">
     <div class="chapter-head">
       <p class="chapter-num">Chapter 2</p>
       <h2>What it does to our minds</h2>
-      <!-- TODO (Aiden): intro to section -->
-      <!-- Each line fades in on its own as you scroll (see .lede-stack in css/style.css) -->
+      <!-- Intro (Aiden). When the block scrolls into view, the lines fly in one after another
+           from alternating sides (see .lede-stack in css/style.css). -->
       <div class="lede-stack">
-        <p class="lede reveal">The effect of screen time is not negligible at all.</p>
-        <p class="lede reveal">Especially for younger individuals with developing brains.</p>
-        <p class="lede reveal">A few of the many effects can be seen in an individual's mental health, stress, and their academics.</p>
+        <p class="lede" style="--i:0">More than <strong>three hours a day</strong> on screens for fun, and that's before counting most of the time spent scrolling on phones.</p>
+        <p class="lede" style="--i:1">By 2024, <strong>58%</strong> of Gen Z adults said they're online <strong>“almost constantly.”</strong></p>
+        <p class="lede" style="--i:2">So what has all that time done to how we feel?</p>
+        <p class="lede" style="--i:3">The American Psychological Association asked Americans the same two questions in 2018 and 2024: <em>How is your mental health?</em> and <em>How stressed are you?</em> Here's how each generation answered.</p>
       </div>
     </div>
 
-    <div class="viz-block">
+    <!-- APA chart. Desktop: the chart stays pinned while the steps scroll past it.
+         Phones and small windows: the full chart shows as a normal block (.apa-flow) and the steps follow as cards. -->
+    <div class="viz-block apa-flow">
       <h3>Mental health and stress, 2018 vs. 2024, by generation</h3>
-      <iframe class="viz-frame" src="viz/aiden.html" title="Mental health across time: how each generation rated its mental health and stress in 2018 and 2024" loading="lazy"></iframe>
+      <iframe class="viz-frame" data-src="viz/aiden.html" title="Mental health across time: how each generation rated its mental health and stress in 2018 and 2024" loading="lazy"></iframe>
       <p class="viz-note">Source: American Psychological Association, Stress in America survey, 2018 and 2024. Chart by Aiden.</p>
     </div>
 
-    <aside class="fact reveal right">
-      <p class="fact-label">Fun fact</p>
-      <p>[Aiden or Eli — fun fact from your dataset.]</p>
-    </aside>
+    <div class="scrolly apa-scrolly" data-kind="frame">
+      <div class="sticky">
+        <iframe class="sticky-frame" data-src="viz/aiden.html?embed=sticky" title="Mental health across time: how each generation rated its mental health and stress in 2018 and 2024" loading="lazy"></iframe>
+      </div>
+      <div class="steps">
+        <!-- Chart steps: data-state goes to the chart. q = question (0 mental health, 1 stress), gen = highlighted generation (0 Gen Z … 3 Boomers & older, null = all).
+             Fact steps (.step-fact) just clear the highlight. Their bars come from data-gens: Gen Z, Millennials, Gen X, Boomers & older (weighted %).
+             All numbers: APA Stress in America respondent files, weighted, adults 18+ unless marked teens. -->
+        <div class="step" data-state='{"q":0,"gen":null}'>
+          <p>Each dot is about <strong>1 in 800 U.S. adults</strong>, colored by generation. The top field is 2018 and the bottom is 2024.</p>
+          <p>Both years asked: <em>“In general, would you say your mental health is excellent, very good, good, fair or poor?”</em> Across all adults, fair or poor rose from <strong>15% to 21%</strong>.</p>
+        </div>
+        <div class="step" data-state='{"gen":0}'>
+          <p><strong class="gen-z">Gen Z</strong> reports the worst mental health of any generation. In 2018, <strong>32%</strong> of Gen Z adults called their mental health fair or poor. By 2024 it was <strong>39%</strong>, and only 30% said very good or excellent.</p>
+        </div>
+        <div class="step" data-state='{"gen":1}'>
+          <p><strong class="gen-mill">Millennials</strong> had the biggest rise: fair or poor nearly doubled, from <strong>15% to 27%</strong>.</p>
+        </div>
+        <div class="step" data-state='{"gen":3}'>
+          <p>Compare <strong class="gen-boomer">Boomers &amp; older</strong>: fair or poor went from <strong>6% to 9%</strong>, and 62% still say very good or excellent.</p>
+        </div>
 
-    <div class="bridge-text reveal">
-      <p>[Aiden — one or two sentences that hand off to Eli's chart.]</p>
+        <div class="step step-fact" data-state='{"gen":null}' data-gens="45.6,34.3,24.2,17.1">
+          <p class="fact-label">Fun fact <span class="asked">Asked only in 2024</span></p>
+          <p><strong>46%</strong> of Gen Z adults say they've <strong>lost hours to screens without meaning to</strong>, and 73% say they fill time scrolling social media without realizing it.</p>
+        </div>
+        <div class="step step-fact" data-state='{"gen":null}' data-gens="41.9,31.6,14.4,5.2">
+          <p class="fact-label">Fun fact <span class="asked">Asked only in 2024</span></p>
+          <p><strong>42%</strong> of Gen Z adults say they <strong>use their phone to avoid people</strong>. Among Boomers &amp; older, 5% do.</p>
+        </div>
+
+        <div class="step" data-state='{"q":1,"gen":null}'>
+          <p>Now stress: <em>“On a scale of 1 to 10, how would you rate your average level of stress during the past month?”</em></p>
+          <p>Across all adults, the share at 8–10 barely moved, from <strong>19% to 22%</strong>.</p>
+        </div>
+        <div class="step" data-state='{"gen":0}'>
+          <p>But <strong class="gen-z">Gen Z</strong>'s high-stress share rose from <strong>23% to 31%</strong>, the biggest jump of any generation. Boomers &amp; older stayed at 11%.</p>
+        </div>
+
+        <div class="step step-fact" data-state='{"gen":null}' data-gens="43.1,31.7,21.2,6.7">
+          <p class="fact-label">Fun fact <span class="asked">Asked only in 2018</span></p>
+          <p><strong>43%</strong> of Gen Z adults said they check social media <strong>“constantly”</strong>. Only 7% of Boomers &amp; older did.</p>
+        </div>
+        <div class="step step-fact" data-state='{"gen":null}'>
+          <p class="fact-label">Fun fact <span class="asked">Teens 15–17, 2018 only</span></p>
+          <p>The 2018 survey also asked teens. <strong>39%</strong> said <strong>how they're seen on social media</strong> is a significant source of stress in their lives, and 41% check social media constantly.</p>
+        </div>
+        <div class="step step-fact" data-state='{"gen":null}' data-gens="41.6,29.1,16.1,4.3">
+          <p class="fact-label">Fun fact <span class="asked">Asked only in 2024</span></p>
+          <p><strong>42%</strong> of Gen Z adults say they <strong>compare themselves to others</strong> on social media. Among them, 51% rate their mental health fair or poor, compared with 30% of Gen Z who don't compare.</p>
+        </div>
+        <div class="step step-fact" data-state='{"gen":null}'>
+          <p class="fact-label">Fun fact <span class="asked">Asked only in 2018</span></p>
+          <p>Social media cuts both ways. In 2018, <strong>55%</strong> of Gen Z adults said it makes them <strong>feel supported</strong>, and <strong>52%</strong> said it makes them <strong>feel judged</strong>. About 1 in 3 said both.</p>
+        </div>
+        <div class="step step-fact" data-state='{"gen":null}' data-gens="44.0,30.2,17.8,11.7">
+          <p class="fact-label">Fun fact <span class="asked">Asked 2016–2018</span></p>
+          <p>When stressed, <strong>44%</strong> of Gen Z adults <strong>play video games</strong> to cope. Among teens 15–17, it's more than half (52%).</p>
+        </div>
+
+        <div class="step" data-state='{"gen":null}'>
+          <p>Your turn: tap a generation or a question on the chart to explore it yourself.</p>
+        </div>
+      </div>
     </div>
 
-    <div class="viz-block">
-      <h3>[Eli — chart title: screen time and depression]</h3>
-      <iframe class="viz-frame" src="viz/eli.html" title="Screen time and depression visualization" loading="lazy"></iframe>
-      <p class="viz-note">Source: [Eli — dataset name]</p>
+    <!-- Linking it back to screens: stress and mental health split by screen habits, APA survey, adults 18+, weighted. -->
+    <div class="versus">
+      <h3>Can we link it back to screens?</h3>
+      <p class="versus-dek">Split people by their screen habits, and the heaviest users report the most stress, in both surveys.</p>
+      <div class="versus-grid">
+        <figure class="versus-panel">
+          <figcaption><strong>2018:</strong> high stress (8–10), by how often people check social media</figcaption>
+          <div class="hbar"><span>Never / rarely</span><i style="--v:15.3"></i><b>15%</b></div>
+          <div class="hbar"><span>Sometimes</span><i style="--v:14.9"></i><b>15%</b></div>
+          <div class="hbar"><span>Often</span><i style="--v:17.5"></i><b>18%</b></div>
+          <div class="hbar"><span>Constantly</span><i style="--v:27.2"></i><b>27%</b></div>
+        </figure>
+        <figure class="versus-panel">
+          <figcaption><strong>2024:</strong> by whether people say they've <strong>lost hours to screens</strong> without meaning to</figcaption>
+          <p class="hbar-group">High stress (8–10)</p>
+          <div class="hbar"><span>Haven't</span><i style="--v:17.4"></i><b>17%</b></div>
+          <div class="hbar"><span>Have</span><i style="--v:31.8"></i><b>32%</b></div>
+          <p class="hbar-group">Fair or poor mental health</p>
+          <div class="hbar"><span>Haven't</span><i style="--v:17.4"></i><b>17%</b></div>
+          <div class="hbar"><span>Have</span><i style="--v:31.7"></i><b>32%</b></div>
+        </figure>
+      </div>
+      <p class="viz-note">APA Stress in America, adults 18+, weighted: 2018 (3,727 adults answered the checking question) and 2024 (3,936 adults). Both panels use the same scale. In 2018, plain hours online showed a smaller link: 18% of people online under 5 hours a week had high stress, against 21% at 20+ hours. These are links, not proof that screens cause stress: people who are already struggling may also turn to their phones more.</p>
     </div>
 
     <div class="takeaway reveal">
-      <!-- TODO (Aiden): closing remark -->
-      <p>[Aiden — closing remark. Lead into real-world effects like school.]</p>
+      <p>More time on screens goes hand in hand with more stress and worse mental health, and the youngest adults, who report the heaviest screen habits, also report the most stress. A survey can't prove screens are the cause, but the link keeps showing up.</p>
+    </div>
+  </section>
+
+  <!-- ================= INTERLUDE: Chapter 2 -> 3 =================
+       Points back to Chapter 1's screen hours, so school reads as a second effect of that time
+       alongside Chapter 2's mental health and stress. Not a chapter, so it has no nav link.
+       Lines fly in like the Chapter 2 intro (.lede-stack). -->
+  <section class="interlude" aria-label="Transition to Chapter 3">
+    <div class="lede-stack">
+      <p class="lede" style="--i:0">Those three-plus hours of screens a day don't only show up in how we feel.</p>
+      <p class="lede" style="--i:1">For students, they share the day with homework, reading and sleep.</p>
+      <p class="lede" style="--i:2"><strong>So do they show up in the classroom, too?</strong></p>
     </div>
   </section>
 
@@ -199,8 +316,30 @@
   <!-- ================= SUMMARY ================= -->
   <section class="summary">
     <h2>What it adds up to</h2>
-    <!-- TODO (group): final summary -->
-    <p>[Group — final summary tying together time, mental health and school.]</p>
+    <!-- DRAFT (Aiden) for the group to edit. One recap line per chapter, then the takeaway.
+         Every number is from a chapter above. -->
+    <div class="recap">
+      <div class="recap-item reveal">
+        <p class="recap-label">Time</p>
+        <p class="recap-num">3 h 10 m</p>
+        <p>a day on screens for fun, nearly as much as work and school. Gen Z spends 17 fewer minutes a day with people in person than Millennials did at the same age.</p>
+      </div>
+      <div class="recap-item reveal">
+        <p class="recap-label">Mind</p>
+        <p class="recap-num">32% → 39%</p>
+        <p>of Gen Z adults rated their mental health fair or poor, 2018 to 2024. Adults who said they check social media constantly, or lose hours to screens without meaning to, were more likely to report high stress.</p>
+      </div>
+      <div class="recap-item reveal">
+        <p class="recap-label">School</p>
+        <p class="recap-num">Same direction</p>
+        <p>in almost every year and screen type: students with more screen time got lower ratings for their schoolwork.</p>
+      </div>
+    </div>
+    <p>Put the three chapters side by side and they tell one story. Screens take up more than three hours of the average American's day, nearly as much as work and school, and the generation that grew up with them spends less time together in person. By 2024, that same generation reported the worst mental health and the highest stress of any generation, and both had gotten worse since 2018. In the classroom, students who spend more time on screens tend to rate their schoolwork lower.</p>
+    <p>Small daily changes add up. Gen Z spends about 17 fewer minutes a day with people in person than Millennials did at the same age. For one person, that's about 104 hours a year, more than four full days. Multiply it across all 49 million Gen Zers ages 15 to 25, and it comes to about 5 billion fewer hours a year spent together.</p>
+    <!-- Numbers from Valay's data: 17.06 min/day × 365 ÷ 60 = 103.8 h/year (4.3 days); × 48.7 million = 5.06 billion h/year. -->
+    <p>None of this proves screens are the cause. Every number here comes from surveys where people describe their own lives, and each link is small on its own. But three different surveys, covering students and adults, keep pointing the same way: more time on screens, less time together, more stress and weaker schoolwork.</p>
+    <p class="summary-close">Three hours a day is a big part of a life. The data can't say screens explain everything that's changed, but it's hard to look at all three chapters and call those hours free.</p>
   </section>
 
   <!-- ================= SOURCES ================= -->
@@ -211,10 +350,7 @@
       <dd>U.S. Bureau of Labor Statistics, activity summary file, 2003–25 (<a href="https://www.bls.gov/tus/">bls.gov/tus</a>). Periods are 3-year averages: 2004–06, 2014–16 and 2023–25. People coded 85 and older are excluded. Generations follow Pew Research Center definitions (2019), and population weights come from U.S. Census Bureau July 1 estimates. Phone calls are voice calls only. The survey does not directly measure smartphone or social media scrolling, so screen time is undercounted. Differences between generations partly reflect age and life stage.</dd>
 
       <dt>APA Stress in America</dt>
-      <dd>American Psychological Association survey of U.S. adults 18 and older, 2018 (3,858 adults) and 2024 (3,936 adults), weighted. Both years asked the same mental health and stress questions with the same wording. In the chart, each year shows 800 adults drawn in proportion to the survey weights, so one dot stands for about 1 in 800 U.S. adults; percentages come from the full weighted surveys. Generations use fixed birth years: Gen Z 1997–2012, Millennials 1981–1996, Gen X 1965–1980, Boomers &amp; older 1964 and earlier. The 2018 and 2024 respondents are different people. [Aiden — add anything else from the white paper.]</dd>
-
-      <dt>[Eli — dataset name]</dt>
-      <dd>[Eli — description from the white paper.]</dd>
+      <dd>American Psychological Association survey of U.S. adults 18 and older, 2018 (3,858 adults) and 2024 (3,936 adults), weighted. Both years asked the same mental health and stress questions with the same wording. In the chart, each year shows 800 adults drawn in proportion to the survey weights, so one dot stands for about 1 in 800 U.S. adults; percentages come from the full weighted surveys. Generations use fixed birth years: Gen Z 1997–2012, Millennials 1981–1996, Gen X 1965–1980, Boomers &amp; older 1964 and earlier. The 2018 and 2024 respondents are different people. The fun facts use questions that were asked in only one survey year (2016–2018 or 2024), or only of the 2018 teen sample (692 teens aged 15–17, weighted separately from adults), so they can't be compared across years. “Boomers &amp; older” includes the Silent Generation. All answers are self-reported: the survey measures how people rate their own stress and mental health, not clinical diagnoses, and its social media questions ask how people feel about their use rather than measuring it. Links between answers show association, not cause and effect.</dd>
 
       <dt>Health Behaviour in School-aged Children (HBSC)</dt>
       <dd>International open-access files for 2005/06, 2009/10 and 2013/14, about 176,000–190,000 students per year who answered every screen-time question, ages 11, 13 and 15. The academic rating is self-reported and relative to classmates, not a grade or test score. Shares are unweighted and rounded so each room adds up to 100. Each room is a different group of students, so results show an association, not cause and effect. Screen time is each student's TV, computer and game hours added together and averaged over the week (5 weekdays, 2 weekend days). Correlations are Spearman rank correlations between that average and the rating.</dd>

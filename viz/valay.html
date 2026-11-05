@@ -1,19 +1,24 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
+<!-- Valay's chart. Copied from the "Time Use Viz" folder (index.html there, built by prep.py) with site changes:
+     the headline figure moved to the story page's title section and the trade-off chart to Chapter 1, page background matches the story page,
+     buttons scroll only inside this frame, and bridge.js lets the story page size the frame. -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>American Time Use</title>
+<script>if (window.parent !== window) document.documentElement.classList.add("in-frame");</script>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="How Americans 15 and older spend their 24 hours, by generation, from the American Time Use Survey.">
+<meta name="description" content="Gen Z is spending less time together: how Americans 15 and older spend their day, by generation, from the American Time Use Survey.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&display=swap">
 <style>
-/* Layout: a survey "almanac" plate. Activities rail on the left, the day's total as one
-   condensed hero figure in the centre, generations as a colour key beneath it, year dial,
-   unit switch and Compare in the right column. "Your comparison" sits under the hero on the
-   same page; the Compare selection screen replaces the plate (hash route). */
+/* Layout: two zones. "The finding" is a fixed argument at the top with no controls: thesis, hero
+   figure, trade-off chart. "Explore the data" below it is the free tool: activities rail, Measure
+   row and explorer figure in the centre, year and Compare on the right. */
 :root {
-  --paper: #f2f4f6;
+  --paper: #fbfaf7; /* story page background (css/style.css) */
   --panel: #e6eaee;
   --ink: #151a21;
   --ink-2: #4a5360;
@@ -22,6 +27,8 @@
   --on-ink: #f2f4f6;
   --on-accent: #ffffff;
   --accent-b: #b3195f;
+  --bar-loss: #5f6b7a;
+  --bar-gain: #98a3b0;
 
   --silent: #7a5aa8;
   --boomers: #b84a24;
@@ -33,21 +40,6 @@
   --body: "Source Serif 4", Georgia, "Times New Roman", serif;
   --ui: "Archivo", "Helvetica Neue", Arial, sans-serif;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #10141a; --panel: #1a2029; --ink: #e9edf2; --ink-2: #a3adba; --rule: #2e3742;
-    --accent: #8fb0ff; --on-ink: #10141a; --on-accent: #10141a; --accent-b: #f07ab0;
-    --silent: #b79ae6; --boomers: #f08a62; --genx: #4fc4b2; --millennials: #e3b448; --genz: #79a3f5;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #10141a; --panel: #1a2029; --ink: #e9edf2; --ink-2: #a3adba; --rule: #2e3742;
-  --accent: #8fb0ff; --on-ink: #10141a; --on-accent: #10141a; --accent-b: #f07ab0;
-  --silent: #b79ae6; --boomers: #f08a62; --genx: #4fc4b2; --millennials: #e3b448; --genz: #79a3f5;
-  color-scheme: dark;
-}
-
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { background: var(--paper); color: var(--ink); }
@@ -57,43 +49,79 @@ body {
   line-height: 1.5;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 20px 40px;
+  padding-block: 8px 24px;
 }
 button, input { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 
 .wrap { max-width: 1240px; margin: 0 auto; }
 
+/* ---- zone 1: the finding */
+.finding { text-align: center; }
+.f-head h1 {
+  font-family: var(--display); font-variation-settings: "wdth" 76; font-weight: 800;
+  font-size: clamp(1.7rem, 4vw, 2.8rem); line-height: 1.05; margin: 0; text-wrap: balance;
+}
+.f-subtitle {
+  font-family: var(--display); font-variation-settings: "wdth" 76; font-weight: 600;
+  font-size: clamp(1.3rem, 3vw, 2.1rem); line-height: 1.1; color: var(--ink-2);
+  margin: 8px auto 0; text-wrap: balance;
+}
+.number.f-number { font-size: clamp(2.6rem, 11vw, 9.5rem); margin-top: 30px; }
+.f-label { max-width: 48ch; }
+
+/* trade-off chart */
+.tradeoff { margin: 0 auto; max-width: 880px; text-align: left; }
+.tradeoff h2 { font-family: var(--display); font-variation-settings: "wdth" 80; font-weight: 800; font-size: 1.3rem; margin: 0; }
+.tradeoff figcaption p { font-family: var(--ui); font-size: .85rem; color: var(--ink-2); margin: 6px 0 0; max-width: 72ch; }
+.to-axis, .to-row { display: grid; grid-template-columns: 250px minmax(0, 1fr); column-gap: 12px; align-items: center; }
+.to-axis { margin-top: 14px; font-family: var(--ui); font-size: .75rem; font-weight: 700; color: var(--ink-2); }
+.to-axis > div:last-child { display: flex; justify-content: space-between; }
+.to-row { padding: 5px 6px; border-radius: 6px; cursor: default; }
+.to-axis { padding: 0 6px; }
+.to-row:hover { background: var(--panel); }
+.to-name { font-family: var(--ui); font-size: .88rem; font-weight: 600; line-height: 1.2; }
+.to-approx { color: var(--ink-2); margin-left: 4px; }
+.to-track { position: relative; height: 22px; }
+.to-zero { position: absolute; left: 50%; top: -5px; bottom: -5px; width: 1px; background: var(--ink-2); }
+.to-bar { position: absolute; top: 2px; bottom: 2px; border-radius: 3px; }
+.to-bar.loss { background: var(--bar-loss); }
+.to-bar.gain { background: var(--bar-gain); }
+.to-val {
+  position: absolute; top: 50%; transform: translateY(-50%); white-space: nowrap;
+  font-family: var(--ui); font-size: .82rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink-2);
+}
+.to-social .to-name { font-weight: 800; color: var(--accent); }
+.to-social .to-bar { background: var(--accent); }
+.to-social .to-val { font-weight: 800; color: var(--accent); }
+
+.f-cue { margin-top: 36px; }
+.cue {
+  background: none; border: 0; padding: 6px 10px; cursor: pointer;
+  font-family: var(--ui); font-size: 1rem; font-weight: 700; color: var(--ink);
+  text-decoration: underline; text-underline-offset: 4px;
+}
+
+/* ---- zone 2: explore the data */
+.explore { scroll-margin-top: 8px; }
+.ex-h { font-family: var(--display); font-variation-settings: "wdth" 76; font-weight: 800; font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1; margin: 0 0 18px; }
+.ex-h:focus { outline: none; }
 .plate {
   display: grid;
-  grid-template-columns: 250px minmax(0, 1fr) 250px;
-  grid-template-rows: auto auto 1fr; /* a tall activities rail stretches the last row, not the hero */
+  grid-template-columns: 250px minmax(0, 1fr) 230px;
+  grid-template-rows: auto 1fr;
   grid-template-areas:
-    "brand base  ctrl"
-    "acts  stage ctrl"
-    "acts  cmp   cmp";
+    "acts measure ctrl"
+    "acts stage   ctrl";
   column-gap: 32px;
-  row-gap: 20px;
+  row-gap: 14px;
   align-items: start;
 }
-.brand  { grid-area: brand; }
-.base-area { grid-area: base; justify-self: center; align-self: end; }
+.measure { grid-area: measure; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; min-width: 0; }
 .ctrl   { grid-area: ctrl; display: grid; gap: 18px; justify-items: end; }
-.acts   { grid-area: acts; }
+.acts   { grid-area: acts; min-width: 0; }
 .stage  { grid-area: stage; min-width: 0; text-align: center; }
-.your-cmp { grid-area: cmp; min-width: 0; }
-
-/* ---- brand */
-.brand h1 {
-  font-family: var(--display);
-  font-variation-settings: "wdth" 80;
-  font-weight: 800;
-  font-size: 1.05rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  margin: 0;
-}
-.brand p { margin: 2px 0 0; color: var(--ink-2); font-size: .9rem; }
+.ex-cover { font-family: var(--ui); font-size: .78rem; line-height: 1.4; color: var(--ink-2); max-width: 56ch; margin: 8px auto 0; text-wrap: balance; }
 
 .eyebrow {
   font-family: var(--ui);
@@ -172,17 +200,11 @@ button, input { font: inherit; color: inherit; }
 /* ---- Compare! */
 .compare-btn {
   width: 100%; max-width: 230px;
-  padding: 16px 18px;
-  border: 0; border-radius: 12px; cursor: pointer;
-  background: var(--accent); color: var(--on-accent);
-  font-family: var(--display); font-variation-settings: "wdth" 78; font-weight: 800;
-  font-size: 1.5rem; letter-spacing: .02em; line-height: 1;
-  box-shadow: 0 2px 0 var(--ink);
-  transition: transform .1s ease, box-shadow .1s ease;
+  padding: 10px 16px;
+  border: 1px solid var(--ink); border-radius: 10px; background: transparent; cursor: pointer;
+  font-family: var(--ui); font-size: .95rem; font-weight: 700;
 }
-.compare-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 0 var(--ink); }
-.compare-btn:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--ink); }
-.compare-btn small { display: block; font-family: var(--ui); font-variation-settings: "wdth" 100; font-weight: 600; font-size: .75rem; letter-spacing: 0; margin-top: 5px; opacity: .85; }
+.compare-btn:hover { background: var(--panel); }
 
 /* ---- activities rail */
 .acts h2 { margin: 0 0 10px; }
@@ -216,8 +238,8 @@ button, input { font: inherit; color: inherit; }
   font-family: var(--ui); font-size: .88rem; font-weight: 700; cursor: pointer;
   padding: 8px 12px; border-radius: 8px; background: var(--panel); border: 1px solid transparent;
 }
-.more-btn .chev { display: inline-block; transition: transform .15s; margin-left: 4px; }
-.more-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.more-btn .chev, .compare-btn .chev { display: inline-block; transition: transform .15s; margin-left: 4px; }
+.more-btn[aria-expanded="true"] .chev, .compare-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
 .clear-btn { background: transparent; border-color: var(--rule); }
 #more-list { margin-top: 10px; }
 .more-list .act, #more-list .act { padding: 7px 12px; font-size: .86rem; }
@@ -228,9 +250,7 @@ button, input { font: inherit; color: inherit; }
   font-variation-settings: "wdth" 68;
   font-weight: 800;
   font-variant-numeric: tabular-nums lining-nums;
-  /* sized to the centre column (viewport minus side columns and gutters) so a full-digit figure,
-     about 5.2em wide, can't run into the controls */
-  font-size: min(8.4rem, calc((100vw - 630px) / 5.2));
+  font-size: clamp(2.2rem, 5vw, 4.5rem); /* fitNumber() shrinks it further if it would overflow */
   line-height: .95;
   letter-spacing: -.01em;
   margin: 18px 0 0;
@@ -252,9 +272,6 @@ button, input { font: inherit; color: inherit; }
   font-family: var(--ui); font-size: .78rem; line-height: 1.4; color: var(--ink-2);
   max-width: 56ch; margin: 10px auto 0; text-wrap: balance;
 }
-.caveat.warn { color: var(--ink); font-weight: 600; }
-.back-headline { margin: 10px 0 0; }
-.back-headline .linkbtn { font-size: .85rem; }
 
 /* stacked bar: share of the selection by generation */
 .share { max-width: 560px; margin: 26px auto 0; }
@@ -312,13 +329,6 @@ button, input { font: inherit; color: inherit; }
   font-family: var(--body); font-style: italic; font-size: 1.1rem; color: var(--ink-2);
 }
 .vs-div::before, .vs-div::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
-.view-head { display: grid; gap: 4px; margin-bottom: 22px; }
-.view-head h2 {
-  font-family: var(--display); font-variation-settings: "wdth" 72; font-weight: 800;
-  font-size: clamp(1.9rem, 4.6vw, 3.2rem); line-height: 1; margin: 0; text-wrap: balance;
-}
-.view-head p { margin: 4px 0 0; color: var(--ink-2); max-width: 62ch; }
-.view-head h2:focus { outline: none; }
 .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start; }
 .col h4 { margin: 0 0 10px; }
 .col .hint { margin-top: 10px; }
@@ -326,17 +336,6 @@ button, input { font: inherit; color: inherit; }
 .col .gen { width: 100%; min-width: 0; flex-direction: row; align-items: center; justify-content: space-between; }
 .col .gen .meta { font-size: .72rem; }
 .col .more-list { margin-top: 8px; }
-.view-foot {
-  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
-  margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--rule);
-}
-.view-foot .right { display: flex; gap: 10px; flex-wrap: wrap; }
-.btn {
-  font-family: var(--ui); font-size: .95rem; font-weight: 700; cursor: pointer;
-  padding: 11px 20px; border-radius: 10px; border: 1px solid var(--rule); background: transparent;
-}
-.btn.primary { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
-.btn:disabled { opacity: .38; cursor: not-allowed; }
 .linkbtn {
   background: none; border: 0; padding: 4px 0; cursor: pointer;
   font-family: var(--ui); font-weight: 700; font-size: .92rem; color: var(--ink);
@@ -346,14 +345,15 @@ button, input { font: inherit; color: inherit; }
 
 /* your comparison */
 .your-cmp { border-top: 1px solid var(--rule); padding-top: 20px; margin-top: 14px; scroll-margin-top: 16px; }
-.cmp-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
-.cmp-actions { display: flex; gap: 8px; align-items: center; }
-.cmp-actions .btn { padding: 8px 14px; font-size: .88rem; }
-.icon-btn {
-  width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--rule); background: transparent;
-  cursor: pointer; font-family: var(--ui); font-size: 1.25rem; line-height: 1; display: grid; place-items: center; padding: 0;
+.cmp-section { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--rule); scroll-margin-top: 12px; }
+.cmp-intro { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.cmp-intro p { font-family: var(--ui); font-size: .9rem; color: var(--ink-2); margin: 0; max-width: 72ch; }
+.cmp-empty {
+  font-family: var(--ui); font-size: .95rem; color: var(--ink-2); text-align: center;
+  border: 1px dashed var(--rule); border-radius: 10px; padding: 26px 16px; margin: 20px 0 0;
 }
-.your-cmp h2:focus { outline: none; }
+.cmp-title { display: block; margin-bottom: 10px; }
+.your-cmp h3:focus { outline: none; }
 .vs {
   display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
   font-family: var(--display); font-variation-settings: "wdth" 76; font-weight: 800;
@@ -394,130 +394,129 @@ footer {
 .notes .src { grid-column: 1 / -1; font-size: .82rem; }
 footer a { color: var(--ink); }
 .source-line { margin: 12px 0 0; font-family: var(--ui); font-size: .72rem; }
+/* On the story page the source is credited under the frame, so hide this one there */
+.in-frame .source-line { display: none; }
 
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* ---- mobile: base, slider, toggle, Compare!, number, generations, comparison, activities */
+/* ---- mobile: the finding in full, then Measure, year, Compare!, number, generations, activities */
 @media (max-width: 860px) {
   .plate {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: none;
     grid-template-areas:
-      "brand"
-      "base"
+      "measure"
       "ctrl"
       "stage"
-      "cmp"
       "acts";
     row-gap: 16px;
   }
-  .base-area { justify-self: stretch; }
   .ctrl { justify-items: stretch; gap: 14px; }
   .year { max-width: none; }
   .year label { text-align: left; }
   .compare-btn { max-width: none; }
-  .number { font-size: clamp(2.3rem, 12.5vw, 5.5rem); margin-top: 8px; }  .gen { min-width: 0; flex: 1 1 calc(50% - 8px); }
+  .number { font-size: clamp(2.3rem, 12.5vw, 5.5rem); margin-top: 8px; }
+  .gen { min-width: 0; flex: 1 1 calc(50% - 8px); }
   .act-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
   .cols { grid-template-columns: minmax(0, 1fr); gap: 22px; }
   .col .act-list { grid-template-columns: minmax(0, 1fr); }
   .pies { grid-template-columns: minmax(0, 1fr); }
   .notes { grid-template-columns: minmax(0, 1fr); }
 }
+@media (max-width: 640px) {
+  .to-axis, .to-row { grid-template-columns: minmax(0, 1fr); }
+  .to-axis > div:first-child { display: none; }
+  .to-row { row-gap: 2px; }
+}
 @media (max-width: 420px) {
   .seg button { padding: 7px 9px; font-size: .82rem; }
+}
+/* Ages live in the tooltip where people can hover; touch devices keep them on the button. */
+@media (hover: hover) {
+  #gens .gen:not([aria-disabled="true"]) .meta { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
 </style>
+</head>
+<body>
 
 <div class="wrap">
-  <!-- ======================= MAIN ======================= -->
-  <div class="plate" id="view-main">
-    <header class="brand">
-      <h1>American Time Use</h1>
-      <p>A day in the life, by generation</p>
-    </header>
+  <main id="view-home">
+    <!-- ======================= ZONE 2: EXPLORE THE DATA ======================= -->
+    <section class="explore" id="explore" aria-labelledby="ex-h">
+      <h2 class="ex-h" id="ex-h" tabindex="-1">Explore the data</h2>
+      <div class="plate" id="view-main">
+        <div class="measure" role="group" aria-label="Measure">
+          <span class="eyebrow">Measure</span>
+          <div class="seg-row" id="base-main"></div>
+          <button type="button" id="mode" class="switch" role="switch" aria-checked="false" aria-label="Show as percent of day">
+            <span class="opt opt-hours">Hours</span>
+            <span class="track" aria-hidden="true"><span class="thumb"></span></span>
+            <span class="opt opt-pct" id="pct-label">% of day</span>
+          </button>
+        </div>
 
-    <div class="base-area">
-      <div class="seg-row" id="base-main"></div>
-    </div>
+        <div class="ctrl">
+          <div class="year">
+            <label class="eyebrow" for="year">Survey years</label>
+            <input type="range" id="year" min="0" max="2" step="1" value="2" aria-valuetext="2025">
+            <div class="stops" id="stops"></div>
+          </div>
+          <button type="button" id="compare-go" class="compare-btn" aria-expanded="false" aria-controls="cmp-section">Compare!<span class="chev" aria-hidden="true">▾</span></button>
+        </div>
 
-    <div class="ctrl">
-      <div class="year">
-        <label class="eyebrow" for="year">Survey years</label>
-        <input type="range" id="year" min="0" max="2" step="1" value="2" aria-valuetext="2025">
-        <div class="stops" id="stops"></div>
-      </div>
-      <button type="button" id="mode" class="switch" role="switch" aria-checked="false" aria-label="Show as percent of day">
-        <span class="opt opt-hours">Hours</span>
-        <span class="track" aria-hidden="true"><span class="thumb"></span></span>
-        <span class="opt opt-pct" id="pct-label">% of day</span>
-      </button>
-      <button type="button" id="compare-go" class="compare-btn">Compare!<small>Generations, activities, years</small></button>
-    </div>
+        <section class="acts" aria-labelledby="acts-h">
+          <h3 class="eyebrow" id="acts-h" style="margin:0 0 10px">Activities</h3>
+          <ul class="act-list" id="main-list"></ul>
+          <div class="act-tools">
+            <button type="button" class="more-btn" id="more" aria-expanded="false" aria-controls="more-list">More<span class="chev" aria-hidden="true">▾</span></button>
+            <button type="button" class="clear-btn" id="clear" hidden>Clear activities</button>
+          </div>
+          <ul class="act-list" id="more-list" hidden></ul>
+        </section>
 
-    <section class="acts" aria-labelledby="acts-h">
-      <h2 class="eyebrow" id="acts-h">Activities</h2>
-      <ul class="act-list" id="main-list"></ul>
-      <div class="act-tools">
-        <button type="button" class="more-btn" id="more" aria-expanded="false" aria-controls="more-list">More<span class="chev" aria-hidden="true">▾</span></button>
-        <button type="button" class="clear-btn" id="clear" hidden>Clear activities</button>
-      </div>
-      <ul class="act-list" id="more-list" hidden></ul>
-    </section>
+        <div class="stage">
+          <p class="number" id="number" aria-hidden="true">0</p>
+          <p class="label" id="label"></p>
+          <p class="subline" id="subline"></p>
+          <p class="ex-cover" id="ex-cover" hidden></p>
+          <p class="sr" id="live" aria-live="polite"></p>
 
-    <main class="stage">
-      <p class="number" id="number" aria-hidden="true">0</p>
-      <p class="label" id="label"></p>
-      <p class="subline" id="subline"></p>
-      <p class="subline" id="subline2" hidden></p>
-      <p class="caveat" id="caveat" hidden>Compared at the same life stage. ATUS doesn't measure phone scrolling, and other changes besides screens may contribute.</p>
-      <p class="caveat warn" id="caveat2" hidden></p>
-      <p class="back-headline" id="back-wrap" hidden><button type="button" class="linkbtn" id="back-headline">↺ Back to headline</button></p>
-      <p class="sr" id="live" aria-live="polite"></p>
-
-      <div class="share" aria-hidden="true"><div class="share-bar" id="share"></div></div>
-      <div class="gens" id="gens" role="group" aria-label="Generations"></div>
-    </main>
-
-    <section class="your-cmp" id="your-cmp" aria-labelledby="cmp-title">
-      <div class="cmp-top">
-        <span class="eyebrow" id="cmp-title">Your comparison</span>
-        <div class="cmp-actions">
-          <button type="button" class="btn" id="res-edit">Edit comparison</button>
-          <button type="button" class="icon-btn" id="res-close" aria-label="Close comparison">×</button>
+          <div class="share" id="share-wrap" aria-hidden="true" hidden><div class="share-bar" id="share"></div></div>
+          <div class="gens" id="gens" role="group" aria-label="Generations"></div>
         </div>
       </div>
-      <h2 id="res-h" class="vs" tabindex="-1"></h2>
-      <div class="res-controls">
-        <div class="grp"><span class="eyebrow">Show</span><div class="seg-row" id="unit-res"></div></div>
-      </div>
-      <p class="note" id="res-note"></p>
-      <div class="chart" id="chart"></div>
-      <ul class="bullets" id="bullets"></ul>
-    </section>
-  </div>
 
-  <!-- ======================= COMPARE: SELECTION SCREEN ======================= -->
-  <section id="view-pick" hidden aria-labelledby="pick-h">
-    <div class="view-head">
-      <h2 id="pick-h" tabindex="-1">Select What to Compare</h2>
-      <p>Pick one or more of each. Several generations combine into one group; several activities are added together.</p>
-    </div>
-    <div class="panel panel-a" id="panel-a" role="group"></div>
-    <div class="vs-div">vs</div>
-    <div class="panel panel-b" id="panel-b" role="group"></div>
-    <div class="view-foot">
-      <button type="button" class="btn" id="pk-cancel">Cancel</button>
-      <button type="button" class="btn primary" id="pk-done" disabled>Done</button>
-    </div>
-  </section>
+      <section class="cmp-section" id="cmp-section" aria-label="Compare" hidden>
+        <div class="cmp-intro">
+          <p>Pick one or more of each. Several generations combine into one group; several activities are added together.</p>
+          <button type="button" class="linkbtn" id="cmp-clear">Clear</button>
+        </div>
+        <div class="panel panel-a" id="panel-a" role="group"></div>
+        <div class="vs-div">vs</div>
+        <div class="panel panel-b" id="panel-b" role="group"></div>
+        <p class="cmp-empty" id="cmp-empty">Pick a generation, activity, and year for both A and B.</p>
+        <section class="your-cmp" id="your-cmp" aria-labelledby="cmp-title" hidden>
+          <span class="eyebrow cmp-title" id="cmp-title">Your comparison</span>
+          <h3 id="res-h" class="vs" tabindex="-1"></h3>
+          <div class="res-controls">
+            <div class="grp"><span class="eyebrow">Show</span><div class="seg-row" id="unit-res"></div></div>
+          </div>
+          <p class="note" id="res-note"></p>
+          <div class="chart" id="chart"></div>
+          <ul class="bullets" id="bullets"></ul>
+        </section>
+      </section>
+    </section>
+  </main>
 
   <footer>
     <button type="button" class="more-btn" id="notes-btn" aria-expanded="false" aria-controls="notes">Notes<span class="chev" aria-hidden="true">▾</span></button>
     <div class="notes" id="notes" hidden>
-      <p>The headline compares Gen Z in 2023–25 with Millennials in 2004–06, both limited to ages 15–25, so both groups are at a similar life stage. The age range matches but the mix isn't identical: 24–25-year-olds are 20% of this Gen Z group and 9% of the Millennial group. Each headline number is the per-person gap (minutes a day × 365 days) multiplied by the 48.7 million Gen Zers ages 15–25. It is not the difference between the two groups' actual totals, which also reflects how many people each group had. The figures are survey estimates, so the full digits are more exact than the data can support. Margin-of-error cautions use about 2 standard errors, calculated without the survey's replicate weights, so they are approximate.</p>
+      <p id="note-head"></p>
+      <p>Gen Z sleeps more than Millennials did at the same age, not less. ATUS records the activity people report, so time in bed using a phone may be recorded as sleep.</p>
       <p id="note-pop"></p>
       <p>Phone calls are voice calls only. ATUS does not directly measure smartphone or social media scrolling, so screen time is undercounted.</p>
       <p>Years are 3-year averages (2004–06, 2014–16, 2023–25). Generation differences within one year partly reflect age and life stage.</p>
@@ -580,30 +579,24 @@ footer a { color: var(--ink); }
   const NO_GENZ = "Oldest Gen Z were 8 in 2005; ATUS starts at 15.";
   const CHECK = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.2 10 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink)"/></svg>';
 
-  // Headline: Gen Z 2025 vs Millennials 2005, both ages 15-25, for whichever activities are checked.
-  // Opens on in-person socializing. gapMin > 0 means Gen Z spends less time.
-  const HEAD = { a: D.headline.genz, b: D.cells["2005"].millennials };
-  function headGap(actIds) {
-    const gapMin = actIds.reduce((t, id) => t + HEAD.b.min[id] - HEAD.a.min[id], 0);
-    const hoursYr = Math.abs(gapMin) * 365 / 60;
-    return { gapMin, more: gapMin < 0, same: Math.abs(gapMin) < 0.05, hoursYr, daysYr: hoursYr / 24, aggregate: HEAD.a.pop * hoursYr };
-  }
-
   const state = {
     period: D.periods.length - 1,
     pct: false,
     base: "total",
-    acts: new Set(["social"]),
-    gens: new Set(["genz"]),
-    headline: true,
-    shown: 0
+    acts: new Set(),
+    gens: new Set(D.generations.map(g => g.id))
   };
   const emptySide = () => ({ gens: new Set(), acts: new Set(), years: new Set() });
-  const headSide = (gen, year, acts = ["social"]) => ({ gens: new Set([gen]), acts: new Set(acts), years: new Set([year]) });
-  // matched: this comparison is the headline's, so its Gen Z side uses the ages 15-25 data
-  const cmp = { a: headSide("genz", "2025"), b: headSide("millennials", "2005"), unit: "min", open: true, matched: true };
+  const cmp = { a: emptySide(), b: emptySide(), unit: "min", open: false };
 
   const $ = id => document.getElementById(id);
+  // Inside the story page the frame is full height and never scrolls itself, so ask the page to bring
+  // the node into view ("viz-scroll", handled in js/main.js). Opened on its own, scroll this window.
+  const frameScrollTo = (node, reduce) => {
+    const top = node.getBoundingClientRect().top + window.scrollY;
+    if (window.parent !== window) window.parent.postMessage({ type: "viz-scroll", top }, "*");
+    else window.scrollTo({ top: top - 8, behavior: reduce ? "auto" : "smooth" });
+  };
   const P = () => D.periods[state.period];
   const cell = (g, p = P()) => D.cells[p][g];
   const catLabel = id => D.categories.find(c => c.id === id).label;
@@ -620,13 +613,13 @@ footer a { color: var(--ink); }
     return 1440;
   }
   // Population-weighted aggregate of a group of generations in one period.
-  function agg(genIds, actIds, p, base = state.base, matched = false) {
+  function agg(genIds, actIds, p, base = state.base) {
     const gs = genIds.filter(g => D.cells[p][g]);
     if (!gs.length) return null;
     let pop = 0, sel = 0, bas = 0;
     const per = {};
     gs.forEach(g => {
-      const c = matched && g === "genz" && p === "2025" ? D.headline.genz : D.cells[p][g];
+      const c = D.cells[p][g];
       const s = actIds.reduce((t, id) => t + c.min[id], 0);
       pop += c.pop; sel += c.pop * s; bas += c.pop * baseMin(c, base);
       actIds.forEach(id => { per[id] = (per[id] || 0) + c.pop * c.min[id]; });
@@ -649,8 +642,8 @@ footer a { color: var(--ink); }
     return EXCL[state.base].find(x => chosen.includes(x));
   }
   const cmpBase = () => cmpExcludedAct() ? "total" : state.base;
-  const cagg = (genIds, actIds, p) => agg(genIds, actIds, p, cmpBase(), cmp.matched);
-  window.__atus = { D, agg, baseMin, state, cmp, HEAD, headGap }; // inspection hook for checking numbers
+  const cagg = (genIds, actIds, p) => agg(genIds, actIds, p, cmpBase());
+  window.__atus = { D, agg, baseMin, state, cmp }; // inspection hook for checking numbers
 
   /* ---------- text helpers */
   function joinList(a) {
@@ -761,43 +754,8 @@ footer a { color: var(--ink); }
     return seg;
   }
 
-  /* ---------- headline state */
-  // Activities stay in the headline, which recalculates for them and keeps its chart in step.
-  function syncHeadCmp() {
-    const acts = CAT_IDS.filter(id => state.acts.has(id));
-    if (!acts.length) return;
-    cmp.a = headSide("genz", "2025", acts);
-    cmp.b = headSide("millennials", "2005", acts);
-  }
-  // Generation, year, base or Hours/% drops to normal daily behavior, keeping the selections.
-  function leaveHeadline() {
-    if (!state.headline) return;
-    state.headline = false;
-    state.shown = 0;
-  }
-  function restoreHeadline() {
-    state.headline = true;
-    state.shown = 0;
-    state.period = D.periods.length - 1;
-    state.pct = false;
-    state.pctLast = false;
-    state.base = "total";
-    state.acts = new Set(["social"]);
-    state.gens = new Set(["genz"]);
-    cmp.a = headSide("genz", "2025");
-    cmp.b = headSide("millennials", "2005");
-    cmp.unit = "min";
-    cmp.open = true;
-    cmp.matched = true;
-    $("year").value = state.period;
-    $("year").setAttribute("aria-valuetext", P() + " (" + D.periodYears[P()] + " average)");
-    hideTip();
-    renderAll();
-  }
-
   function setBase(id) {
     if (id === state.base) return;
-    leaveHeadline();
     state.base = id;
     EXCL[id].forEach(x => state.acts.delete(x));
     hideTip();
@@ -814,15 +772,13 @@ footer a { color: var(--ink); }
     const b = document.createElement("button");
     b.type = "button"; b.textContent = p; b.tabIndex = -1;
     b.addEventListener("click", () => {
-      if (i === state.period) return;
-      leaveHeadline();
       $("year").value = i; setPeriod(i);
     });
     stops.appendChild(b);
   });
-  $("year").addEventListener("input", e => { leaveHeadline(); setPeriod(+e.target.value); });
+  $("year").addEventListener("input", e => setPeriod(+e.target.value));
 
-  function actButton(c, isOn, toggle) {
+  function actButton(c, followsBase, toggle) {
     const li = document.createElement("li");
     const b = document.createElement("button");
     b.type = "button"; b.className = "act"; b.dataset.id = c.id;
@@ -833,7 +789,7 @@ footer a { color: var(--ink); }
       if (b.getAttribute("aria-disabled") === "true") return;
       toggle(c.id);
     });
-    attachTip(b, () => (isExcluded(c.id) ? EXCL_WHY[state.base][c.id] : ""));
+    attachTip(b, () => (followsBase && isExcluded(c.id) ? EXCL_WHY[state.base][c.id] : ""));
     li.appendChild(b);
     return li;
   }
@@ -848,13 +804,8 @@ footer a { color: var(--ink); }
     }
     b.setAttribute("aria-pressed", String(on && !ex));
   }
-  function activitiesChanged() {
-    if (state.headline) syncHeadCmp();
-    renderMain();
-    if (state.headline) renderResults();
-  }
-  const toggleMain = id => { state.acts.has(id) ? state.acts.delete(id) : state.acts.add(id); activitiesChanged(); };
-  D.categories.forEach(c => $(c.main ? "main-list" : "more-list").appendChild(actButton(c, null, toggleMain)));
+  const toggleMain = id => { state.acts.has(id) ? state.acts.delete(id) : state.acts.add(id); renderMain(); };
+  D.categories.forEach(c => $(c.main ? "main-list" : "more-list").appendChild(actButton(c, true, toggleMain)));
 
   $("more").addEventListener("click", () => {
     const open = $("more").getAttribute("aria-expanded") !== "true";
@@ -862,12 +813,17 @@ footer a { color: var(--ink); }
     $("more-list").hidden = !open;
     renderMain();
   });
-  $("clear").addEventListener("click", () => { state.acts.clear(); activitiesChanged(); });
-  $("mode").addEventListener("click", () => { leaveHeadline(); state.pct = !state.pct; renderMain(); });
-  $("compare-go").addEventListener("click", () => openPicker(false));
-  $("back-headline").addEventListener("click", () => {
-    restoreHeadline();
-    $("compare-go").focus({ preventScroll: true });
+  $("clear").addEventListener("click", () => { state.acts.clear(); renderMain(); });
+  $("mode").addEventListener("click", () => { state.pct = !state.pct; renderMain(); });
+  $("compare-go").addEventListener("click", () => {
+    cmp.open = !cmp.open;
+    $("compare-go").setAttribute("aria-expanded", String(cmp.open));
+    $("cmp-section").hidden = !cmp.open;
+    hideTip();
+    if (!cmp.open) return;
+    renderPick();
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    frameScrollTo($("cmp-section"), reduce);
   });
   $("notes-btn").addEventListener("click", () => {
     const open = $("notes-btn").getAttribute("aria-expanded") !== "true";
@@ -882,7 +838,6 @@ footer a { color: var(--ink); }
     b.querySelector(".name span:last-child").textContent = g.label;
     b.addEventListener("click", () => {
       if (b.getAttribute("aria-disabled") === "true") return;
-      leaveHeadline();
       state.gens.has(g.id) ? state.gens.delete(g.id) : state.gens.add(g.id);
       renderMain();
     });
@@ -896,10 +851,8 @@ footer a { color: var(--ink); }
     renderMain();
   }
 
-  // While the headline shows, the Gen Z button describes the ages 15-25 group it is using.
-  const genCell = id => state.headline && id === "genz" ? HEAD.a : cell(id);
   function tipText(g) {
-    const p = P(), c = genCell(g.id);
+    const p = P(), c = cell(g.id);
     if (!c) return "<strong>" + g.label + ", " + p + ": no data.</strong> " + NO_GENZ;
     const all = c.ageMin === 15 || g.id === "silent" ? " only" : "";
     let s = "<strong>" + g.label + ", " + p + ": ages " + c.ageMin + "–" + c.ageMaxLabel + all + "</strong>";
@@ -910,85 +863,125 @@ footer a { color: var(--ink); }
     return s;
   }
 
-  /* ---------- number animation */
-  let anim = null, animTimer = null;
-  function animateTo(target, decimals, unit) {
-    cancelAnimationFrame(anim);
-    const el = $("number"), from = state.shown, t0 = performance.now();
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const dur = reduce ? 0 : 550;
-    const f = decimals ? fmt1 : fmt0, suffix = unit || (decimals ? "%" : "");
-    const step = now => {
-      const k = dur ? Math.min(1, (now - t0) / dur) : 1;
-      const e = 1 - Math.pow(1 - k, 3);
-      const v = from + (target - from) * e;
-      el.textContent = f.format(v) + suffix;
-      state.shown = v;
-      if (k < 1) anim = requestAnimationFrame(step);
-      else state.shown = target;
-    };
-    anim = requestAnimationFrame(step);
-    // Animation frames pause in background tabs; the final figure still has to land.
-    clearTimeout(animTimer);
-    animTimer = setTimeout(() => {
-      cancelAnimationFrame(anim);
-      el.textContent = f.format(target) + suffix;
-      state.shown = target;
-    }, dur + 150);
+  /* ---------- big numbers: count-up, sized to fit even if the web fonts never load */
+  function fitNumber(el, text, force) {
+    const unchanged = el._fitText === text && el._fitBox === el.clientWidth;
+    el._fitText = text;
+    if (!el.clientWidth || (unchanged && !force)) return; // hidden, or already fitted
+    el._fitBox = el.clientWidth;
+    el.style.fontSize = "";
+    const shown = el.textContent;
+    el.textContent = text;
+    const r = document.createRange();
+    r.selectNodeContents(el);
+    const w = r.getBoundingClientRect().width, box = el.clientWidth;
+    if (w > box) el.style.fontSize = (parseFloat(getComputedStyle(el).fontSize) * box / w * 0.98) + "px";
+    el.textContent = shown;
   }
+  function refit(force) {
+    [$("number")].forEach(el => { if (el._fitText) fitNumber(el, el._fitText, force === true); });
+  }
+  function makeCounter(el) {
+    let from = 0, anim = null, timer = null;
+    const halt = () => { cancelAnimationFrame(anim); clearTimeout(timer); };
+    return {
+      to(target, decimals) {
+        halt();
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const dur = reduce ? 0 : 550, start = from, t0 = performance.now();
+        const f = decimals ? fmt1 : fmt0, suffix = decimals ? "%" : "";
+        fitNumber(el, f.format(target) + suffix);
+        const step = now => {
+          const k = dur ? Math.min(1, (now - t0) / dur) : 1;
+          const e = 1 - Math.pow(1 - k, 3);
+          from = start + (target - start) * e;
+          el.textContent = f.format(from) + suffix;
+          if (k < 1) anim = requestAnimationFrame(step);
+          else from = target;
+        };
+        anim = requestAnimationFrame(step);
+        // Animation frames pause in background tabs; the final figure still has to land.
+        timer = setTimeout(() => {
+          cancelAnimationFrame(anim);
+          el.textContent = f.format(target) + suffix;
+          from = target;
+        }, dur + 150);
+      },
+      reset() { from = 0; },
+      stop() { halt(); from = 0; el._fitText = null; el._fitBox = null; el.style.fontSize = ""; }
+    };
+  }
+  const exCount = makeCounter($("number"));
 
-  /* ---------- render: headline */
-  function renderHeadline(actIds) {
-    const numEl = $("number"), share = $("share");
-    share.innerHTML = "";
-    if (!actIds.length) {
-      cancelAnimationFrame(anim);
-      clearTimeout(animTimer);
-      numEl.classList.add("empty");
-      numEl.textContent = "Select an activity";
-      $("label").textContent = "Pick any activity to see how Gen Z's time compares with Millennials at the same age.";
-      $("subline").textContent = "";
-      $("subline2").hidden = true;
-      $("caveat").hidden = true;
-      $("live").textContent = "No activity selected.";
-      state.shown = 0;
-      return;
-    }
-    numEl.classList.remove("empty");
-    state.pctLast = false;
-    const G = headGap(actIds), what = actPhrase(actIds);
-    const ages = HEAD.a.ageMin + "–" + HEAD.a.ageMaxLabel;
-    let label, sub;
-    if (G.same) {
-      animateTo(0, 0);
-      label = "hours a year of difference: Gen Z and Millennials spend about the same time " + what + " at the same age";
-      sub = "Less than a minute's difference a day per person";
-      $("subline2").hidden = true;
-    } else {
-      // The hero is the per-person gap scaled to today's Gen Z. It is not the gap between the two
-      // groups' actual totals, which also depends on how many people each group had.
-      const dir = G.more ? "more" : "fewer";
-      animateTo(Math.round(G.aggregate), 0);
-      label = dir + " hours a year that Gen Z spends " + what + " than if they matched Millennials at the same age";
-      const m = Math.round(Math.abs(G.gapMin)), h = Math.round(G.hoursYr), d = Math.round(G.daysYr);
-      const perDay = m < 1 ? "Under 1 " + dir + " minute" : "≈ " + m + " " + dir + (m === 1 ? " minute" : " minutes");
-      const perYear = d >= 1 ? h + " hours, or " + d + (d === 1 ? " full day" : " full days") + ", a year" : h + (h === 1 ? " hour" : " hours") + " a year";
-      sub = perDay + " a day per person · about " + perYear;
-      $("subline2").textContent = "Multiplied across all " + Math.round(HEAD.a.pop / 1e6) + " million Gen Zers ages " + ages + ".";
-    }
-    $("label").textContent = label;
-    $("subline").textContent = sub;
-    const noisy = actIds.filter(id => D.headline.noisy.includes(id));
-    if (noisy.length) {
-      $("caveat2").textContent = "Caution: the gap for " + joinList(noisy.map(catLabel)) +
-        " is within the survey's margin of error, so it may not be a real difference.";
-      $("caveat2").hidden = false;
-    }
-    $("live").textContent = fmt0.format(G.same ? 0 : Math.round(G.aggregate)) + " " + label + ". " + sub + ".";
-    const s = document.createElement("span");
-    s.style.flexBasis = "100%";
-    s.style.background = "var(--genz)";
-    share.appendChild(s);
+  /* ---------- zone 1: the finding. Built once from the data; no control writes to it. */
+  const minus = v => (v < 0 ? "−" : "+");
+  function tradeoffRows(a, b) {
+    const rows = D.categories.map(c => ({
+      id: c.id, label: c.label, z: a.min[c.id], m: b.min[c.id], gap: a.min[c.id] - b.min[c.id],
+      noisy: D.headline.noisy.includes(c.id)
+    }));
+    const big = rows.filter(r => Math.abs(r.gap) >= 5), small = rows.filter(r => Math.abs(r.gap) < 5);
+    const sum = k => small.reduce((t, r) => t + r[k], 0);
+    const rest = { id: "rest", label: "Everything else", z: sum("z"), m: sum("m"), gap: sum("gap"), noisy: false };
+    const losses = big.filter(r => r.gap < 0).sort((x, y) => x.gap - y.gap);
+    const gains = big.filter(r => r.gap > 0).sort((x, y) => y.gap - x.gap);
+    (rest.gap < 0 ? losses : gains).push(rest);
+    return losses.concat(gains);
+  }
+  function buildFinding() {
+    const a = D.headline.genz, b = D.cells["2005"].millennials;
+    const gapMin = b.min.social - a.min.social;
+    const hoursYr = gapMin * 365 / 60, days = hoursYr / 24, aggregate = a.pop * hoursYr;
+    const millions = Math.round(a.pop / 1e6), ages = a.ageMin + "–" + a.ageMaxLabel;
+    const dayN = Math.round(days), minN = Math.round(gapMin), hourN = Math.round(hoursYr);
+
+    // The label, subline and count-up figure are shown in the story page's title section (index.html).
+
+    $("note-head").textContent = "The finding compares Gen Z in 2023–25 with Millennials in 2004–06, both limited to ages " + ages +
+      ", so both groups are at a similar life stage. The age range matches but the mix isn't identical: this Gen Z group has a larger share of 24–25-year-olds. " +
+      "The big number is the aggregate: the per-person gap (" + fmt1.format(gapMin) + " minutes a day × 365 ÷ 60) multiplied by the " + fmt1.format(a.pop / 1e6) + " million Gen Zers ages " + ages +
+      ". It is not the difference between the two groups' actual totals, which also reflects how many people each group had. " +
+      "The per-person figures are that same gap for one person: about " + minN + " minutes a day, " + hourN + " hours a year, or " + dayN + " days. " +
+      "The figures are survey estimates, so the full digits are more exact than the data can support. " +
+      "In the trade-off chart (“What Gen Z does more of, and less of”), ≈ marks a gap within about 2 standard errors, calculated without the survey's replicate weights, so it is approximate. " +
+      "The explorer uses a wider Gen Z age range: all ages surveyed (" + D.cells["2025"].genz.ageMin + "–" + D.cells["2025"].genz.ageMaxLabel + " in 2025).";
+
+    const rows = tradeoffRows(a, b);
+    window.__atus.finding = { minutes: { genz: a.min.social, millennials: b.min.social }, gapMin, hoursYr, days, pop: a.pop, aggregate, rows };
+    if (!$("to-rows")) return; // trade-off chart moved to the story page (index.html, Chapter 1)
+    const scale = Math.max(...rows.map(r => Math.abs(r.gap)));
+    const fmtGap = v => minus(v) + Math.round(Math.abs(v)) + " m";
+    const box = $("to-rows");
+    rows.forEach(r => {
+      const pct = Math.abs(r.gap) / scale * 36, loss = r.gap < 0, side = loss ? "right" : "left";
+      const row = document.createElement("div");
+      row.className = "to-row" + (r.id === "social" ? " to-social" : "");
+      row.setAttribute("role", "listitem");
+      row.tabIndex = 0;
+      row.dataset.id = r.id;
+      row.dataset.gap = r.gap;
+      const name = document.createElement("div");
+      name.className = "to-name";
+      name.textContent = r.label;
+      if (r.noisy) {
+        const m = document.createElement("span");
+        m.className = "to-approx"; m.textContent = "≈"; m.setAttribute("aria-hidden", "true");
+        name.appendChild(m);
+      }
+      const track = document.createElement("div");
+      track.className = "to-track";
+      track.innerHTML = '<span class="to-zero"></span><span class="to-bar ' + (loss ? "loss" : "gain") + '" style="' + side + ':50%;width:' + pct + '%"></span>' +
+        '<span class="to-val" style="' + side + ':calc(' + (50 + pct) + '% + 5px)">' + fmtGap(r.gap) + "</span>";
+      row.append(name, track);
+      const note = r.noisy ? "<br>Small sample; treat as approximate." : "";
+      const html = "<strong>" + r.label + "</strong><br>Gen Z: " + fmt1.format(r.z) + " minutes · Millennials: " + fmt1.format(r.m) + " minutes<br>Gap: " +
+        minus(r.gap) + fmt1.format(Math.abs(r.gap)) + " minutes a day" + note;
+      row.setAttribute("aria-label", r.label + ": Gen Z " + fmt1.format(r.z) + " minutes, Millennials " + fmt1.format(r.m) + " minutes, gap " +
+        minus(r.gap) + fmt1.format(Math.abs(r.gap)) + " minutes a day." + (r.noisy ? " Small sample; treat as approximate." : ""));
+      attachTip(row, () => html);
+      box.appendChild(row);
+    });
+    window.__atus.finding = { minutes: { genz: a.min.social, millennials: b.min.social }, gapMin, hoursYr, days, pop: a.pop, aggregate, rows };
   }
 
   /* ---------- render: main */
@@ -1005,7 +998,7 @@ footer a { color: var(--ink); }
     $("mode").setAttribute("aria-label", "Show as percent of " + (state.base === "total" ? "day" : B.word + " hours"));
 
     [...$("gens").children].forEach(b => {
-      const g = D.generations.find(x => x.id === b.dataset.id), c = genCell(g.id);
+      const g = D.generations.find(x => x.id === b.dataset.id), c = cell(g.id);
       const meta = b.querySelector(".meta");
       if (!c) {
         b.setAttribute("aria-disabled", "true");
@@ -1025,7 +1018,7 @@ footer a { color: var(--ink); }
 
     $("view-main").querySelectorAll(".act").forEach(b => {
       syncActButton(b, state.acts.has(b.dataset.id));
-      b.querySelector(".t").textContent = popSum ? hm(state.headline ? HEAD.a.min[b.dataset.id] : avgMin(b.dataset.id)) : "";
+      b.querySelector(".t").textContent = popSum ? hm(avgMin(b.dataset.id)) : "";
     });
     const moreSel = D.categories.filter(c => !c.main && actIds.includes(c.id)).length;
     const moreOpen = $("more").getAttribute("aria-expanded") === "true";
@@ -1037,17 +1030,15 @@ footer a { color: var(--ink); }
       fmt1.format(census / 1e6) + " million (" + fmt0.format(census) + ") because ATUS only surveys people 15 and older, " +
       "and excludes people in institutions such as nursing homes and prisons, as well as active-duty military.";
 
-    $("subline2").hidden = !state.headline;
-    $("caveat").hidden = !state.headline;
-    $("caveat2").hidden = true;
-    const onDefault = actIds.length === 1 && actIds[0] === "social";
-    $("back-wrap").hidden = state.headline && cmp.open && onDefault;
-    if (state.headline) { renderHeadline(actIds); return; }
+    const gz = D.cells["2025"].genz, hz = D.headline.genz;
+    $("ex-cover").hidden = !active.some(g => g.id === "genz");
+    $("ex-cover").textContent = "Explorer uses all Gen Z ages surveyed (" + gz.ageMin + "–⁠" + gz.ageMaxLabel +
+      " in 2025); the headline figure at the top of the page uses ages " + hz.ageMin + "–⁠" + hz.ageMaxLabel + "."; // word joiner: keeps age ranges on one line
+    $("share-wrap").hidden = active.length < 2;
 
     const numEl = $("number");
     if (active.length === 0) {
-      cancelAnimationFrame(anim);
-      clearTimeout(animTimer);
+      exCount.stop();
       numEl.classList.add("empty");
       const onlyNoData = state.gens.size > 0;
       numEl.textContent = "Select a generation";
@@ -1057,7 +1048,6 @@ footer a { color: var(--ink); }
       $("subline").textContent = "";
       $("live").textContent = "No generation selected.";
       $("share").innerHTML = "";
-      state.shown = 0;
       return;
     }
     numEl.classList.remove("empty");
@@ -1067,9 +1057,9 @@ footer a { color: var(--ink); }
     const perMin = hasAct ? A.minPP : A.basePP;
     const totalHours = hasAct ? A.totalHours : A.baseHours;
     const value = state.pct ? (hasAct ? A.share * 100 : 100) : totalHours;
-    if (state.pctLast !== state.pct) state.shown = 0; // switching units: count up from zero
+    if (state.pctLast !== state.pct) exCount.reset(); // switching units: count up from zero
     state.pctLast = state.pct;
-    animateTo(value, state.pct ? 1 : 0);
+    exCount.to(value, state.pct ? 1 : 0);
 
     const allGens = active.length === available.length;
     const genTxt = allGens ? "all generations" : active.map(g => g.label).join(" + ");
@@ -1108,13 +1098,6 @@ footer a { color: var(--ink); }
   /* ======================= COMPARE: selection screen ======================= */
   const complete = s => s.gens.size > 0 && s.acts.size > 0 && s.years.size > 0;
   const genzBlocked = s => s.years.size === 1 && s.years.has("2005");
-  const cloneSide = s => ({ gens: new Set(s.gens), acts: new Set(s.acts), years: new Set(s.years) });
-  const sameSet = (x, y) => x.size === y.size && [...x].every(v => y.has(v));
-  const sameSide = (x, y) => sameSet(x.gens, y.gens) && sameSet(x.acts, y.acts) && sameSet(x.years, y.years);
-
-  // Selections live in a draft until Done, so Cancel changes nothing.
-  let draft = null;
-  let cameFromHome = false, savedY = 0, pendingScroll = false;
 
   function buildPanel(k, title) {
     const root = $("panel-" + k), id = "p-" + k;
@@ -1128,7 +1111,7 @@ footer a { color: var(--ink); }
           '<ul class="act-list more-list" id="' + id + '-more-list" hidden></ul></div>' +
         '<div class="col"><h4 class="eyebrow" id="' + id + '-yr-h">Year</h4><ul class="act-list years" aria-labelledby="' + id + '-yr-h"></ul><p class="hint">Pick two or more years to see a trend line.</p></div>' +
       '</div>';
-    const side = () => draft[k];
+    const side = () => cmp[k];
     D.generations.forEach(g => {
       const b = document.createElement("button");
       b.type = "button"; b.className = "gen " + g.id; b.dataset.id = g.id;
@@ -1144,7 +1127,7 @@ footer a { color: var(--ink); }
       root.querySelector(".gen-stack").appendChild(b);
     });
     const toggle = id2 => { const s = side(); s.acts.has(id2) ? s.acts.delete(id2) : s.acts.add(id2); renderPick(); };
-    D.categories.forEach(c => root.querySelector(c.main ? ".main-acts" : ".more-list").appendChild(actButton(c, null, toggle)));
+    D.categories.forEach(c => root.querySelector(c.main ? ".main-acts" : ".more-list").appendChild(actButton(c, false, toggle)));
     D.periods.forEach(p => {
       const li = document.createElement("li");
       const b = document.createElement("button");
@@ -1170,31 +1153,16 @@ footer a { color: var(--ink); }
   buildPanel("a", "Compare");
   buildPanel("b", "To");
 
-  function openPicker(prefill) {
-    draft = prefill ? { a: cloneSide(cmp.a), b: cloneSide(cmp.b) } : { a: emptySide(), b: emptySide() };
-    cameFromHome = true;
-    savedY = window.scrollY;
-    location.hash = "compare";
-  }
-  // Undo the #compare history entry when we can, so Back from home doesn't reopen the screen.
-  function goHome() {
-    if (cameFromHome) history.back();
-    else location.hash = "";
-  }
-  $("pk-cancel").addEventListener("click", goHome);
-  $("pk-done").addEventListener("click", () => {
-    if (!complete(draft.a) || !complete(draft.b)) return;
-    if (!sameSide(draft.a, cmp.a) || !sameSide(draft.b, cmp.b)) { leaveHeadline(); cmp.matched = false; }
-    cmp.a = draft.a; cmp.b = draft.b; cmp.open = true;
-    pendingScroll = true;
-    goHome();
+  $("cmp-clear").addEventListener("click", () => {
+    cmp.a = emptySide();
+    cmp.b = emptySide();
+    renderPick();
   });
 
   function renderPick() {
     ["a", "b"].forEach(k => {
-      const s = draft[k], root = $("panel-" + k);
+      const s = cmp[k], root = $("panel-" + k);
       if (genzBlocked(s)) s.gens.delete("genz");
-      EXCL[state.base].forEach(x => s.acts.delete(x));
       [...root.querySelector(".gen-stack").children].forEach(b => {
         const blocked = b.dataset.id === "genz" && genzBlocked(s);
         if (blocked) {
@@ -1209,19 +1177,19 @@ footer a { color: var(--ink); }
         }
         b.setAttribute("aria-pressed", String(s.gens.has(b.dataset.id)));
       });
-      root.querySelectorAll(".act[data-id]").forEach(b => syncActButton(b, s.acts.has(b.dataset.id)));
+      root.querySelectorAll(".act[data-id]").forEach(b => b.setAttribute("aria-pressed", String(s.acts.has(b.dataset.id))));
       root.querySelectorAll(".act[data-year]").forEach(b => b.setAttribute("aria-pressed", String(s.years.has(b.dataset.year))));
       const more = root.querySelector(".more-btn");
       const moreSel = D.categories.filter(c => !c.main && s.acts.has(c.id)).length;
       const open = more.getAttribute("aria-expanded") === "true";
       more.firstChild.textContent = open ? "Fewer" : (moreSel ? "More (" + moreSel + " selected)" : "More");
     });
-    $("pk-done").disabled = !(complete(draft.a) && complete(draft.b));
+    segs.forEach(s => s.sync()); // the % option's name follows the comparison's base
+    renderResults();
   }
 
   /* ======================= COMPARE: results ======================= */
-  function gensShort(s) { return ordered(s.gens, GEN_IDS).map(genLabel).join(" + "); }
-  function gensTitle(s) { return gensShort(s) + (cmp.matched ? " ages 15–25" : ""); }
+  function gensTitle(s) { return ordered(s.gens, GEN_IDS).map(genLabel).join(" + "); }
   function actsTitle(s) {
     const a = ordered(s.acts, CAT_IDS);
     return a.length > 3 ? a.length + " activities" : a.map(catLabel).join(" + ");
@@ -1367,7 +1335,7 @@ footer a { color: var(--ink); }
       const vt = el("text", { x: cx, y: y(r.v) - 8, "text-anchor": "middle", "font-size": 14, "font-weight": 800, style: "fill:var(--ink)" }, svg);
       vt.textContent = fmtVal(r.v, unit);
       const lt = el("text", { x: cx, y: H - 10, "text-anchor": "middle", "font-size": 13, "font-weight": 700 }, svg);
-      lt.textContent = (gensShort(r.s).length > 26 ? (i ? "B" : "A") : gensShort(r.s)) + (rows[0].yr !== rows[1].yr ? " · " + r.yr : "");
+      lt.textContent = (gensTitle(r.s).length > 26 ? (i ? "B" : "A") : gensTitle(r.s)) + (rows[0].yr !== rows[1].yr ? " · " + r.yr : "");
     });
     box.appendChild(svg);
     legend(box, st);
@@ -1553,8 +1521,10 @@ footer a { color: var(--ink); }
 
   let lastChartW = 0;
   function renderResults() {
-    $("your-cmp").hidden = !cmp.open;
-    if (!cmp.open) return;
+    const ready = complete(cmp.a) && complete(cmp.b);
+    $("your-cmp").hidden = !ready;
+    $("cmp-empty").hidden = ready;
+    if (!cmp.open || !ready) return;
     const st = sideStyles();
     const h = $("res-h");
     h.innerHTML = "";
@@ -1579,6 +1549,10 @@ footer a { color: var(--ink); }
         notes.push("The 2005 figure for " + gensTitle(s) + " covers " + rest + " only.");
       });
     }
+    if (["a", "b"].some(k => cmp[k].gens.has("genz") && cmp[k].years.has("2025"))) {
+      const gz25 = D.cells["2025"].genz, hz = D.headline.genz;
+      notes.push("Gen Z in 2025 here is all ages surveyed (" + gz25.ageMin + "–" + gz25.ageMaxLabel + "); the headline figure at the top of the page uses ages " + hz.ageMin + "–" + hz.ageMaxLabel + ".");
+    }
     $("res-note").textContent = notes.join(" ");
     const box = $("chart");
     box.innerHTML = "";
@@ -1593,55 +1567,26 @@ footer a { color: var(--ink); }
     bullets().forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
   }
   window.addEventListener("resize", () => {
-    if (view === "main" && cmp.open && Math.abs($("chart").clientWidth - lastChartW) > 4) renderResults();
+    if (cmp.open && !$("your-cmp").hidden && Math.abs($("chart").clientWidth - lastChartW) > 4) renderResults();
   });
 
-  $("res-edit").addEventListener("click", () => openPicker(true));
-  $("res-close").addEventListener("click", () => {
-    cmp.open = false;
-    hideTip();
-    renderAll();
-    $("compare-go").focus({ preventScroll: true });
-  });
-
-  /* ======================= routing ======================= */
-  let view = "main";
-  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-  function route() {
-    const v = location.hash === "#compare" ? "pick" : "main";
-    const prev = view;
-    view = v;
-    hideTip();
-    $("view-main").hidden = v !== "main";
-    $("view-pick").hidden = v !== "pick";
-    if (v === "pick" && !draft) draft = { a: emptySide(), b: emptySide() };
-    if (v === "main") { draft = null; cameFromHome = false; }
-    renderAll();
-    if (prev === v) return;
-    if (v === "pick") {
-      window.scrollTo(0, 0);
-      $("pick-h").focus({ preventScroll: true });
-    } else if (pendingScroll) {
-      pendingScroll = false;
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      $("your-cmp").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-      $("res-h").focus({ preventScroll: true });
-    } else {
-      window.scrollTo(0, savedY);
-      $("compare-go").focus({ preventScroll: true });
-    }
-  }
   function renderAll() {
     segs.forEach(s => s.sync());
-    if (view === "main") { renderMain(); renderResults(); }
-    else renderPick();
+    renderMain();
+    renderResults();
   }
-  window.addEventListener("hashchange", route);
 
   $("year").setAttribute("aria-valuetext", P() + " (" + D.periodYears[P()] + " average)");
-  route();
+  window.addEventListener("resize", refit);
+  if (document.fonts) {
+    document.fonts.ready.then(() => refit(true)); // a font swap changes the width at the same box size
+    if (document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", () => refit(true));
+  }
+  buildFinding();
+  renderAll();
+  renderPick();
 })();
 </script>
-
 <script src="bridge.js"></script>
-</body></html>
+</body>
+</html>
