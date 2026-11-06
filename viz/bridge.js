@@ -18,6 +18,14 @@
     document.head.appendChild(st);
   }
 
+  // "&glide=1": the story page moves this viz as you scroll, so the reader can't scroll it directly.
+  // The wheel/touch then scrolls the story page instead of getting caught inside the frame.
+  if (new URLSearchParams(location.search).get("glide") === "1") {
+    const st = document.createElement("style");
+    st.textContent = "html, body { overflow: hidden !important; overscroll-behavior: none; }";
+    document.head.appendChild(st);
+  }
+
   function click(sel) {
     const el = document.querySelector(sel);
     if (el) el.click();
