@@ -6,14 +6,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>
 /* Layout: night classroom of 100 students is the hero, a compact tally beside it, the hour-by-hour strip below,
-   then three short takeaway cards. Text kept to labels; detail lives in a closed "About the data" panel. Single dark world by design. */
+   then three short takeaway cards. Text kept to labels; detail lives in a closed "About the data" panel. Light colors to match the story page. */
 :root{
-  color-scheme:dark;
-  --night:#0d1016; --room:#151a23; --panel:#191f2a; --floor-line:#1d2430; --desk:#3a3128; --desk-edge:#4a3f33;
-  --ink:#f1f3f6; --ink-2:#c3cad4; --muted:#909aa8; --line:rgba(255,255,255,.10);
-  --glow:#6fc3ff;
-  --r1:#e3c74f; --r2:#3fbf83; --r3:#9aa3b0; --r4:#ef6b5f;
-  --worse:#ff8a7f; --better:#5fd39a;
+  color-scheme:light;
+  --night:#fbfaf7; --room:#f3efe6; --panel:#ffffff; --floor-line:#e6e0d4; --desk:#d8c6a6; --desk-edge:#bfa982;
+  --ink:#1a1a1a; --ink-2:#4a4a4a; --muted:#6e6e6e; --line:#e2ded5;
+  --glow:#2a6fb0;
+  --r1:#e0b62c; --r2:#2f9e6a; --r3:#aab0b9; --r4:#d9534a;
+  --worse:#c0392b; --better:#1f8a55;
   --f-display:"Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
   --f-body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -31,13 +31,13 @@ h1 span{color:var(--glow)}
 .who{width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;font-weight:700;font-size:13px;line-height:1;color:#151a23;flex:none}
 
 .controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
-.seg{display:inline-flex;gap:2px;padding:3px;border-radius:8px;background:#1d2430;flex-wrap:wrap}
+.seg{display:inline-flex;gap:2px;padding:3px;border-radius:8px;background:#ece7dc;flex-wrap:wrap}
 .seg button{font:700 14px/1 var(--f-body);color:var(--ink-2);background:transparent;border:0;border-radius:6px;padding:8px 11px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--night)}
 button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--glow);outline-offset:2px}
-.pill{font:700 14px/1 var(--f-body);background:transparent;color:var(--glow);border:1px solid rgba(111,195,255,.55);border-radius:999px;padding:9px 15px;cursor:pointer}
+.pill{font:700 14px/1 var(--f-body);background:transparent;color:var(--glow);border:1px solid rgba(42,111,176,.5);border-radius:999px;padding:9px 15px;cursor:pointer}
 .pill[aria-pressed="true"]{background:var(--glow);color:var(--night)}
-.pill.red{color:var(--worse);border-color:rgba(255,138,127,.6)}
+.pill.red{color:var(--worse);border-color:rgba(192,57,43,.5)}
 .pill.red[aria-pressed="true"]{background:var(--worse);color:var(--night)}
 
 .rooms{display:grid;gap:34px}
@@ -65,8 +65,8 @@ h2{font-family:var(--f-display);font-weight:800;font-size:30px;letter-spacing:.0
 .bars-scroll{overflow-x:auto}
 .bars{display:grid;gap:6px;grid-auto-flow:column;grid-auto-columns:minmax(62px,1fr)}
 .bar{display:grid;gap:4px;background:transparent;border:1px solid transparent;border-radius:9px;padding:6px 4px 8px;cursor:pointer;color:var(--ink-2);font:inherit}
-.bar[aria-pressed="true"]{border-color:var(--glow);background:rgba(111,195,255,.07);color:var(--ink)}
-.bar:hover{background:rgba(255,255,255,.04)}
+.bar[aria-pressed="true"]{border-color:var(--glow);background:rgba(42,111,176,.08);color:var(--ink)}
+.bar:hover{background:rgba(0,0,0,.04)}
 .stack{height:140px;display:flex;flex-direction:column;gap:2px;border-radius:4px;overflow:hidden}
 .stack div{transition:flex-grow .5s ease}
 .bar .lb{font-weight:700;font-size:15px;text-align:center;color:var(--ink)}
@@ -80,7 +80,7 @@ h2{font-family:var(--f-display);font-weight:800;font-size:30px;letter-spacing:.0
 .take p{margin:0;color:var(--ink-2);font-size:15px}
 .take p b{color:var(--ink)}
 .dots{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;max-width:300px}
-.dots i{aspect-ratio:1;border-radius:50%;background:#2a3240}
+.dots i{aspect-ratio:1;border-radius:50%;background:#e2ddd2}
 .dots i.on{background:var(--worse)}
 .mini svg{display:block;width:100%;height:auto;overflow:visible}
 .mini text{font-family:var(--f-body);font-size:11px;fill:var(--muted)}
@@ -172,7 +172,7 @@ function drawRoom(cv,order){
   order.forEach((k,i)=>{
     const x=pad+(i%10)*cw, y=top+Math.floor(i/10)*ch, dw=cw*.74, dh=ch*.30, dx=x+(cw-dw)/2, dy=y+ch*.10;
     rr(ctx,dx,dy,dw,dh,Math.min(4,dw*.08)); ctx.fillStyle=css("--desk"); ctx.fill(); ctx.strokeStyle=css("--desk-edge"); ctx.stroke();
-    const sw=dw*.56, sh=Math.max(3,dh*.34); rr(ctx,dx+(dw-sw)/2,dy+dh*.22,sw,sh,1.5); ctx.fillStyle="#5a6577"; ctx.fill();
+    const sw=dw*.56, sh=Math.max(3,dh*.34); rr(ctx,dx+(dw-sw)/2,dy+dh*.22,sw,sh,1.5); ctx.fillStyle="#6b7585"; ctx.fill();
     const col=RC[k], hr=Math.min(cw*.2,ch*.19), hx=x+cw/2, hy=dy+dh+hr*1.05;
     ctx.beginPath(); ctx.ellipse(hx,hy+hr*1.25,hr*1.55,hr*.75,0,Math.PI,0); ctx.fillStyle=mixHex(col,"#151a23",.35); ctx.fill();
     ctx.beginPath(); ctx.arc(hx,hy,hr,0,Math.PI*2); ctx.fillStyle=col; ctx.fill();
@@ -188,7 +188,7 @@ function mini(box,vals,peak){
   const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Students rated good or better at each screen-time level"},box);
   const lo=Math.min(...vals)-3, hi=Math.max(...vals)+3, iw=W-m.l-m.r, ih=H-m.t-m.b;
   const x=i=>m.l+i*iw/(vals.length-1), y=v=>m.t+ih-(v-lo)/(hi-lo)*ih;
-  el("line",{x1:m.l,x2:W-m.r,y1:H-m.b,y2:H-m.b,stroke:"#2a3240"},svg);
+  el("line",{x1:m.l,x2:W-m.r,y1:H-m.b,y2:H-m.b,stroke:"#d6d0c4"},svg);
   el("path",{d:vals.map((v,i)=>(i?"L":"M")+x(i)+","+y(v)).join(""),fill:"none",stroke:css("--glow"),"stroke-width":2.25,"stroke-linejoin":"round"},svg);
   vals.forEach((v,i)=>el("circle",{cx:x(i),cy:y(v),r:i===peak?5:3,fill:i===peak?css("--ink"):css("--glow"),stroke:css("--panel"),"stroke-width":2},svg));
   const t=el("text",{x:x(peak),y:y(vals[peak])-10,"text-anchor":peak===0?"start":"middle",class:"pk"},svg); t.textContent="peak "+Math.round(vals[peak]);

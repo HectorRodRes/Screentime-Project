@@ -23,6 +23,20 @@
     if (el) el.click();
   }
 
+  // Smooth glide: the story page sends a list of elements and a position like 2.4
+  // (40% of the way from element 2 to element 3); scroll there instantly, every frame.
+  function topOf(sel) {
+    const el = document.querySelector(sel);
+    return el ? Math.max(0, el.getBoundingClientRect().top + window.scrollY - 8) : 0;
+  }
+  addEventListener("message", function (e) {
+    const m = e.data;
+    if (!m || m.type !== "viz-glide" || !m.targets || !m.targets.length) return;
+    const i = Math.min(Math.floor(m.pos), m.targets.length - 1), f = m.pos - i;
+    const a = topOf(m.targets[i]), b = i + 1 < m.targets.length ? topOf(m.targets[i + 1]) : a;
+    window.scrollTo({ top: a + (b - a) * f, behavior: "instant" });
+  });
+
   addEventListener("message", function (e) {
     const m = e.data;
     if (!m || m.type !== "viz-state") return;

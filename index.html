@@ -263,8 +263,9 @@
       <p class="lede">Does more screen time mean worse grades? We put 100 students in a classroom to find out.</p>
     </div>
 
-    <!-- Scrolly: the classrooms stay put while the steps scroll through them -->
-    <div class="scrolly" data-kind="frame">
+    <!-- Scrolly: the chart window stays put and glides through the classrooms as you scroll
+         (data-smooth: the chart follows the scroll continuously instead of jumping step to step) -->
+    <div class="scrolly" data-kind="frame" data-smooth>
       <div class="sticky">
         <iframe class="sticky-frame" id="roomFrame" src="viz/hector-room-of-100.html?embed=scrolly" title="Room of 100: screen time and how teachers rate schoolwork"></iframe>
       </div>

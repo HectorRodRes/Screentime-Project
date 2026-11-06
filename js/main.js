@@ -93,12 +93,41 @@ const stepObserver = new IntersectionObserver(entries => {
       const state = {};
       steps.slice(0, steps.indexOf(step) + 1).forEach(s => Object.assign(state, JSON.parse(s.dataset.state || "{}")));
       if (!JSON.parse(step.dataset.state || "{}").scrollTo) state.scrollTo = ".controls";
+      if (scrolly.hasAttribute("data-smooth")) delete state.scrollTo; // position is handled by glideFrames()
       sendToFrame(scrolly.querySelector(".sticky-frame"), state);
     }
   });
 }, { rootMargin: "-50% 0px -50% 0px" }); // fires when a step crosses the middle of the screen
 
 document.querySelectorAll(".step").forEach(s => stepObserver.observe(s));
+
+/* ---------- Smooth glide (.scrolly[data-smooth]) ---------- */
+// Instead of jumping when a step becomes active, the chart scrolls along with the page:
+// between two steps it sits partway between their scrollTo targets.
+const glideScrollies = [...document.querySelectorAll(".scrolly[data-smooth]")];
+let glideQueued = false;
+
+function glideFrames() {
+  glideQueued = false;
+  glideScrollies.forEach(scrolly => {
+    const steps = [...scrolly.querySelectorAll(".step")];
+    const targets = steps.map(s => JSON.parse(s.dataset.state || "{}").scrollTo || "body");
+    const mid = innerHeight / 2;
+    const centers = steps.map(s => { const r = s.getBoundingClientRect(); return r.top + r.height / 2; });
+    let pos = 0;
+    if (mid >= centers[centers.length - 1]) pos = steps.length - 1;
+    else for (let i = 0; i < centers.length - 1; i++) {
+      if (mid >= centers[i] && mid < centers[i + 1]) { pos = i + (mid - centers[i]) / (centers[i + 1] - centers[i]); break; }
+    }
+    scrolly.querySelector(".sticky-frame").contentWindow?.postMessage({ type: "viz-glide", targets, pos }, "*");
+  });
+}
+
+if (glideScrollies.length) {
+  addEventListener("scroll", () => { if (!glideQueued) { glideQueued = true; requestAnimationFrame(glideFrames); } }, { passive: true });
+  addEventListener("resize", glideFrames);
+  glideScrollies.forEach(s => s.querySelector(".sticky-frame").addEventListener("load", glideFrames));
+}
 
 /* ---------- Load only the visible copy of a chart (chapter 2) ---------- */
 // The APA chart has a pinned desktop copy and a normal phone copy; only one is shown at a time.
