@@ -31,13 +31,49 @@ for (let h = 0; h < 24; h++) {
   dayGrid.appendChild(cell);
 }
 
-function updateDay(step) {
+/* The squares fill in with the scroll: while the reader scrolls from one step to the next,
+   the next step's hours fill one square at a time. upTo = how many hours are filled so far. */
+const dayScrolly = document.querySelector('.scrolly[data-kind="day"]');
+const daySteps = dayScrolly ? [...dayScrolly.querySelectorAll(".step")] : [];
+const dayFills = daySteps.map(s => JSON.parse(s.dataset.fill || "[]"));
+const dayTotal = f => f.reduce((t, p) => t + p.hours, 0);
+let dayQueued = false, dayShown = -1;
+
+function scrollDay() {
+  dayQueued = false;
+  if (!daySteps.length) return;
+  const mid = innerHeight / 2;
+  const centers = daySteps.map(s => { const r = s.getBoundingClientRect(); return r.top + r.height / 2; });
+  // k = last step whose middle has passed the middle of the screen
+  let k = 0;
+  centers.forEach((c, i) => { if (c <= mid) k = i; });
+  let show = k, upTo = dayTotal(dayFills[k]);
+  if (centers[0] <= mid && k < daySteps.length - 1) {
+    const frac = Math.min(1, Math.max(0, (mid - centers[k]) / (centers[k + 1] - centers[k])));
+    upTo += (dayTotal(dayFills[k + 1]) - upTo) * frac;
+    if (frac > 0.02) show = k + 1; // the step being filled names the graphic
+  }
+  updateDay(daySteps[show], upTo);
+}
+
+if (daySteps.length) {
+  addEventListener("scroll", () => { if (!dayQueued) { dayQueued = true; requestAnimationFrame(scrollDay); } }, { passive: true });
+  addEventListener("resize", scrollDay);
+  scrollDay();
+}
+
+function updateDay(step, upTo = Infinity) {
   const fill = JSON.parse(step.dataset.fill || "[]");
-  dayTitle.innerHTML = step.dataset.title || "";
-  // Lay the activities end to end along the 24 hours; a square can be partly filled.
+  const i = daySteps.indexOf(step);
+  if (i !== dayShown) { dayTitle.innerHTML = step.dataset.title || ""; dayShown = i; }
+  // Lay the activities end to end along the 24 hours, stopping at upTo; a square can be partly filled.
   const segs = [];
   let start = 0;
-  fill.forEach(p => { segs.push({ from: start, to: start + p.hours, color: p.color }); start += p.hours; });
+  fill.forEach(p => {
+    const to = Math.min(start + p.hours, upTo);
+    if (to > start) segs.push({ from: start, to, color: p.color });
+    start += p.hours;
+  });
 
   [...dayGrid.children].forEach((cell, h) => {
     const stops = [];
@@ -51,7 +87,7 @@ function updateDay(step) {
     cell.classList.toggle("filled", covered > 0.5);
   });
 
-  dayLegend.innerHTML = fill
+  dayLegend.innerHTML = fill.slice(0, segs.length) // only activities that have started filling
     .map(p => `<span><i style="background:${p.color}"></i>${p.label}: ${fmtHours(p.hours)}</span>`)
     .join("");
 }
@@ -86,7 +122,7 @@ const stepObserver = new IntersectionObserver(entries => {
     const scrolly = step.closest(".scrolly");
     scrolly.querySelectorAll(".step").forEach(s => s.classList.toggle("is-active", s === step));
 
-    if (scrolly.dataset.kind === "day") updateDay(step);
+    // (the day graphic follows the scroll itself; see scrollDay)
     if (scrolly.dataset.kind === "frame") {
       // Combine this step with every step before it, so scrolling back up restores the right view.
       const steps = [...scrolly.querySelectorAll(".step")];
