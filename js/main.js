@@ -284,11 +284,52 @@ function updatePinned() {
 }
 
 if (pins.length) {
-  const ro = new ResizeObserver(layoutPins);
+  const ro = new ResizeObserver(() => { layoutPins(); easeHolds(); });
   pins.forEach(pin => ro.observe(pin.firstElementChild));
   addEventListener("resize", layoutPins);
   addEventListener("scroll", updatePinned, { passive: true });
   layoutPins();
+}
+
+/* ---------- Smooth holds (step cards and pinned charts) ---------- */
+// Instead of stopping dead like position: sticky, each card or chart slows down as it reaches its
+// spot, holds still, then speeds back up as it leaves. It's moved with a transform:
+// offset = how far it has been carried down so far, between 0 and the hold distance.
+function softRamp(x, k) { // 0 before -k/2, x after +k/2, a smooth curve in between
+  const u = (x + k / 2) / k;
+  if (u <= 0) return 0;
+  if (u >= 1) return x;
+  return k * (u * u * u - u * u * u * u / 2);
+}
+function heldOffset(d, hold) {
+  if (hold <= 0) return 0;
+  const k = Math.min(hold * 0.4, 220); // length of the slow-down / speed-up, in px of scrolling
+  return softRamp(d, k) - softRamp(d - hold, k);
+}
+
+const holdItems = [
+  // step cards stop with their top at 38% of the screen
+  ...[...document.querySelectorAll(".step-hold")].map(box => ({ box, el: box.firstElementChild, at: () => innerHeight * 0.38 })),
+  // pinned charts stop where layoutPins() placed them (--pin-top)
+  ...pins.map(box => ({ box, el: box.firstElementChild, at: () => parseFloat(box.style.getPropertyValue("--pin-top")) || navH() })),
+];
+let holdQueued = false;
+
+function easeHolds() {
+  holdQueued = false;
+  // read everything first, then write, so the browser lays out the page only once
+  const moves = holdItems.map(h => {
+    const hold = h.box.offsetHeight - h.el.offsetHeight;
+    const d = h.at() - h.box.getBoundingClientRect().top;
+    return heldOffset(d, hold);
+  });
+  holdItems.forEach((h, i) => { h.el.style.transform = moves[i] ? `translateY(${moves[i].toFixed(1)}px)` : ""; });
+}
+
+if (holdItems.length) {
+  addEventListener("scroll", () => { if (!holdQueued) { holdQueued = true; requestAnimationFrame(easeHolds); } }, { passive: true });
+  addEventListener("resize", easeHolds);
+  easeHolds();
 }
 
 /* ---------- Progress bar + active chapter ---------- */
