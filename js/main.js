@@ -21,6 +21,16 @@
   setTimeout(() => { el.textContent = fmt.format(target); }, dur + 200);
 })();
 
+/* ---------- Pause on every step ---------- */
+// Wrap each scrolling step in .step-hold, so its card stops mid-screen for a moment (see css/style.css).
+document.querySelectorAll(".scrolly .step").forEach(step => {
+  if (step.parentElement.classList.contains("step-hold")) return;
+  const hold = document.createElement("div");
+  hold.className = "step-hold";
+  step.before(hold);
+  hold.appendChild(step);
+});
+
 /* ---------- Day graphic (chapter 1) ---------- */
 const dayGrid = document.getElementById("dayGrid");
 const dayTitle = document.getElementById("dayTitle");

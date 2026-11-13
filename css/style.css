@@ -148,8 +148,10 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 }
 .step:last-child { margin-bottom: 0; }
 .step.is-active { opacity: 1; }
-/* Pausing step: the card sticks just above mid-screen for --hold of scrolling, then moves on */
+/* Pausing steps: js/main.js wraps every step in .step-hold. The card sticks just above
+   mid-screen for --hold of scrolling, then moves on. Change --hold to lengthen the pause. */
 .step-hold { --hold: 45vh; margin-bottom: 70vh; }
+.step-hold:last-child { margin-bottom: 0; }
 .step-hold::after { content: ""; display: block; height: var(--hold); } /* room for the card to stay put */
 .step-hold > .step { position: sticky; top: 38vh; margin-bottom: 0; }
 
@@ -321,6 +323,10 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 }
 .apa-scrolly .step { margin-bottom: 20px; opacity: 1; }
 .apa-scrolly { margin: 24px 0 48px; }
+/* plain list here, so no pause */
+.apa-scrolly .step-hold { margin-bottom: 20px; }
+.apa-scrolly .step-hold::after { display: none; }
+.apa-scrolly .step-hold > .step { position: static; }
 
 /* Desktop: chart pinned on the right, steps scroll past on the left */
 @media (min-width: 1000px) and (min-height: 640px) {
@@ -334,6 +340,10 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
   .apa-scrolly .step { margin-bottom: 55vh; opacity: .35; }
   .apa-scrolly .step.is-active { opacity: 1; }
   .apa-scrolly .step:last-child { margin-bottom: 0; }
+  .apa-scrolly .step-hold { margin-bottom: 55vh; }
+  .apa-scrolly .step-hold:last-child { margin-bottom: 0; }
+  .apa-scrolly .step-hold::after { display: block; }
+  .apa-scrolly .step-hold > .step { position: sticky; margin-bottom: 0; }
 }
 
 /* Hours online vs. how it feels */
