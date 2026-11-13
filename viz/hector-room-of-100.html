@@ -43,8 +43,9 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 .rooms{display:grid;gap:34px}
 .block{display:grid;gap:10px;min-width:0}
 .block>.seg{justify-self:start}
-.stage{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:18px;align-items:start}
-@media (max-width:880px){.stage{grid-template-columns:1fr}}
+.pickers{display:flex;flex-wrap:wrap;gap:8px 12px}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:18px;align-items:start}
+@media (max-width:600px){.stage{grid-template-columns:1fr}}
 .roomwrap{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--room);min-width:0}
 canvas{display:block;width:100%;height:auto}
 .board{position:absolute;left:0;right:0;top:0;padding:9px 14px;display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);pointer-events:none}
@@ -112,7 +113,6 @@ details p{margin:8px 0 0;max-width:80ch}
 
 
   <div class="takes">
-    <div class="block" id="peakSeg"></div>
     <div class="take">
       <div class="n" id="tPeak"></div>
       <p id="tPeakT"></p>
@@ -120,7 +120,24 @@ details p{margin:8px 0 0;max-width:80ch}
     </div>
   </div>
 
-  <div class="rooms" id="rooms"></div>
+  <!-- One classroom. The buttons (or the story page, via bridge.js) switch screen time and year. -->
+  <div class="block" id="room">
+    <div class="pickers">
+      <div class="seg" data-f="room" role="group" aria-label="Screen time a day"></div>
+      <div class="seg" data-f="year" role="group" aria-label="Survey year"></div>
+    </div>
+    <section class="stage">
+      <div class="roomwrap">
+        <canvas id="cv"></canvas>
+        <div class="board"><span>↑ Best-rated in front</span><span id="br"></span></div>
+      </div>
+      <div class="card" aria-live="polite">
+        <div class="hours" id="hrs"></div>
+        <ul class="tally" id="ta"></ul>
+        <p class="vs" id="vs"></p>
+      </div>
+    </section>
+  </div>
 
   <details>
     <summary>About the data</summary>
@@ -132,9 +149,7 @@ details p{margin:8px 0 0;max-width:80ch}
 const T={"rooms": {"2006": [[1714, 2713, 1626, 382], [4379, 7474, 4263, 698], [11543, 22413, 13950, 2049], [9292, 20218, 14148, 2104], [5673, 13094, 10081, 1633], [7134, 16257, 14224, 3054]], "2010": [[1695, 2213, 1244, 311], [4445, 7012, 3474, 512], [11400, 20680, 11549, 1577], [9641, 19117, 12532, 1805], [6320, 13606, 10006, 1625], [8689, 19115, 16686, 3547]], "2014": [[1588, 1856, 873, 196], [4309, 5854, 2761, 394], [11013, 17267, 8710, 1111], [8870, 15936, 9503, 1244], [6201, 12521, 8500, 1239], [10749, 22603, 19170, 3876]]}, "rho": {"2006": -0.1, "2010": -0.13, "2014": -0.16}};
 const L=["<2 h","2–4 h","4–8 h","8 h+"], UP=["2 h","4 h","8 h"], GROUPS=[[0,1],[2],[3,4],[5]];
 const YEARS=["2006","2010","2014"];
-let Y=["2014","2014","2014","2014","2014"]; // one year per room, last = peak card
-try{const v=JSON.parse(localStorage.getItem("room100v6")||"null"); if(Array.isArray(v)&&v.length===5) Y=v;}catch(e){}
-const segHTML=i=>`<div class="seg" data-i="${i}" role="group" aria-label="Survey year">${YEARS.map(y=>`<button data-v="${y}" aria-pressed="${Y[i]===y}">${y}</button>`).join("")}</div>`;
+let LV=0, YR="2014"; // the room on show: screen-time level (index into L) and survey year
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const RC=["--r1","--r2","--r3","--r4"].map(css), RN=["Very good","Good","Average","Below average"], SYM=["★","✓","–","✕"];
 function to100(c){ const n=c.reduce((a,b)=>a+b,0); if(!n) return [0,0,0,0];
@@ -143,25 +158,17 @@ function to100(c){ const n=c.reduce((a,b)=>a+b,0); if(!n) return [0,0,0,0];
 const mixHex=(a,b,t)=>{const h=x=>{const n=parseInt(x.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255];};const A=h(a),B=h(b);return "#"+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,"0")).join("");};
 const fmt=n=>n.toLocaleString("en-US");
 
-/* build one section per screen-time group */
-const box=document.getElementById("rooms");
-box.innerHTML=L.map((l,i)=>`
-  <div class="block">${segHTML(i)}
-  <section class="stage" aria-label="${l} a day">
-    <div class="roomwrap">
-      <canvas id="cv${i}" aria-label="Classroom of 100 students with ${l} of screen time a day, each marked with their teacher rating"></canvas>
-      <div class="board"><span>↑ Best-rated in front</span><span id="br${i}"></span></div>
-    </div>
-    <div class="card">
-      <div class="hours">${l}<small id="sub${i}"></small></div>
-      <ul class="tally" id="ta${i}"></ul>
-      <p class="vs" id="vs${i}"></p>
-    </div>
-  </section></div>`).join("");
-document.getElementById("peakSeg").innerHTML=segHTML(4);
+/* button rows: screen time and year */
+function fillSeg(f,vals,labels,cur){
+  document.querySelector(`.seg[data-f="${f}"]`).innerHTML=vals.map((v,i)=>`<button data-v="${v}" aria-pressed="${v===cur}">${labels[i]}</button>`).join("");
+}
+fillSeg("room",["0","1","2","3"],L,String(LV));
+fillSeg("year",YEARS,YEARS,YR);
 
+const cv=document.getElementById("cv");
 function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
-function drawRoom(cv,order){
+// Draw the room partway (t = 0..1) from one seating order to another, so students fade to their new rating.
+function drawRoom(from,to,t){
   const w=cv.parentElement.clientWidth||800, dpr=Math.min(2,window.devicePixelRatio||1), h=Math.round(w*(w<520?1.05:0.76));
   cv.width=w*dpr; cv.height=h*dpr; cv.style.height=h+"px";
   const ctx=cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -169,16 +176,25 @@ function drawRoom(cv,order){
   ctx.fillStyle=css("--room"); ctx.fillRect(0,0,w,h);
   ctx.strokeStyle=css("--floor-line"); ctx.lineWidth=1;
   for(let c=0;c<=10;c++){ctx.beginPath();ctx.moveTo(pad+c*cw,top);ctx.lineTo(pad+c*cw,h);ctx.stroke();}
-  order.forEach((k,i)=>{
+  to.forEach((k,i)=>{
     const x=pad+(i%10)*cw, y=top+Math.floor(i/10)*ch, dw=cw*.74, dh=ch*.30, dx=x+(cw-dw)/2, dy=y+ch*.10;
     rr(ctx,dx,dy,dw,dh,Math.min(4,dw*.08)); ctx.fillStyle=css("--desk"); ctx.fill(); ctx.strokeStyle=css("--desk-edge"); ctx.stroke();
     const sw=dw*.56, sh=Math.max(3,dh*.34); rr(ctx,dx+(dw-sw)/2,dy+dh*.22,sw,sh,1.5); ctx.fillStyle="#6b7585"; ctx.fill();
-    const col=RC[k], hr=Math.min(cw*.2,ch*.19), hx=x+cw/2, hy=dy+dh+hr*1.05;
+    const col=t>=1?RC[k]:mixHex(RC[from[i]],RC[k],t), hr=Math.min(cw*.2,ch*.19), hx=x+cw/2, hy=dy+dh+hr*1.05;
     ctx.beginPath(); ctx.ellipse(hx,hy+hr*1.25,hr*1.55,hr*.75,0,Math.PI,0); ctx.fillStyle=mixHex(col,"#151a23",.35); ctx.fill();
     ctx.beginPath(); ctx.arc(hx,hy,hr,0,Math.PI*2); ctx.fillStyle=col; ctx.fill();
     ctx.fillStyle="#151a23"; ctx.font=`700 ${Math.round(hr*1.25)}px "Atkinson Hyperlegible", system-ui, sans-serif`; ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.fillText(SYM[k],hx,hy+hr*.06);
+    ctx.fillText(SYM[t<.5?from[i]:k],hx,hy+hr*.06);
   });
+}
+let shown=null, anim=0;
+function showOrder(order){
+  const from=shown||order; shown=order; cancelAnimationFrame(anim);
+  if(from===order||matchMedia("(prefers-reduced-motion: reduce)").matches){ drawRoom(order,order,1); return; }
+  const t0=performance.now(), D=550;
+  const step=now=>{ const t=Math.min(1,(now-t0)/D); drawRoom(from,order,t); if(t<1) anim=requestAnimationFrame(step); };
+  anim=requestAnimationFrame(step);
+  setTimeout(()=>{ if(shown===order) drawRoom(order,order,1); },D+100); // land the final frame even if animation is paused
 }
 
 const NS="http://www.w3.org/2000/svg";
@@ -195,7 +211,6 @@ function mini(box,vals,peak){
   [0,vals.length-1].forEach(i=>{const a=el("text",{x:x(i),y:H-4,"text-anchor":i?"end":"start"},svg);a.textContent=L[i];});
 }
 
-let orders=[];
 function stats(year){
   const raw=T.rooms[year], acc=GROUPS.map(g=>[0,1,2,3].map(k=>g.reduce((s,i)=>s+raw[i][k],0)));
   const rooms=acc.map(to100), ns=acc.map(c=>c.reduce((a,b)=>a+b,0));
@@ -203,39 +218,36 @@ function stats(year){
   let best=0; share.forEach((v,i)=>{ if(v>share[best]) best=i; });
   return {rooms,ns,share,best};
 }
-function renderRoom(i){
-  const year=Y[i], {rooms,ns,best}=stats(year), cur=rooms[i], base=rooms[best];
-  const o=[]; cur.forEach((n,k)=>{for(let j=0;j<n;j++) o.push(k);}); orders[i]=o;
-  const S={year};
-  {
-    document.getElementById("sub"+i).textContent=`total screen time a day · ${S.year} · ${fmt(ns[i])} students`;
-    document.getElementById("br"+i).textContent=`${L[i]} · ${S.year}`;
-    document.getElementById("ta"+i).innerHTML=cur.map((n,k)=>{
-      const d=n-base[k]; let txt="", cls="";
-      if(i!==best&&d!==0){ cls=((k<2)?d<0:d>0)?"worse":"better"; txt=(d>0?"+":"−")+Math.abs(d); }
-      return `<li><span class="nm"><span class="who" style="background:${RC[k]}">${SYM[k]}</span>${RN[k]}</span><b>${n}</b><em class="${cls}">${txt}</em></li>`;}).join("");
-    document.getElementById("vs"+i).innerHTML=i===best
-      ? `<b>${cur[0]+cur[1]}</b> of 100 rated good or better. This is the best-rated room.`
-      : `<b>${cur[0]+cur[1]}</b> of 100 rated good or better. Change vs the ${L[best]} room; <span style="color:var(--worse)">red</span> = worse ratings.`;
-    drawRoom(document.getElementById("cv"+i),orders[i]);
-  }
-}
-function renderPeak(){
-  const {share,best}=stats(Y[4]);
+function render(){
+  const {rooms,ns,share,best}=stats(YR), cur=rooms[LV], base=rooms[best];
+  const o=[]; cur.forEach((n,k)=>{for(let j=0;j<n;j++) o.push(k);});
+  document.getElementById("hrs").innerHTML=`${L[LV]}<small>total screen time a day · ${YR} · ${fmt(ns[LV])} students</small>`;
+  document.getElementById("br").textContent=`${L[LV]} · ${YR}`;
+  cv.setAttribute("aria-label",`Classroom of 100 students with ${L[LV]} of screen time a day in ${YR}, each marked with their teacher rating`);
+  document.getElementById("ta").innerHTML=cur.map((n,k)=>{
+    const d=n-base[k]; let txt="", cls="";
+    if(LV!==best&&d!==0){ cls=((k<2)?d<0:d>0)?"worse":"better"; txt=(d>0?"+":"−")+Math.abs(d); }
+    return `<li><span class="nm"><span class="who" style="background:${RC[k]}">${SYM[k]}</span>${RN[k]}</span><b>${n}</b><em class="${cls}">${txt}</em></li>`;}).join("");
+  document.getElementById("vs").innerHTML=LV===best
+    ? `<b>${cur[0]+cur[1]}</b> of 100 rated good or better. This is the best-rated room.`
+    : `<b>${cur[0]+cur[1]}</b> of 100 rated good or better. Change vs the ${L[best]} room; <span style="color:var(--worse)">red</span> = worse ratings.`;
+  showOrder(o);
+  // peak card
   document.getElementById("tPeak").innerHTML=`<small>Peak</small> <span style="white-space:nowrap">${L[best]}</span>`;
   document.getElementById("tPeakT").innerHTML=best===0
     ? `Highest under ${UP[0]} a day, then lower with each step of extra screen time.`
     : `A hill, not a straight slope. After the ${L[best]} peak, ratings fall.`;
   mini(document.getElementById("mini"),share,best);
 }
-document.querySelectorAll(".seg[data-i]").forEach(seg=>{const i=+seg.dataset.i;
-  seg.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
-    Y[i]=b.dataset.v; seg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
-    try{localStorage.setItem("room100v6",JSON.stringify(Y));}catch(e){}
-    i===4?renderPeak():renderRoom(i);}));});
-[0,1,2,3].forEach(renderRoom); renderPeak();
-let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>orders.forEach((o,i)=>drawRoom(document.getElementById("cv"+i),o)),120);});
-document.fonts&&document.fonts.ready.then(()=>orders.forEach((o,i)=>drawRoom(document.getElementById("cv"+i),o)));
+document.querySelectorAll(".seg[data-f]").forEach(seg=>seg.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  seg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  if(seg.dataset.f==="room") LV=+b.dataset.v; else YR=b.dataset.v;
+  render();
+}));
+render();
+let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>shown&&drawRoom(shown,shown,1),120);});
+document.fonts&&document.fonts.ready.then(()=>shown&&drawRoom(shown,shown,1));
 </script>
 
 

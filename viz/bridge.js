@@ -49,7 +49,7 @@
     const m = e.data;
     if (!m || m.type !== "viz-state") return;
     // Filter buttons, e.g. { year: "2014", day: "wd", scr: "total" }
-    ["scr", "year", "day"].forEach(function (f) {
+    ["scr", "year", "day", "room"].forEach(function (f) {
       if (m[f] == null) return;
       const b = document.querySelector('.seg[data-f="' + f + '"] button[data-v="' + m[f] + '"]');
       if (b && b.getAttribute("aria-pressed") !== "true") b.click();
@@ -59,11 +59,6 @@
       const hl = document.getElementById("hl");
       if (hl && (hl.getAttribute("aria-pressed") === "true") !== m.hl) hl.click();
     }
-    // Room of 100: survey year per room, e.g. roomYears: ["2014","2014","2014","2006","2014"]
-    if (Array.isArray(m.roomYears)) m.roomYears.forEach(function (y, i) {
-      const b = document.querySelector('.seg[data-i="' + i + '"] button[data-v="' + y + '"]');
-      if (b && b.getAttribute("aria-pressed") !== "true") b.click();
-    });
     // Pick a room (screen-time level) by index
     if (m.lv != null) click('.bar[data-i="' + m.lv + '"]');
     // Scroll inside the viz to an element
