@@ -22,8 +22,15 @@
   // The wheel/touch then scrolls the story page instead of getting caught inside the frame.
   if (new URLSearchParams(location.search).get("glide") === "1") {
     const st = document.createElement("style");
-    st.textContent = "html, body { overflow: hidden !important; overscroll-behavior: none; }";
+    st.textContent = "html, body { overflow: hidden !important; }";
     document.head.appendChild(st);
+    // Hand the mouse wheel to the story page, so scrolling works with the pointer over the chart.
+    addEventListener("wheel", function (e) {
+      if (e.ctrlKey) return; // pinch-zoom
+      e.preventDefault();
+      const k = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
+      parent.postMessage({ type: "viz-wheel", dx: e.deltaX * k, dy: e.deltaY * k }, "*");
+    }, { passive: false });
   }
 
   function click(sel) {

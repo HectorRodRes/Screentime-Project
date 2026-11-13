@@ -163,6 +163,12 @@ if (glideScrollies.length) {
   addEventListener("scroll", () => { if (!glideQueued) { glideQueued = true; requestAnimationFrame(glideFrames); } }, { passive: true });
   addEventListener("resize", glideFrames);
   glideScrollies.forEach(s => s.querySelector(".sticky-frame").addEventListener("load", glideFrames));
+  // A glide chart can't scroll itself, so it passes the mouse wheel here; scroll the page instead.
+  addEventListener("message", e => {
+    if (!e.data || e.data.type !== "viz-wheel") return;
+    if (!glideScrollies.some(s => s.querySelector(".sticky-frame").contentWindow === e.source)) return;
+    scrollBy({ left: 0, top: e.data.dy, behavior: "instant" });
+  });
 }
 
 /* ---------- Load only the visible copy of a chart (chapter 2) ---------- */
