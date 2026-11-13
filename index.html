@@ -59,8 +59,12 @@
         <div class="step" data-title="One day = 24 hours" data-fill='[]'>
           <p>Every American gets the same 24 hours a day. Each square is one hour.</p>
         </div>
-        <div class="step" data-title="Sleep" data-fill='[{"label":"Sleep","hours":9.03,"color":"var(--c-sleep)"}]'>
-          <p>The average American spends about <strong>9 hours</strong> asleep.</p>
+        <!-- .step-hold: the card stops mid-screen for a moment so readers can take it in.
+             Wrap any other step the same way to make it pause too. -->
+        <div class="step-hold">
+          <div class="step" data-title="Sleep" data-fill='[{"label":"Sleep","hours":9.03,"color":"var(--c-sleep)"}]'>
+            <p>The average American spends about <strong>9 hours</strong> asleep.</p>
+          </div>
         </div>
         <div class="step" data-title="Work &amp; school" data-fill='[{"label":"Sleep","hours":9.03,"color":"var(--c-sleep)"},{"label":"Work & school","hours":3.66,"color":"var(--c-work)"}]'>
           <p>Work and school take about <strong>3 hours 40 minutes</strong>. That's averaged over every day of the week and everyone 15 and older, including retirees.</p>

@@ -49,7 +49,9 @@ function scrollDay() {
   centers.forEach((c, i) => { if (c <= mid) k = i; });
   let show = k, upTo = dayTotal(dayFills[k]);
   if (centers[0] <= mid && k < daySteps.length - 1) {
-    const frac = Math.min(1, Math.max(0, (mid - centers[k]) / (centers[k + 1] - centers[k])));
+    // The next step's hours fill while its card rises from just below the screen to the middle,
+    // so a card that pauses (.step-hold) keeps its own picture until the next card shows up.
+    const frac = Math.min(1, Math.max(0, 1 - (centers[k + 1] - mid) / (innerHeight * 0.6)));
     upTo += (dayTotal(dayFills[k + 1]) - upTo) * frac;
     if (frac > 0.02) show = k + 1; // the step being filled names the graphic
   }

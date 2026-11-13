@@ -148,6 +148,10 @@ h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
 }
 .step:last-child { margin-bottom: 0; }
 .step.is-active { opacity: 1; }
+/* Pausing step: the card sticks just above mid-screen for --hold of scrolling, then moves on */
+.step-hold { --hold: 45vh; margin-bottom: 70vh; }
+.step-hold::after { content: ""; display: block; height: var(--hold); } /* room for the card to stay put */
+.step-hold > .step { position: sticky; top: 38vh; margin-bottom: 0; }
 
 /* Desktop: graphic on the right, steps on the left */
 @media (min-width: 900px) {
