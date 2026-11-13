@@ -247,7 +247,7 @@ function scrollIntoFrame(frame) {
   // A pinned frame's on-screen spot moves while it's stuck, so measure from where its pin starts on the page.
   const pin = frame.closest(".viz-pin");
   const frameTop = pin
-    ? pin.getBoundingClientRect().top + scrollY + (frame.getBoundingClientRect().top - pin.querySelector(".viz-block").getBoundingClientRect().top)
+    ? pin.getBoundingClientRect().top + scrollY + (frame.getBoundingClientRect().top - pin.firstElementChild.getBoundingClientRect().top)
     : frame.getBoundingClientRect().top + scrollY;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   scrollTo({ top: frameTop + inner - navH() - 8, behavior: reduce ? "auto" : "smooth" });
@@ -263,7 +263,7 @@ const navH = () => parseFloat(getComputedStyle(document.documentElement).getProp
 
 function layoutPins() {
   pins.forEach(pin => {
-    const block = pin.querySelector(".viz-block");
+    const block = pin.firstElementChild;
     const frame = block.querySelector(".viz-frame");
     const avail = innerHeight - navH();
     if (frame && frame.dataset.h) frame.style.height = Math.max(300, +frame.dataset.h) + "px";
@@ -277,7 +277,7 @@ function layoutPins() {
 function updatePinned() {
   pins.forEach(pin => {
     const r = pin.getBoundingClientRect();
-    const blockTop = pin.querySelector(".viz-block").getBoundingClientRect().top;
+    const blockTop = pin.firstElementChild.getBoundingClientRect().top;
     const stuck = r.top < blockTop - 1 && r.bottom > innerHeight * 0.6;
     pin.classList.toggle("is-pinned", stuck);
   });
@@ -285,7 +285,7 @@ function updatePinned() {
 
 if (pins.length) {
   const ro = new ResizeObserver(layoutPins);
-  pins.forEach(pin => ro.observe(pin.querySelector(".viz-block")));
+  pins.forEach(pin => ro.observe(pin.firstElementChild));
   addEventListener("resize", layoutPins);
   addEventListener("scroll", updatePinned, { passive: true });
   layoutPins();
